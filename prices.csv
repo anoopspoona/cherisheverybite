@@ -1,31 +1,31 @@
 no,category,name,price,status
 1,Soups,Ragi collagen chicken soup,TBD,live
-2,Soups,Vegetable broth,TBD,live
-3,Salads,Corn and yuzu salad,TBD,live
-4,Salads,Mesclun quinoa salad,TBD,live
-5,Salads,Pulled Chicken Caesar Salad,TBD,live
-6,Salads,Shirazi salad,TBD,live
-7,Protein Add On,Herbs marinated chicken breast,TBD,live
-8,Bites,Ragi quinoa chips,TBD,live
-9,Bites,Greek yogurt granola,TBD,live
-10,Bites,Maple togarashi spiced nuts,TBD,live
-11,Bites,Steamed edamame,TBD,live
-12,Sandwiches,French Onion Grilled Cheese,TBD,live
-13,Sandwiches,Furikake Avocado Toast,TBD,live
-14,Sandwiches,Grilled chicken and avocado sandwich,TBD,live
-15,Pizza,Pizza base shared,TBD,hidden
-16,Combos,Protein millet collagen kanji,TBD,live
-17,Combos,Ragi jowar chapathi meals,TBD,live
-18,Drinks,ABC Smoothie,TBD,live
-19,Drinks,CBP Protein Smoothie,TBD,live
-20,Drinks,Chia peanut butter protein smoothie,TBD,live
-21,Drinks,Chia-Protein Smoothie,TBD,live
-22,Drinks,Kaanji,TBD,live
-23,Drinks,Tepache,TBD,live
-24,Drinks,Masala chaas,TBD,live
-25,Drinks,Mint pineapple spinach smoothie,TBD,live
-26,Desserts,Chia mango monk fruit pudding,TBD,live
-27,Desserts,Chocolate chips oats cookies,TBD,live
-28,Desserts,Vegan Chocolate Chip Oat Cookies,TBD,draft
-29,Desserts,Protein Peanut Butter Brownie,TBD,live
-30,Drinks,Seasonal Green Smoothie,TBD,draft
+2,Soups,Vegetable broth,129,live
+3,Salads,Corn and yuzu salad,189,live
+4,Salads,Mesclun quinoa salad,229,live
+5,Salads,Pulled Chicken Caesar Salad,269,live
+6,Salads,Shirazi salad,179,live
+7,Protein Add On,Herbs marinated chicken breast,149,live
+8,Bites,Ragi quinoa chips,119,live
+9,Bites,Greek yogurt granola,149,live
+10,Bites,Maple togarashi spiced nuts,159,live
+11,Bites,Steamed edamame,149,live
+12,Sandwiches,French Onion Grilled Cheese,219,live
+13,Sandwiches,Furikake Avocado Toast,239,live
+14,Sandwiches,Grilled chicken and avocado sandwich,279,live
+15,Pizza,Pizza base shared,299,hidden
+16,Combos,Protein millet collagen kanji,249,live
+17,Combos,Ragi jowar chapathi meals,289,live
+18,Drinks,ABC Smoothie,169,live
+19,Drinks,CBP Protein Smoothie,199,live
+20,Drinks,Chia peanut butter protein smoothie,209,live
+21,Drinks,Chia-Protein Smoothie,189,live
+22,Drinks,Kaanji,99,live
+23,Drinks,Tepache,119,live
+24,Drinks,Masala chaas,89,live
+25,Drinks,Mint pineapple spinach smoothie,179,live
+26,Desserts,Chia mango monk fruit pudding,149,live
+27,Desserts,Chocolate chips oats cookies,129,live
+28,Desserts,Vegan Chocolate Chip Oat Cookies,139,draft
+29,Desserts,Protein Peanut Butter Brownie,159,live
+30,Drinks,Seasonal Green Smoothie,199,draft
