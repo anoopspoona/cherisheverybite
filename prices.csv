@@ -1,21 +1,21 @@
 no,category,name,price,status
 1,Soups,Ragi collagen chicken soup,TBD,live
-2,Soups,Vegetable broth,TBD,live
+2,Soups,Vegetable broth,TBD,hidden
 3,Salads,Corn and yuzu salad,TBD,live
 4,Salads,Mesclun quinoa salad,TBD,live
-5,Salads,Pulled Chicken Caesar Salad,TBD,live
-6,Salads,Shirazi salad,TBD,live
+5,Salads,Pulled Chicken Caesar Salad,TBD,hidden
+6,Salads,Shirazi salad,TBD,hidden
 7,Protein Add On,Herbs marinated chicken breast,TBD,live
-8,Bites,Ragi quinoa chips,TBD,live
+8,Bites,Ragi quinoa chips,TBD,hidden
 9,Bites,Greek yogurt granola,TBD,live
 10,Bites,Maple togarashi spiced nuts,TBD,live
 11,Bites,Steamed edamame,TBD,live
-12,Sandwiches,French Onion Grilled Cheese,TBD,live
+12,Sandwiches,French Onion Grilled Cheese,TBD,hidden
 13,Sandwiches,Furikake Avocado Toast,TBD,live
-14,Sandwiches,Grilled chicken and avocado sandwich,TBD,live
+14,Sandwiches,Grilled chicken and avocado sandwich,TBD,hidden
 15,Pizza,Pizza base shared,TBD,hidden
 16,Combos,Protein millet collagen kanji,TBD,live
-17,Combos,Ragi jowar chapathi meals,TBD,live
+17,Combos,Ragi jowar chapathi meals,TBD,hidden
 18,Drinks,ABC Smoothie,TBD,live
 19,Drinks,CBP Protein Smoothie,TBD,live
 20,Drinks,Chia peanut butter protein smoothie,TBD,live
@@ -26,6 +26,5 @@ no,category,name,price,status
 25,Drinks,Mint pineapple spinach smoothie,TBD,live
 26,Desserts,Chia mango monk fruit pudding,TBD,live
 27,Desserts,Chocolate chips oats cookies,TBD,live
-28,Desserts,Vegan Chocolate Chip Oat Cookies,TBD,draft
+28,Desserts,Vegan Chocolate Chip Oat Cookies,TBD,hidden
 29,Desserts,Protein Peanut Butter Brownie,TBD,live
-30,Drinks,Seasonal Green Smoothie,TBD,draft
