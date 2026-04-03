@@ -718,7 +718,8 @@
       const lines = text.trim().split(/\r?\n/).filter(Boolean);
       if (lines.length < 2) return [];
 
-      const headers = parseCSVLine(lines[0]).map(h => h.toLowerCase());
+      const cleanHeader = lines[0].replace(/^﻿/, "");
+      const headers = parseCSVLine(cleanHeader).map(h => h.trim().toLowerCase());
       const noIndex = headers.indexOf("no");
       const categoryIndex = headers.indexOf("category");
       const nameIndex = headers.indexOf("name");
