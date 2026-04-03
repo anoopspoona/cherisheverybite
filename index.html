@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Cherish Every Bite | Curated Healthy Meals</title>
   <meta name="description" content="Cherish Every Bite cloud kitchen — healthy curated meals, soups, salads, smoothies, bites, desserts and subscription meal options." />
-
+  <link rel="icon" type="image/jpeg" href="Cherish logo.jpg" />
   <style>
     :root {
       --red: #c82027;
@@ -15,47 +15,68 @@
       --green-dark: #154d33;
       --green-soft: #f2fbf5;
       --white: #ffffff;
-      --off-white: #fafcfb;
       --text: #1f2937;
       --muted: #667085;
-      --card: rgba(255,255,255,0.98);
       --shadow: 0 18px 48px rgba(0, 0, 0, 0.10);
       --radius: 24px;
-      --border: rgba(0,0,0,0.08);
     }
 
     * { box-sizing: border-box; }
     html { scroll-behavior: smooth; }
-
     body {
       margin: 0;
       font-family: Arial, Helvetica, sans-serif;
       color: var(--text);
       line-height: 1.6;
       background:
-        radial-gradient(circle at top left, rgba(200,32,39,0.08), transparent 24%),
-        radial-gradient(circle at bottom right, rgba(31,109,71,0.08), transparent 24%),
+        radial-gradient(circle at top left, rgba(200,32,39,0.07), transparent 24%),
+        radial-gradient(circle at bottom right, rgba(31,109,71,0.07), transparent 24%),
         linear-gradient(180deg, #ffffff 0%, #f8fbf9 100%);
     }
-
     a { color: inherit; }
-
     .container {
       width: min(1180px, calc(100% - 32px));
       margin: 0 auto;
     }
 
+    /* Splash */
+    #splash {
+      position: fixed;
+      inset: 0;
+      background: rgba(255,255,255,0.98);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      animation: splashFade 0.7s ease forwards;
+      animation-delay: 1.2s;
+    }
+    #splash img {
+      width: 110px;
+      height: 110px;
+      object-fit: contain;
+      animation: splashZoom 0.8s ease;
+    }
+    @keyframes splashZoom {
+      from { transform: scale(0.82); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+    @keyframes splashFade {
+      to { opacity: 0; visibility: hidden; }
+    }
+
+    /* Header */
     header {
       position: sticky;
       top: 0;
       z-index: 50;
       backdrop-filter: blur(14px);
-      background: rgba(255,255,255,0.90);
+      background: rgba(255,255,255,0.92);
       border-bottom: 1px solid rgba(0,0,0,0.05);
+      box-shadow: 0 4px 18px rgba(0,0,0,0.04);
     }
-
     .nav {
-      min-height: 92px;
+      min-height: 98px;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -63,56 +84,51 @@
       flex-wrap: wrap;
       padding: 12px 0;
     }
-
     .brand {
       display: flex;
       align-items: center;
-      gap: 16px;
+      gap: 18px;
     }
-
     .logo-wrap {
-      width: 76px;
-      height: 76px;
-      border-radius: 22px;
+      width: 92px;
+      height: 92px;
+      border-radius: 24px;
       background: #fff;
+      box-shadow: 0 12px 28px rgba(0,0,0,0.10);
+      border: 1px solid rgba(0,0,0,0.05);
+      overflow: hidden;
       display: grid;
       place-items: center;
-      box-shadow: var(--shadow);
-      overflow: hidden;
-      border: 1px solid rgba(0,0,0,0.06);
       flex-shrink: 0;
     }
-
     .logo-img {
       width: 100%;
       height: 100%;
       object-fit: contain;
-      background: white;
+      background: #fff;
     }
-
     .brand-text h1 {
       margin: 0;
-      font-size: clamp(1.6rem, 3.4vw, 2.4rem);
+      font-size: clamp(1.9rem, 4vw, 2.7rem);
       line-height: 1;
       color: var(--red);
+      font-weight: 900;
       letter-spacing: 0.2px;
-      font-weight: 800;
     }
-
     .brand-text p {
       margin: 6px 0 0;
-      font-size: 1rem;
+      font-size: 1.02rem;
       color: var(--green);
       font-weight: 700;
       font-style: italic;
     }
-
     .nav-actions {
       display: flex;
       gap: 10px;
       flex-wrap: wrap;
     }
 
+    /* Buttons */
     .btn {
       display: inline-flex;
       align-items: center;
@@ -121,223 +137,129 @@
       padding: 12px 18px;
       border-radius: 999px;
       text-decoration: none;
-      font-weight: bold;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      font-weight: 700;
       border: 1px solid transparent;
-      cursor: pointer;
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
     }
-
     .btn:hover {
       transform: translateY(-2px);
       box-shadow: 0 10px 24px rgba(0,0,0,0.10);
     }
+    .btn-red { background: var(--red); color: #fff; }
+    .btn-green { background: var(--green); color: #fff; }
+    .btn-red-outline { background: var(--red-soft); color: var(--red-dark); border-color: rgba(200,32,39,0.10); }
+    .btn-green-outline { background: var(--green-soft); color: var(--green-dark); border-color: rgba(31,109,71,0.10); }
 
-    .btn-red {
-      background: var(--red);
-      color: white;
-    }
-
-    .btn-green {
-      background: var(--green);
-      color: white;
-    }
-
-    .btn-red-outline {
-      background: var(--red-soft);
-      color: var(--red-dark);
-      border-color: rgba(200,32,39,0.12);
-    }
-
-    .btn-green-outline {
-      background: var(--green-soft);
-      color: var(--green-dark);
-      border-color: rgba(31,109,71,0.12);
-    }
-
-    .hero {
-      padding: 42px 0 18px;
-    }
-
+    /* Hero */
+    .hero { padding: 42px 0 22px; }
     .hero-shell {
       display: grid;
       grid-template-columns: 1.08fr 0.92fr;
-      gap: 26px;
+      gap: 24px;
       align-items: stretch;
     }
-
     .hero-main,
     .hero-side,
     .menu-section,
-    .csv-panel,
     .subscription-section,
-    .cta-box {
+    .cta-box,
+    .footer-card {
       border-radius: var(--radius);
       box-shadow: var(--shadow);
       border: 1px solid rgba(0,0,0,0.05);
+      background: #fff;
     }
-
     .hero-main {
-      min-height: 500px;
-      padding: 44px;
-      color: white;
+      min-height: 480px;
+      padding: 42px;
+      color: #fff;
       display: flex;
       flex-direction: column;
       justify-content: flex-end;
       background:
-        linear-gradient(135deg, rgba(200,32,39,0.82), rgba(200,32,39,0.62)),
+        linear-gradient(135deg, rgba(200,32,39,0.78), rgba(200,32,39,0.56)),
         url('https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=1400&q=80') center/cover;
       position: relative;
       overflow: hidden;
     }
-
     .hero-main::before {
       content: "BITES CURATED FOR YOU";
       position: absolute;
       top: 24px;
       left: 24px;
-      background: white;
+      background: #fff;
       color: var(--red);
       padding: 9px 14px;
       border-radius: 999px;
-      letter-spacing: 0.8px;
-      font-size: 0.78rem;
-      font-weight: bold;
+      font-size: 0.76rem;
+      font-weight: 800;
+      letter-spacing: 0.7px;
     }
-
     .hero-eyebrow {
-      width: fit-content;
       display: inline-block;
+      width: fit-content;
       margin-bottom: 14px;
       padding: 8px 14px;
-      border: 1px solid rgba(255,255,255,0.24);
       border-radius: 999px;
-      background: rgba(255,255,255,0.14);
+      border: 1px solid rgba(255,255,255,0.25);
+      background: rgba(255,255,255,0.12);
       font-size: 0.9rem;
     }
-
     .hero-main h2 {
       margin: 0 0 12px;
-      font-size: clamp(2.2rem, 4.8vw, 4.1rem);
+      font-size: clamp(2.2rem, 4.9vw, 4rem);
       line-height: 1.02;
-      max-width: 720px;
+      max-width: 680px;
     }
-
     .hero-main p {
       margin: 0 0 22px;
-      color: rgba(255,255,255,0.95);
-      font-size: 1.05rem;
       max-width: 650px;
+      color: rgba(255,255,255,0.94);
+      font-size: 1.03rem;
     }
-
     .hero-cta {
       display: flex;
       gap: 12px;
       flex-wrap: wrap;
     }
-
     .hero-side {
-      padding: 24px;
+      padding: 22px;
       display: grid;
-      gap: 18px;
-      background: linear-gradient(180deg, #ffffff, #f4fbf6);
+      gap: 16px;
+      background: linear-gradient(180deg, #fff, #f8fbf9);
     }
-
     .mini-card {
       padding: 18px;
-      border-radius: 20px;
+      border-radius: 18px;
+      border: 1px solid rgba(0,0,0,0.05);
       background: #fff;
-      border: 1px solid rgba(0,0,0,0.06);
     }
-
-    .mini-card.red-card {
-      background: linear-gradient(180deg, #fff, #fff5f5);
-      border-color: rgba(200,32,39,0.10);
+    .red-card { background: linear-gradient(180deg, #fff, #fff7f7); }
+    .green-card { background: linear-gradient(180deg, #fff, #f5fbf6); }
+    .mini-card h3 {
+      margin: 0 0 6px;
+      font-size: 1.12rem;
     }
-
-    .mini-card.green-card {
-      background: linear-gradient(180deg, #fff, #f4fbf6);
-      border-color: rgba(31,109,71,0.10);
-    }
-
-    .mini-card h3,
-    .section-title,
-    .menu-title,
-    .csv-panel h3,
-    .subscription-section h3 {
-      margin: 0;
-    }
-
-    .mini-card.red-card h3,
-    .csv-panel h3 { color: var(--red-dark); }
-    .mini-card.green-card h3,
-    .section-title,
-    .menu-title,
-    .subscription-section h3 { color: var(--green-dark); }
-
-    .mini-card p,
-    .csv-panel p,
-    .subscription-section p {
-      margin: 8px 0 0;
-      color: var(--muted);
-    }
-
+    .red-card h3 { color: var(--red-dark); }
+    .green-card h3 { color: var(--green-dark); }
+    .mini-card p { margin: 0; color: var(--muted); }
     .pill-row {
       display: flex;
       flex-wrap: wrap;
       gap: 10px;
       margin-top: 12px;
     }
-
-    .pill.red-pill {
-      background: var(--red-soft);
-      color: var(--red-dark);
+    .pill {
       padding: 7px 12px;
       border-radius: 999px;
-      font-size: 0.86rem;
-      font-weight: bold;
-      border: 1px solid rgba(200,32,39,0.08);
-    }
-
-    .pill.green-pill {
-      background: var(--green-soft);
-      color: var(--green-dark);
-      padding: 7px 12px;
-      border-radius: 999px;
-      font-size: 0.86rem;
-      font-weight: bold;
-      border: 1px solid rgba(31,109,71,0.08);
-    }
-
-    .section {
-      padding: 12px 0 28px;
-    }
-
-    .csv-panel {
-      padding: 22px;
-      margin-bottom: 24px;
-      background: linear-gradient(180deg, #fff, #fff5f5);
-    }
-
-    .config-box {
-      margin-top: 16px;
-      padding: 14px 16px;
-      border-radius: 16px;
-      background: #fff;
-      border: 1px solid rgba(200,32,39,0.10);
-      overflow-x: auto;
-      font-family: Consolas, Monaco, monospace;
-      font-size: 0.86rem;
-      white-space: pre;
-      color: #374151;
-    }
-
-    .csv-note {
-      margin-top: 12px;
-      color: var(--red-dark);
+      font-size: 0.84rem;
       font-weight: 700;
-      font-size: 0.92rem;
     }
+    .red-pill { background: var(--red-soft); color: var(--red-dark); }
+    .green-pill { background: var(--green-soft); color: var(--green-dark); }
 
+    /* Menu */
+    .section { padding: 10px 0 26px; }
     .section-top {
       display: flex;
       justify-content: space-between;
@@ -346,46 +268,52 @@
       margin-bottom: 18px;
       flex-wrap: wrap;
     }
-
-    .section-top p { margin: 6px 0 0; color: var(--muted); }
-
+    .section-title {
+      margin: 0;
+      color: var(--green-dark);
+      font-size: 1.9rem;
+    }
+    .section-top p {
+      margin: 6px 0 0;
+      color: var(--muted);
+    }
     .menu-grid {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 22px;
     }
-
     .menu-section {
       padding: 24px;
-      background: linear-gradient(180deg, rgba(255,255,255,0.99), rgba(244,251,246,0.84));
+      background: linear-gradient(180deg, #fff, #f9fcfa);
     }
-
     .menu-title-row {
       display: flex;
-      align-items: center;
       justify-content: space-between;
+      align-items: center;
       gap: 12px;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
       padding-bottom: 10px;
       border-bottom: 1px solid rgba(0,0,0,0.06);
     }
-
-    .count {
-      font-size: 0.85rem;
+    .menu-title {
+      margin: 0;
       color: var(--green-dark);
-      background: rgba(31,109,71,0.10);
+      font-size: 1.18rem;
+    }
+    .count {
+      white-space: nowrap;
+      font-size: 0.84rem;
+      font-weight: 700;
+      color: var(--green-dark);
+      background: var(--green-soft);
       padding: 6px 10px;
       border-radius: 999px;
-      font-weight: bold;
-      white-space: nowrap;
     }
-
-    ul.item-list {
+    .item-list {
       list-style: none;
       margin: 0;
       padding: 0;
     }
-
     .item-list li {
       display: grid;
       grid-template-columns: 30px 1fr auto;
@@ -394,141 +322,131 @@
       padding: 12px 0;
       border-bottom: 1px dashed rgba(0,0,0,0.10);
     }
-
     .item-list li:last-child { border-bottom: none; }
-
     .item-number {
       width: 30px;
       height: 30px;
       border-radius: 50%;
-      background: rgba(31,109,71,0.10);
-      color: var(--green-dark);
       display: grid;
       place-items: center;
-      font-size: 0.85rem;
-      font-weight: bold;
-      margin-top: 1px;
+      background: var(--green-soft);
+      color: var(--green-dark);
+      font-size: 0.84rem;
+      font-weight: 800;
     }
-
-    .item-name { font-weight: 600; }
-
+    .item-name {
+      font-weight: 700;
+      display: block;
+    }
     .item-note {
       display: block;
       font-size: 0.84rem;
       color: var(--muted);
       margin-top: 2px;
     }
-
     .price {
       min-width: 74px;
       text-align: right;
-      font-weight: bold;
+      font-weight: 800;
       color: var(--red);
-      background: rgba(200,32,39,0.07);
-      border: 1px solid rgba(200,32,39,0.12);
+      background: var(--red-soft);
       padding: 7px 10px;
       border-radius: 999px;
-      font-size: 0.95rem;
+      font-size: 0.94rem;
     }
 
-    .subscription-wrap {
-      padding: 0 0 28px;
-    }
-
+    /* Subscription */
+    .subscription-wrap { padding: 0 0 28px; }
     .subscription-section {
       padding: 28px;
-      background: linear-gradient(180deg, #ffffff, #f4fbf6);
+      background: linear-gradient(180deg, #fff, #f5fbf6);
     }
-
+    .subscription-section h3 {
+      margin: 0;
+      color: var(--green-dark);
+      font-size: 1.7rem;
+    }
+    .subscription-section > p {
+      margin: 8px 0 0;
+      color: var(--muted);
+    }
     .subscription-grid {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 18px;
       margin-top: 18px;
     }
-
     .subscription-card {
+      background: #fff;
+      border: 1px solid rgba(0,0,0,0.05);
       border-radius: 20px;
       padding: 20px;
-      background: #fff;
-      border: 1px solid rgba(31,109,71,0.08);
       box-shadow: 0 8px 20px rgba(0,0,0,0.04);
     }
-
-    .subscription-card.red-sub {
-      background: linear-gradient(180deg, #fff, #fff6f6);
-      border-color: rgba(200,32,39,0.10);
-    }
-
-    .subscription-card.green-sub {
-      background: linear-gradient(180deg, #fff, #f5fbf6);
-      border-color: rgba(31,109,71,0.10);
-    }
-
+    .red-sub { background: linear-gradient(180deg, #fff, #fff7f7); }
+    .green-sub { background: linear-gradient(180deg, #fff, #f5fbf6); }
     .subscription-card h4 {
       margin: 0 0 6px;
-      font-size: 1.15rem;
+      font-size: 1.1rem;
     }
-
-    .subscription-card.red-sub h4 { color: var(--red-dark); }
-    .subscription-card.green-sub h4 { color: var(--green-dark); }
-
+    .red-sub h4 { color: var(--red-dark); }
+    .green-sub h4 { color: var(--green-dark); }
     .sub-price {
-      font-size: 1.65rem;
-      font-weight: 800;
-      margin: 8px 0 10px;
+      font-size: 1.55rem;
+      font-weight: 900;
+      margin: 6px 0 10px;
+      color: var(--text);
     }
-
     .subscription-card ul {
       margin: 0 0 16px;
       padding-left: 18px;
       color: var(--muted);
     }
 
+    /* CTA + Footer */
     .cta-wrap { padding: 0 0 72px; }
-
     .cta-box {
       padding: 30px;
       display: grid;
       grid-template-columns: 1fr auto;
       gap: 18px;
       align-items: center;
-      background: linear-gradient(180deg, #fff, #fff5f5);
-      color: var(--text);
+      background: linear-gradient(180deg, #fff, #fff7f7);
     }
-
     .cta-box h3 {
       margin: 0 0 8px;
-      font-size: 1.7rem;
       color: var(--red-dark);
+      font-size: 1.7rem;
     }
-
-    .cta-box p { margin: 0; color: var(--muted); }
-
+    .cta-box p {
+      margin: 0;
+      color: var(--muted);
+    }
     footer {
       background: var(--green-dark);
-      color: rgba(255,255,255,0.94);
       padding: 42px 0 110px;
+      color: rgba(255,255,255,0.92);
     }
-
     .footer-grid {
       display: grid;
       grid-template-columns: 1.05fr 0.95fr;
       gap: 22px;
     }
-
     .footer-card {
       background: rgba(255,255,255,0.08);
-      border: 1px solid rgba(255,255,255,0.12);
-      border-radius: 22px;
+      border-color: rgba(255,255,255,0.12);
+      box-shadow: none;
+      color: rgba(255,255,255,0.92);
       padding: 22px;
     }
-
-    .footer-card h3 { margin-top: 0; color: white; }
-    .footer-card p, .footer-card li { color: rgba(255,255,255,0.86); }
-    .footer-card ul { padding-left: 18px; margin-bottom: 0; }
-
-    .floating-whatsapp {
+    .footer-card h3 {
+      margin-top: 0;
+      color: #fff;
+    }
+    .footer-card p, .footer-card li {
+      color: rgba(255,255,255,0.86);
+    }
+    .floating-order {
       position: fixed;
       right: 18px;
       bottom: 18px;
@@ -536,38 +454,54 @@
       box-shadow: 0 18px 36px rgba(0,0,0,0.18);
     }
 
-    .tiny { font-size: 0.85rem; color: rgba(255,255,255,0.75); }
-
     @media (max-width: 980px) {
       .hero-shell,
       .menu-grid,
+      .subscription-grid,
       .footer-grid,
-      .cta-box,
-      .subscription-grid { grid-template-columns: 1fr; }
-
-      .hero-main { min-height: 430px; padding: 30px; }
+      .cta-box {
+        grid-template-columns: 1fr;
+      }
+      .hero-main {
+        min-height: 420px;
+        padding: 30px;
+      }
     }
-
     @media (max-width: 640px) {
-      .item-list li { grid-template-columns: 28px 1fr; }
+      .logo-wrap {
+        width: 78px;
+        height: 78px;
+      }
+      .brand-text h1 {
+        font-size: 1.8rem;
+      }
+      .item-list li {
+        grid-template-columns: 28px 1fr;
+      }
       .price {
         grid-column: 2;
         width: fit-content;
         text-align: left;
       }
-      .nav-actions { width: 100%; }
-      .nav-actions .btn { flex: 1 1 180px; }
-      .logo-wrap { width: 64px; height: 64px; }
-      .hero-main::before { font-size: 0.72rem; }
+      .nav-actions {
+        width: 100%;
+      }
+      .nav-actions .btn {
+        flex: 1 1 180px;
+      }
     }
   </style>
 </head>
 <body>
+  <div id="splash">
+    <img src="Cherish logo.jpg" alt="Cherish Logo" />
+  </div>
+
   <header>
     <div class="container nav">
       <div class="brand">
         <div class="logo-wrap">
-          <img class="logo-img" src="Cherish logo.jpg" alt="Cherish Every Bite logo" onerror="this.style.display='none'; this.parentNode.innerHTML='<div style=\'font-weight:bold;color:#c82027;font-size:1rem;text-align:center;padding:8px;line-height:1.1\'>Cherish</div>'">
+          <img class="logo-img" src="Cherish logo.jpg" alt="Cherish Every Bite logo" onerror="this.style.display='none'; this.parentNode.innerHTML='<div style=\'font-weight:bold;color:#c82027;font-size:1rem;text-align:center;padding:8px;line-height:1.1\'>Cherish</div>'" />
         </div>
         <div class="brand-text">
           <h1>Cherish Every Bite</h1>
@@ -576,7 +510,7 @@
       </div>
       <div class="nav-actions">
         <a class="btn btn-green-outline" href="#menu">View Menu</a>
-        <a class="btn btn-red" id="nav-order" href="https://order.cherisheverybite.com/outlet/56752198194843" target="_blank" rel="noopener">Order Now</a>
+        <a class="btn btn-red" href="https://order.cherisheverybite.com/outlet/56752198194843" target="_blank" rel="noopener">Order Now</a>
       </div>
     </div>
   </header>
@@ -586,12 +520,10 @@
       <div class="hero-main">
         <span class="hero-eyebrow">Healthy • Fresh • Hygienic</span>
         <h2>Premium everyday food for health watchers.</h2>
-        <p>
-          Nourishing soups, vibrant salads, mindful bites, protein-forward meals, curated drinks and clean desserts — crafted for customers who want healthier choices without compromising on taste.
-        </p>
+        <p>Nourishing soups, vibrant salads, mindful bites, protein-forward meals, curated drinks and clean desserts — crafted for customers who want healthier choices without compromising on taste.</p>
         <div class="hero-cta">
           <a class="btn btn-red" href="#menu">Explore Menu</a>
-          <a class="btn btn-green" id="hero-order" href="https://order.cherisheverybite.com/outlet/56752198194843" target="_blank" rel="noopener">Order Now</a>
+          <a class="btn btn-green" href="https://order.cherisheverybite.com/outlet/56752198194843" target="_blank" rel="noopener">Order Now</a>
         </div>
       </div>
 
@@ -616,7 +548,7 @@
 
         <div class="mini-card red-card">
           <h3>Subscription Ordering</h3>
-          <p>WhatsApp workflow now includes subscription enquiry buttons for weekly and monthly meal plans.</p>
+          <p>WhatsApp workflow includes subscription enquiry buttons for weekly and monthly meal plans.</p>
         </div>
       </aside>
     </div>
@@ -630,7 +562,6 @@
           <p>Healthy curated meals, drinks and desserts from Cherish Every Bite.</p>
         </div>
       </div>
-
       <div class="menu-grid" id="menu-grid"></div>
     </div>
   </section>
@@ -640,7 +571,6 @@
       <div class="subscription-section">
         <h3>Subscription Plans</h3>
         <p>Use WhatsApp to enquire about recurring meal plans, office meal subscriptions or custom healthy meal packages.</p>
-
         <div class="subscription-grid">
           <div class="subscription-card red-sub">
             <h4>Weekly Reset Plan</h4>
@@ -652,7 +582,6 @@
             </ul>
             <a class="btn btn-red" id="sub-weekly" href="#">Enquire Weekly Plan</a>
           </div>
-
           <div class="subscription-card green-sub">
             <h4>Office Lunch Plan</h4>
             <div class="sub-price">Mon–Fri</div>
@@ -663,7 +592,6 @@
             </ul>
             <a class="btn btn-green" id="sub-office" href="#">Enquire Office Plan</a>
           </div>
-
           <div class="subscription-card red-sub">
             <h4>Monthly Wellness Plan</h4>
             <div class="sub-price">30 Days</div>
@@ -686,7 +614,7 @@
           <h3>Ready to order?</h3>
           <p>Place your order directly through our online ordering page or contact us on WhatsApp for subscriptions.</p>
         </div>
-        <a class="btn btn-green" id="cta-order" href="https://order.cherisheverybite.com/outlet/56752198194843" target="_blank" rel="noopener">Order Now</a>
+        <a class="btn btn-green" href="https://order.cherisheverybite.com/outlet/56752198194843" target="_blank" rel="noopener">Order Now</a>
       </div>
     </div>
   </section>
@@ -695,10 +623,8 @@
     <div class="container footer-grid">
       <div class="footer-card">
         <h3>Cherish Every Bite</h3>
-        <p>Healthy curated meals with a premium, clean and modern presentation. This page is built as a static website, so it stays easy to host and update.</p>
-        
+        <p>Healthy curated meals with a premium, clean and modern presentation.</p>
       </div>
-
       <div class="footer-card">
         <h3>Contact</h3>
         <p><strong>Phone / WhatsApp:</strong> +91 80501 13165</p>
@@ -708,110 +634,53 @@
     </div>
   </footer>
 
-  <a class="btn btn-green floating-whatsapp" id="float-order" href="https://order.cherisheverybite.com/outlet/56752198194843" target="_blank" rel="noopener">Order Now</a>
+  <a class="btn btn-green floating-order" href="https://order.cherisheverybite.com/outlet/56752198194843" target="_blank" rel="noopener">Order Now</a>
 
   <script>
     const WHATSAPP_NUMBER = "918050113165";
-
-    const DEFAULT_MENU_DATA = [
-      {
-        category: "Soups",
-        items: [
-          { no: 1, name: "Ragi collagen chicken soup", note: "Warm, nourishing and protein-forward", price: 179 },
-          { no: 2, name: "Vegetable broth", note: "Light, clean and comforting", price: 129 }
-        ]
-      },
-      {
-        category: "Salads",
-        items: [
-          { no: 3, name: "Corn and yuzu salad", price: 189 },
-          { no: 4, name: "Mesclun quinoa salad", price: 229 },
-          { no: 5, name: "Pulled Chicken Caesar Salad", price: 269 },
-          { no: 6, name: "Shirazi salad", price: 179 }
-        ]
-      },
-      {
-        category: "Protein Add On",
-        items: [
-          { no: 7, name: "Herbs marinated chicken breast", price: 149 }
-        ]
-      },
-      {
-        category: "Bites",
-        items: [
-          { no: 8, name: "Ragi quinoa chips", price: 119 },
-          { no: 9, name: "Greek yogurt granola", price: 149 },
-          { no: 10, name: "Maple togarashi spiced nuts", price: 159 },
-          { no: 11, name: "Steamed edamame", price: 149 }
-        ]
-      },
-      {
-        category: "Sandwiches",
-        items: [
-          { no: 12, name: "French Onion Grilled Cheese", price: 219 },
-          { no: 13, name: "Furikake Avocado Toast", price: 239 },
-          { no: 14, name: "Grilled chicken and avocado sandwich", price: 279 }
-        ]
-      },
-      {
-        category: "Pizza",
-        items: [
-          { no: 15, name: "Pizza base shared", note: "Recipe not complete — keep hidden or update before launch", price: 299 }
-        ]
-      },
-      {
-        category: "Combos",
-        items: [
-          { no: 16, name: "Protein millet collagen kanji", price: 249 },
-          { no: 17, name: "Ragi jowar chapathi meals", price: 289 }
-        ]
-      },
-      {
-        category: "Drinks",
-        items: [
-          { no: 18, name: "ABC Smoothie", price: 169 },
-          { no: 19, name: "CBP Protein Smoothie", price: 199 },
-          { no: 20, name: "Chia peanut butter protein smoothie", price: 209 },
-          { no: 21, name: "Chia-Protein Smoothie", price: 189 },
-          { no: 22, name: "Kaanji", price: 99 },
-          { no: 23, name: "Tepache", price: 119 },
-          { no: 24, name: "Masala chaas", price: 89 },
-          { no: 25, name: "Mint pineapple spinach smoothie", price: 179 }
-        ]
-      },
-      {
-        category: "Desserts",
-        items: [
-          { no: 26, name: "Chia mango monk fruit pudding", price: 149 },
-          { no: 27, name: "Chocolate chips oats cookies", price: 129 },
-          { no: 28, name: "Vegan Chocolate Chip Oat Cookies", price: 139 },
-          { no: 29, name: "Protein Peanut Butter Brownie", price: 159 }
-        ]
-      }
-    ];
 
     function buildWhatsappLink(message) {
       return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
     }
 
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/\"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+
     function renderMenu(menuData) {
       const menuGrid = document.getElementById("menu-grid");
+      if (!menuData.length) {
+        menuGrid.innerHTML = `
+          <article class="menu-section">
+            <div class="menu-title-row">
+              <h3 class="menu-title">Menu updating soon</h3>
+            </div>
+            <p>Please upload a valid prices.csv file with category, name, price and status columns.</p>
+          </article>
+        `;
+        return;
+      }
+
       menuGrid.innerHTML = menuData.map(section => {
         const items = section.items.map(item => `
           <li>
-            <span class="item-number">${item.no}</span>
+            <span class="item-number">${escapeHtml(item.no)}</span>
             <div>
-              <span class="item-name">${item.name}</span>
-              ${item.note ? `<span class="item-note">${item.note}</span>` : ""}
+              <span class="item-name">${escapeHtml(item.name)}</span>
             </div>
-            <span class="price">₹${item.price}</span>
+            <span class="price">₹${escapeHtml(item.price)}</span>
           </li>
         `).join("");
 
         return `
           <article class="menu-section">
             <div class="menu-title-row">
-              <h3 class="menu-title">${section.category}</h3>
+              <h3 class="menu-title">${escapeHtml(section.category)}</h3>
               <span class="count">${section.items.length} item${section.items.length > 1 ? "s" : ""}</span>
             </div>
             <ul class="item-list">${items}</ul>
@@ -820,34 +689,79 @@
       }).join("");
     }
 
-    function parseCSV(text) {
-      const lines = text.trim().split(/\r?\n/).filter(Boolean);
-      if (lines.length < 2) return {};
+    function parseCSVLine(line) {
+      const out = [];
+      let current = "";
+      let inQuotes = false;
 
-      const headers = lines[0].split(",").map(h => h.trim().toLowerCase());
-      const noIndex = headers.indexOf("no");
-      const priceIndex = headers.indexOf("price");
-      if (noIndex === -1 || priceIndex === -1) return {};
-
-      const priceMap = {};
-      for (let i = 1; i < lines.length; i++) {
-        const cols = lines[i].split(",");
-        const no = Number((cols[noIndex] || "").trim());
-        const price = Number((cols[priceIndex] || "").trim());
-        if (!Number.isNaN(no) && !Number.isNaN(price)) {
-          priceMap[no] = price;
+      for (let i = 0; i < line.length; i++) {
+        const ch = line[i];
+        if (ch === '"') {
+          if (inQuotes && line[i + 1] === '"') {
+            current += '"';
+            i++;
+          } else {
+            inQuotes = !inQuotes;
+          }
+        } else if (ch === ',' && !inQuotes) {
+          out.push(current);
+          current = "";
+        } else {
+          current += ch;
         }
       }
-      return priceMap;
+      out.push(current);
+      return out.map(v => v.trim());
     }
 
-    function mergePrices(menuData, priceMap) {
-      return menuData.map(section => ({
-        ...section,
-        items: section.items.map(item => ({
-          ...item,
-          price: priceMap[item.no] ?? item.price
-        }))
+    function parseCSV(text) {
+      const lines = text.trim().split(/
+?
+/).filter(Boolean);
+      if (lines.length < 2) return [];
+
+      const headers = parseCSVLine(lines[0]).map(h => h.toLowerCase());
+      const noIndex = headers.indexOf("no");
+      const categoryIndex = headers.indexOf("category");
+      const nameIndex = headers.indexOf("name");
+      const priceIndex = headers.indexOf("price");
+      const statusIndex = headers.indexOf("status");
+      const activeIndex = headers.indexOf("active");
+
+      if (noIndex === -1 || categoryIndex === -1 || nameIndex === -1 || priceIndex === -1) {
+        return [];
+      }
+
+      const grouped = new Map();
+
+      for (let i = 1; i < lines.length; i++) {
+        const cols = parseCSVLine(lines[i]);
+        const no = Number(cols[noIndex] || "");
+        const category = (cols[categoryIndex] || "").trim();
+        const name = (cols[nameIndex] || "").trim();
+        const price = Number(cols[priceIndex] || "");
+        const rawStatus = statusIndex !== -1 ? (cols[statusIndex] || "").trim().toLowerCase() : "";
+        const rawActive = activeIndex !== -1 ? (cols[activeIndex] || "").trim().toLowerCase() : "";
+
+        let status = rawStatus || "live";
+        if (!rawStatus && activeIndex !== -1) {
+          status = ["yes", "true", "1", "live"].includes(rawActive) ? "live" : "hidden";
+        }
+
+        if (!category || !name || Number.isNaN(no) || Number.isNaN(price) || status !== "live") {
+          continue;
+        }
+
+        if (!grouped.has(category)) {
+          grouped.set(category, []);
+        }
+
+        grouped.get(category).push({ no, name, price });
+      }
+
+      return Array.from(grouped.entries()).map(([category, items]) => ({
+        category,
+        items: items.sort((a, b) => a.no - b.no)
       }));
     }
 
@@ -856,30 +770,28 @@
         const response = await fetch("prices.csv", { cache: "no-store" });
         if (!response.ok) throw new Error("prices.csv not found");
         const text = await response.text();
-        const priceMap = parseCSV(text);
-        return mergePrices(DEFAULT_MENU_DATA, priceMap);
+        return parseCSV(text);
       } catch (error) {
-        return DEFAULT_MENU_DATA;
+        return [];
       }
     }
 
     function attachLinks() {
-      const weeklyPlan = buildWhatsappLink("Hi Cherish Every Bite, I am interested in the Weekly Reset Plan subscription. Please share menu, pricing and process.");
-      const officePlan = buildWhatsappLink("Hi Cherish Every Bite, I am interested in the Office Lunch Plan subscription. Please share menu, pricing and process.");
-      const monthlyPlan = buildWhatsappLink("Hi Cherish Every Bite, I am interested in the Monthly Wellness Plan subscription. Please share menu, pricing and process.");
-
-      const weeklyBtn = document.getElementById("sub-weekly");
-      const officeBtn = document.getElementById("sub-office");
-      const monthlyBtn = document.getElementById("sub-monthly");
-
-      if (weeklyBtn) { weeklyBtn.href = weeklyPlan; weeklyBtn.target = "_blank"; weeklyBtn.rel = "noopener"; }
-      if (officeBtn) { officeBtn.href = officePlan; officeBtn.target = "_blank"; officeBtn.rel = "noopener"; }
-      if (monthlyBtn) { monthlyBtn.href = monthlyPlan; monthlyBtn.target = "_blank"; monthlyBtn.rel = "noopener"; }
+      const weekly = buildWhatsappLink("Hi Cherish Every Bite, I am interested in the Weekly Reset Plan subscription. Please share menu, pricing and process.");
+      const office = buildWhatsappLink("Hi Cherish Every Bite, I am interested in the Office Lunch Plan subscription. Please share menu, pricing and process.");
+      const monthly = buildWhatsappLink("Hi Cherish Every Bite, I am interested in the Monthly Wellness Plan subscription. Please share menu, pricing and process.");
+      document.getElementById("sub-weekly").href = weekly;
+      document.getElementById("sub-office").href = office;
+      document.getElementById("sub-monthly").href = monthly;
+      ["sub-weekly", "sub-office", "sub-monthly"].forEach(id => {
+        const el = document.getElementById(id);
+        el.target = "_blank";
+        el.rel = "noopener";
+      });
     }
 
     (async function init() {
-      const menuData = await loadMenuData();
-      renderMenu(menuData);
+      renderMenu(await loadMenuData());
       attachLinks();
     })();
   </script>
