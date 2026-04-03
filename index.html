@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<!-- saved from url=(0058)file:///C:/Users/anoop/Downloads/cherish_menu_website.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cherish Every Bite | Curated Healthy Meals</title>
+  <meta name="description" content="Cherish Every Bite cloud kitchen — healthy curated meals, soups, salads, smoothies, bites and desserts.">
+  <style>
+    :root {
+      --green-dark: #173f33;
+      --green: #245847;
+      --green-soft: #e8f1ec;
+      --red: #b52025;
+      --gold: #d8a54a;
+      --cream: #fbf7f0;
+      --cream-2: #f4ecde;
+      --text: #1f2937;
+      --muted: #667085;
+      --white: #ffffff;
+      --card: rgba(255, 255, 255, 0.96);
+      --shadow: 0 18px 50px rgba(0, 0, 0, 0.10);
+      --radius: 24px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--text);
+      line-height: 1.6;
+      background:
+        radial-gradient(circle at top left, rgba(216, 165, 74, 0.18), transparent 28%),
+        radial-gradient(circle at bottom right, rgba(36, 88, 71, 0.10), transparent 24%),
+        linear-gradient(180deg, #fffdfa 0%, #f8f0e4 100%);
+    }
+
+    a { color: inherit; }
+
+    .container {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(14px);
+      background: rgba(255, 252, 247, 0.86);
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+    }
+
+    .nav {
+      min-height: 82px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      padding: 12px 0;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .brand-mark {
+      width: 58px;
+      height: 58px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, var(--green-dark), var(--green));
+      color: var(--white);
+      display: grid;
+      place-items: center;
+      font-size: 1.5rem;
+      font-weight: bold;
+      box-shadow: var(--shadow);
+    }
+
+    .brand-text h1 {
+      margin: 0;
+      font-size: 1.25rem;
+      color: var(--red);
+      letter-spacing: 0.2px;
+    }
+
+    .brand-text p {
+      margin: 0;
+      font-size: 0.95rem;
+      color: var(--muted);
+    }
+
+    .nav-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 18px;
+      border-radius: 999px;
+      text-decoration: none;
+      font-weight: bold;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+      border: 1px solid transparent;
+      cursor: pointer;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 24px rgba(0,0,0,0.10);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--gold), #e6bb66);
+      color: #1a1a1a;
+    }
+
+    .btn-secondary {
+      background: rgba(36, 88, 71, 0.08);
+      color: var(--green-dark);
+      border-color: rgba(36, 88, 71, 0.12);
+    }
+
+    .btn-whatsapp {
+      background: linear-gradient(135deg, #1f9d58, #25d366);
+      color: white;
+    }
+
+    .hero {
+      padding: 44px 0 20px;
+    }
+
+    .hero-shell {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 26px;
+      align-items: stretch;
+    }
+
+    .hero-main,
+    .hero-side,
+    .menu-section,
+    .cta-box {
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      border: 1px solid rgba(0,0,0,0.05);
+    }
+
+    .hero-main {
+      min-height: 470px;
+      padding: 42px;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      background:
+        linear-gradient(135deg, rgba(20, 51, 41, 0.86), rgba(34, 86, 69, 0.80)),
+        url('https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=1400&q=80') center/cover;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-main::before {
+      content: "BITES CURATED FOR YOU";
+      position: absolute;
+      top: 24px;
+      left: 24px;
+      background: var(--red);
+      color: white;
+      padding: 9px 14px;
+      border-radius: 999px;
+      letter-spacing: 0.8px;
+      font-size: 0.78rem;
+      font-weight: bold;
+    }
+
+    .hero-eyebrow {
+      width: fit-content;
+      display: inline-block;
+      margin-bottom: 14px;
+      padding: 8px 14px;
+      border: 1px solid rgba(255,255,255,0.22);
+      border-radius: 999px;
+      background: rgba(255,255,255,0.10);
+      font-size: 0.9rem;
+    }
+
+    .hero-main h2 {
+      margin: 0 0 12px;
+      font-size: clamp(2.2rem, 4.5vw, 4rem);
+      line-height: 1.02;
+      max-width: 720px;
+    }
+
+    .hero-main p {
+      margin: 0 0 22px;
+      color: rgba(255,255,255,0.92);
+      font-size: 1.04rem;
+      max-width: 650px;
+    }
+
+    .hero-cta {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .hero-side {
+      padding: 26px;
+      display: grid;
+      gap: 18px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.98), rgba(246,239,226,0.96));
+    }
+
+    .mini-card {
+      padding: 18px;
+      border-radius: 20px;
+      background: white;
+      border: 1px solid rgba(0,0,0,0.06);
+    }
+
+    .mini-card h3,
+    .section-title,
+    .menu-title {
+      margin: 0;
+      color: var(--green-dark);
+    }
+
+    .mini-card p {
+      margin: 8px 0 0;
+      color: var(--muted);
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .pill {
+      background: var(--green-soft);
+      color: var(--green-dark);
+      padding: 7px 12px;
+      border-radius: 999px;
+      font-size: 0.86rem;
+      font-weight: bold;
+    }
+
+    .section {
+      padding: 12px 0 70px;
+    }
+
+    .section-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 16px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+
+    .section-top p {
+      margin: 6px 0 0;
+      color: var(--muted);
+    }
+
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 22px;
+    }
+
+    .menu-section {
+      padding: 24px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(255,255,255,0.92));
+    }
+
+    .menu-title-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+    }
+
+    .count {
+      font-size: 0.85rem;
+      color: var(--green-dark);
+      background: rgba(36, 88, 71, 0.09);
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-weight: bold;
+      white-space: nowrap;
+    }
+
+    ul.item-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    .item-list li {
+      display: grid;
+      grid-template-columns: 30px 1fr auto;
+      gap: 12px;
+      align-items: start;
+      padding: 12px 0;
+      border-bottom: 1px dashed rgba(0,0,0,0.10);
+    }
+
+    .item-list li:last-child { border-bottom: none; }
+
+    .item-number {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: rgba(216, 165, 74, 0.16);
+      color: var(--green-dark);
+      display: grid;
+      place-items: center;
+      font-size: 0.85rem;
+      font-weight: bold;
+      margin-top: 1px;
+    }
+
+    .item-name {
+      font-weight: 600;
+    }
+
+    .item-note {
+      display: block;
+      font-size: 0.84rem;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .price {
+      min-width: 74px;
+      text-align: right;
+      font-weight: bold;
+      color: var(--red);
+      background: rgba(181, 32, 37, 0.06);
+      border: 1px solid rgba(181, 32, 37, 0.10);
+      padding: 7px 10px;
+      border-radius: 999px;
+      font-size: 0.95rem;
+    }
+
+    .cta-wrap {
+      padding-bottom: 72px;
+    }
+
+    .cta-box {
+      padding: 30px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 18px;
+      align-items: center;
+      background:
+        linear-gradient(135deg, rgba(23,63,51,0.98), rgba(36,88,71,0.95));
+      color: white;
+    }
+
+    .cta-box h3 {
+      margin: 0 0 8px;
+      font-size: 1.7rem;
+    }
+
+    .cta-box p {
+      margin: 0;
+      color: rgba(255,255,255,0.88);
+    }
+
+    footer {
+      background: var(--green-dark);
+      color: rgba(255,255,255,0.92);
+      padding: 42px 0 110px;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 22px;
+    }
+
+    .footer-card {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 22px;
+      padding: 22px;
+    }
+
+    .footer-card h3 {
+      margin-top: 0;
+      color: white;
+    }
+
+    .footer-card p, .footer-card li {
+      color: rgba(255,255,255,0.84);
+    }
+
+    .footer-card ul {
+      padding-left: 18px;
+      margin-bottom: 0;
+    }
+
+    .floating-whatsapp {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      z-index: 60;
+      box-shadow: 0 18px 36px rgba(0,0,0,0.18);
+    }
+
+    .tiny {
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    @media (max-width: 980px) {
+      .hero-shell,
+      .menu-grid,
+      .footer-grid,
+      .cta-box {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-main {
+        min-height: 420px;
+        padding: 30px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .item-list li {
+        grid-template-columns: 28px 1fr;
+      }
+
+      .price {
+        grid-column: 2;
+        width: fit-content;
+        text-align: left;
+      }
+
+      .nav-actions {
+        width: 100%;
+      }
+
+      .nav-actions .btn {
+        flex: 1 1 180px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container nav">
+      <div class="brand">
+        <div class="brand-mark">C</div>
+        <div class="brand-text">
+          <h1>Cherish Every Bite</h1>
+          <p>Healthy curated meals • Cloud kitchen</p>
+        </div>
+      </div>
+      <div class="nav-actions">
+        <a class="btn btn-secondary" href="file:///C:/Users/anoop/Downloads/cherish_menu_website.html#menu">View Menu</a>
+        <a class="btn btn-whatsapp" href="https://wa.me/918050113165?text=Hi%20Cherish%20Every%20Bite%2C%20I%20would%20like%20to%20place%20an%20order." target="_blank" rel="noopener">Order on WhatsApp</a>
+      </div>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="container hero-shell">
+      <div class="hero-main">
+        <span class="hero-eyebrow">Healthy • Fresh • Hygienic</span>
+        <h2>Premium everyday food for health watchers.</h2>
+        <p>
+          Nourishing soups, vibrant salads, mindful bites, protein-forward meals, curated drinks and clean desserts — crafted for people who want healthier choices without compromising on taste.
+        </p>
+        <div class="hero-cta">
+          <a class="btn btn-primary" href="file:///C:/Users/anoop/Downloads/cherish_menu_website.html#menu">Explore Menu</a>
+          <a class="btn btn-whatsapp" href="https://wa.me/918050113165?text=Hi%20Cherish%20Every%20Bite%2C%20please%20share%20today%27s%20menu%20and%20availability." target="_blank" rel="noopener">WhatsApp to Order</a>
+        </div>
+      </div>
+
+      <aside class="hero-side">
+        <div class="mini-card">
+          <h3>Brand Promise</h3>
+          <p>Curated meals with a premium, clean and wholesome feel — designed for customers who care about what they eat.</p>
+          <div class="pill-row">
+            <span class="pill">High protein</span>
+            <span class="pill">Balanced</span>
+            <span class="pill">Freshly made</span>
+          </div>
+        </div>
+
+        <div class="mini-card">
+          <h3>Quick Order</h3>
+          <p>Tap WhatsApp and send your order directly. You can later customize the message, timings, delivery areas and payment details.</p>
+        </div>
+
+        <div class="mini-card">
+          <h3>Premium starter website</h3>
+          <p>This version includes menu prices, premium Cherish-style colors and direct WhatsApp ordering.</p>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <section class="section" id="menu">
+    <div class="container">
+      <div class="section-top">
+        <div>
+          <h2 class="section-title">Our Menu</h2>
+          <p>Starter pricing added for website launch. You can edit any price anytime.</p>
+        </div>
+      </div>
+
+      <div class="menu-grid">
+        <article class="menu-section">
+          <div class="menu-title-row">
+            <h3 class="menu-title">Soups</h3>
+            <span class="count">2 items</span>
+          </div>
+          <ul class="item-list">
+            <li><span class="item-number">1</span><div><span class="item-name">Ragi collagen chicken soup</span><span class="item-note">Warm, nourishing and protein-forward</span></div><span class="price">₹179</span></li>
+            <li><span class="item-number">2</span><div><span class="item-name">Vegetable broth</span><span class="item-note">Light, clean and comforting</span></div><span class="price">₹129</span></li>
+          </ul>
+        </article>
+
+        <article class="menu-section">
+          <div class="menu-title-row">
+            <h3 class="menu-title">Salads</h3>
+            <span class="count">4 items</span>
+          </div>
+          <ul class="item-list">
+            <li><span class="item-number">3</span><div><span class="item-name">Corn and yuzu salad</span></div><span class="price">₹189</span></li>
+            <li><span class="item-number">4</span><div><span class="item-name">Mesclun quinoa salad</span></div><span class="price">₹229</span></li>
+            <li><span class="item-number">5</span><div><span class="item-name">Pulled Chicken Caesar Salad</span></div><span class="price">₹269</span></li>
+            <li><span class="item-number">6</span><div><span class="item-name">Shirazi salad</span></div><span class="price">₹179</span></li>
+          </ul>
+        </article>
+
+        <article class="menu-section">
+          <div class="menu-title-row">
+            <h3 class="menu-title">Protein Add On</h3>
+            <span class="count">1 item</span>
+          </div>
+          <ul class="item-list">
+            <li><span class="item-number">7</span><div><span class="item-name">Herbs marinated chicken breast</span></div><span class="price">₹149</span></li>
+          </ul>
+        </article>
+
+        <article class="menu-section">
+          <div class="menu-title-row">
+            <h3 class="menu-title">Bites</h3>
+            <span class="count">4 items</span>
+          </div>
+          <ul class="item-list">
+            <li><span class="item-number">8</span><div><span class="item-name">Ragi quinoa chips</span></div><span class="price">₹119</span></li>
+            <li><span class="item-number">9</span><div><span class="item-name">Greek yogurt granola</span></div><span class="price">₹149</span></li>
+            <li><span class="item-number">10</span><div><span class="item-name">Maple togarashi spiced nuts</span></div><span class="price">₹159</span></li>
+            <li><span class="item-number">11</span><div><span class="item-name">Steamed edamame</span></div><span class="price">₹149</span></li>
+          </ul>
+        </article>
+
+        <article class="menu-section">
+          <div class="menu-title-row">
+            <h3 class="menu-title">Sandwiches</h3>
+            <span class="count">3 items</span>
+          </div>
+          <ul class="item-list">
+            <li><span class="item-number">12</span><div><span class="item-name">French Onion Grilled Cheese</span></div><span class="price">₹219</span></li>
+            <li><span class="item-number">13</span><div><span class="item-name">Furikake Avocado Toast</span></div><span class="price">₹239</span></li>
+            <li><span class="item-number">14</span><div><span class="item-name">Grilled chicken and avocado sandwich</span></div><span class="price">₹279</span></li>
+          </ul>
+        </article>
+
+        <article class="menu-section">
+          <div class="menu-title-row">
+            <h3 class="menu-title">Pizza</h3>
+            <span class="count">1 item</span>
+          </div>
+          <ul class="item-list">
+            <li><span class="item-number">15</span><div><span class="item-name">Pizza base shared</span><span class="item-note">Recipe not complete — keep hidden or update before launch</span></div><span class="price">₹299</span></li>
+          </ul>
+        </article>
+
+        <article class="menu-section">
+          <div class="menu-title-row">
+            <h3 class="menu-title">Combos</h3>
+            <span class="count">2 items</span>
+          </div>
+          <ul class="item-list">
+            <li><span class="item-number">16</span><div><span class="item-name">Protein millet collagen kanji</span></div><span class="price">₹249</span></li>
+            <li><span class="item-number">17</span><div><span class="item-name">Ragi jowar chapathi meals</span></div><span class="price">₹289</span></li>
+          </ul>
+        </article>
+
+        <article class="menu-section">
+          <div class="menu-title-row">
+            <h3 class="menu-title">Drinks</h3>
+            <span class="count">8 items</span>
+          </div>
+          <ul class="item-list">
+            <li><span class="item-number">18</span><div><span class="item-name">ABC Smoothie</span></div><span class="price">₹169</span></li>
+            <li><span class="item-number">19</span><div><span class="item-name">CBP Protein Smoothie</span></div><span class="price">₹199</span></li>
+            <li><span class="item-number">20</span><div><span class="item-name">Chia peanut butter protein smoothie</span></div><span class="price">₹209</span></li>
+            <li><span class="item-number">21</span><div><span class="item-name">Chia-Protein Smoothie</span></div><span class="price">₹189</span></li>
+            <li><span class="item-number">22</span><div><span class="item-name">Kaanji</span></div><span class="price">₹99</span></li>
+            <li><span class="item-number">23</span><div><span class="item-name">Tepache</span></div><span class="price">₹119</span></li>
+            <li><span class="item-number">24</span><div><span class="item-name">Masala chaas</span></div><span class="price">₹89</span></li>
+            <li><span class="item-number">25</span><div><span class="item-name">Mint pineapple spinach smoothie</span></div><span class="price">₹179</span></li>
+          </ul>
+        </article>
+
+        <article class="menu-section">
+          <div class="menu-title-row">
+            <h3 class="menu-title">Desserts</h3>
+            <span class="count">4 items</span>
+          </div>
+          <ul class="item-list">
+            <li><span class="item-number">26</span><div><span class="item-name">Chia mango monk fruit pudding</span></div><span class="price">₹149</span></li>
+            <li><span class="item-number">27</span><div><span class="item-name">Chocolate chips oats cookies</span></div><span class="price">₹129</span></li>
+            <li><span class="item-number">28</span><div><span class="item-name">Vegan Chocolate Chip Oat Cookies</span></div><span class="price">₹139</span></li>
+            <li><span class="item-number">29</span><div><span class="item-name">Protein Peanut Butter Brownie</span></div><span class="price">₹159</span></li>
+          </ul>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-wrap">
+    <div class="container">
+      <div class="cta-box">
+        <div>
+          <h3>Ready to order?</h3>
+          <p>Send us a WhatsApp message and we can confirm availability, delivery area and pickup timing.</p>
+        </div>
+        <a class="btn btn-whatsapp" href="https://wa.me/918050113165?text=Hi%20Cherish%20Every%20Bite%2C%20I%20would%20like%20to%20place%20an%20order." target="_blank" rel="noopener">Order Now on WhatsApp</a>
+      </div>
+    </div>
+  </section>
+
+  <footer id="contact">
+    <div class="container footer-grid">
+      <div class="footer-card">
+        <h3>Cherish Every Bite</h3>
+        <p>Healthy curated meals with a premium, clean and modern presentation. This page is built as a static website, so it is easy to host and update.</p>
+        <p class="tiny">Tip: Replace the temporary prices with your final selling prices before publishing.</p>
+      </div>
+
+      <div class="footer-card">
+        <h3>Contact &amp; Launch Checklist</h3>
+        <p><strong>Phone / WhatsApp:</strong> +91 80501 13165</p>
+        <p><strong>Email:</strong> cherisheverybiteforever@gmail.com</p>
+        <p><strong>FSSAI:</strong> 21326131000079</p>
+        <ul>
+          <li>Add your actual logo image</li>
+          <li>Confirm final prices</li>
+          <li>Remove hidden / incomplete items if needed</li>
+          <li>Add Instagram and delivery timings</li>
+        </ul>
+      </div>
+    </div>
+  </footer>
+
+  <a class="btn btn-whatsapp floating-whatsapp" href="https://wa.me/918050113165?text=Hi%20Cherish%20Every%20Bite%2C%20I%20would%20like%20to%20place%20an%20order." target="_blank" rel="noopener">WhatsApp Order</a>
+
+
+</body></html>
