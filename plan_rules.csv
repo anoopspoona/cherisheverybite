@@ -1,0 +1,11 @@
+rule_id,plan_id,rule_type,rule_key,rule_value,message
+R001,P_ELITE,min,meals_per_day,3,"Minimum 3 items/day required"
+R002,P_ELITE,max,meals_per_day,5,"Maximum 5 items/day allowed"
+R003,P_DIABETIC,exclude,tag,high_sugar,"High sugar items are not allowed"
+R004,P_DIABETIC,include,diabetic_friendly,true,"Only diabetic-friendly meals allowed"
+R005,P_DIABETIC,max,addon_type,dessert,"Dessert add-ons are not allowed"
+R006,P_BUDGET,max,meals_per_day,2,"Budget plan supports up to 2 meals/day"
+R007,P_BASIC,max,meals_per_day,2,"Basic plan supports up to 2 meals/day"
+R008,P_ADDITIONAL,min,total_items_per_week,7,"Select at least 7 items per week"
+R009,P_ADDITIONAL,max,total_items_per_week,28,"Maximum 28 items per week"
+R010,P_ADDITIONAL,include,customization,true,"Additional plan supports full customization"

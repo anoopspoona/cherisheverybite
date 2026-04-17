@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Subscription Plan Menu | Cherish Every Bite</title>
+  <style>
+    :root {
+      --red: #c82027;
+      --green: #1f6d47;
+      --text: #1f2937;
+      --muted: #667085;
+      --bg: #f7fbf8;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--text);
+      background: linear-gradient(180deg, #fff, var(--bg));
+    }
+    .container { width: min(1120px, calc(100% - 28px)); margin: 0 auto; }
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(0,0,0,.08);
+    }
+    .nav {
+      min-height: 76px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .btn {
+      border-radius: 999px;
+      text-decoration: none;
+      padding: 10px 16px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid transparent;
+    }
+    .btn-red { background: var(--red); color: #fff; }
+    .btn-green { background: var(--green); color: #fff; }
+    .btn-soft { background: #eef8f2; color: #165b3a; border-color: rgba(31,109,71,.2); }
+
+    .hero { padding: 28px 0 12px; }
+    .hero-card {
+      background: #fff;
+      border: 1px solid rgba(0,0,0,.08);
+      border-radius: 20px;
+      padding: 22px;
+      box-shadow: 0 12px 30px rgba(0,0,0,.08);
+    }
+    h1 { margin: 0 0 8px; color: var(--red); }
+    .muted { color: var(--muted); }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0,1fr));
+      gap: 12px;
+      margin: 18px 0 34px;
+    }
+    .day-card {
+      background: #fff;
+      border: 1px solid rgba(0,0,0,.08);
+      border-radius: 16px;
+      padding: 14px;
+    }
+    .day-card h3 { margin: 0 0 10px; color: var(--green); }
+    .slot { margin-bottom: 10px; }
+    .slot strong { display: block; font-size: .86rem; color: #4b5563; text-transform: uppercase; }
+    .slot span { display: block; margin-top: 3px; }
+    .legend {
+      font-size: .92rem;
+      color: var(--muted);
+      margin-top: 10px;
+    }
+
+    .note {
+      margin-top: 14px;
+      padding: 12px;
+      background: #fff7dc;
+      border: 1px solid #f3e4a1;
+      border-radius: 12px;
+      color: #6f5800;
+      font-size: .92rem;
+    }
+
+    @media (max-width: 980px) {
+      .grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+    }
+    @media (max-width: 640px) {
+      .grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container nav">
+      <a class="btn btn-soft" href="index.html#subscriptions">← Back to Plans</a>
+      <a class="btn btn-red" href="https://order.cherisheverybite.com/outlet/56752198194843" target="_blank" rel="noopener">Order À La Carte</a>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="container">
+      <article class="hero-card">
+        <h1 id="plan-title">Plan Menu</h1>
+        <p class="muted" id="plan-desc">Daily preview for selected subscription plan.</p>
+        <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;">
+          <a class="btn btn-green" id="enquire-btn" target="_blank" rel="noopener" href="#">Enquire this Plan on WhatsApp</a>
+          <a class="btn btn-soft" href="index.html#menu">View À La Carte Menu</a>
+        </div>
+        <div class="note">This is a sample per-day menu preview. Final order, payment link/wallet top-up and KOT are handled through TMbill by our team.</div>
+      </article>
+
+      <div class="legend" id="plan-meta"></div>
+      <div class="grid" id="days-grid"></div>
+    </div>
+  </section>
+
+  <script>
+    const WHATSAPP_NUMBER = "918050113165";
+
+    const planConfigs = {
+      elite: {
+        label: "Elite Plan",
+        description: "Premium variety with 3 meal slots per day.",
+        mealsPerDay: 3,
+        diabeticOnly: false
+      },
+      diabetic: {
+        label: "Diabetic Plan",
+        description: "Diabetic-friendly selection with balanced low-spike options.",
+        mealsPerDay: 3,
+        diabeticOnly: true
+      },
+      budget: {
+        label: "Budget Plan",
+        description: "Value-focused 2-slot daily plan.",
+        mealsPerDay: 2,
+        diabeticOnly: false
+      },
+      basic: {
+        label: "Basic Plan",
+        description: "Starter plan with 2 meal slots per day.",
+        mealsPerDay: 2,
+        diabeticOnly: false
+      },
+      additional: {
+        label: "Additional (Custom)",
+        description: "Customizable plan preview; final menu is rule-based by request.",
+        mealsPerDay: 3,
+        diabeticOnly: false
+      }
+    };
+
+    function parseCSVLine(line) {
+      const out = [];
+      let current = "";
+      let inQuotes = false;
+      for (let i = 0; i < line.length; i++) {
+        const ch = line[i];
+        if (ch === '"') {
+          if (inQuotes && line[i + 1] === '"') {
+            current += '"';
+            i++;
+          } else {
+            inQuotes = !inQuotes;
+          }
+        } else if (ch === ',' && !inQuotes) {
+          out.push(current);
+          current = "";
+        } else {
+          current += ch;
+        }
+      }
+      out.push(current);
+      return out.map(v => v.trim());
+    }
+
+    function parseMealsCSV(text) {
+      const lines = text.trim().split(/\r?\n/).filter(Boolean);
+      if (lines.length < 2) return [];
+
+      const headers = parseCSVLine(lines[0]).map(h => h.toLowerCase());
+      const idx = {
+        name: headers.indexOf("name"),
+        category: headers.indexOf("category"),
+        status: headers.indexOf("status"),
+        diabetic: headers.indexOf("diabetic_friendly")
+      };
+
+      if (idx.name === -1 || idx.category === -1 || idx.status === -1) return [];
+
+      const rows = [];
+      for (let i = 1; i < lines.length; i++) {
+        const cols = parseCSVLine(lines[i]);
+        const status = (cols[idx.status] || "").toLowerCase();
+        if (status !== "live") continue;
+        rows.push({
+          name: cols[idx.name] || "",
+          category: cols[idx.category] || "",
+          diabeticFriendly: idx.diabetic !== -1 ? (cols[idx.diabetic] || "").toLowerCase() === "true" : false
+        });
+      }
+      return rows;
+    }
+
+    async function loadMeals() {
+      try {
+        const response = await fetch("meals.csv", { cache: "no-store" });
+        if (response.ok) {
+          return parseMealsCSV(await response.text());
+        }
+      } catch (error) {
+        // fallback below
+      }
+
+      const fallback = await fetch("prices.csv", { cache: "no-store" });
+      const text = await fallback.text();
+      const lines = text.trim().split(/\r?\n/).filter(Boolean);
+      const headers = parseCSVLine(lines[0]).map(h => h.toLowerCase());
+      const idxName = headers.indexOf("name");
+      const idxCategory = headers.indexOf("category");
+      const idxStatus = headers.indexOf("status");
+      const out = [];
+      for (let i = 1; i < lines.length; i++) {
+        const cols = parseCSVLine(lines[i]);
+        if ((cols[idxStatus] || "").toLowerCase() !== "live") continue;
+        out.push({ name: cols[idxName] || "", category: cols[idxCategory] || "", diabeticFriendly: false });
+      }
+      return out;
+    }
+
+    function pickMealsForDay(pool, count, dayIndex) {
+      const meals = [];
+      if (!pool.length) return meals;
+      for (let i = 0; i < count; i++) {
+        meals.push(pool[(dayIndex * count + i) % pool.length]);
+      }
+      return meals;
+    }
+
+    function slotNames(count) {
+      if (count === 2) return ["Meal 1", "Meal 2"];
+      return ["Breakfast", "Lunch", "Dinner"];
+    }
+
+    function buildWhatsappLink(planLabel) {
+      const text = [
+        `Hi Cherish Every Bite, I am interested in the ${planLabel} subscription plan.`,
+        "Please share detailed per-day menu, add-on options, pricing and TMbill payment/wallet process."
+      ].join(" ");
+      return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
+    }
+
+    async function init() {
+      const planKey = new URLSearchParams(window.location.search).get("plan") || "elite";
+      const plan = planConfigs[planKey] || planConfigs.elite;
+
+      document.getElementById("plan-title").textContent = `${plan.label} – 7 Day Menu Preview`;
+      document.getElementById("plan-desc").textContent = plan.description;
+      document.getElementById("plan-meta").textContent = `Meals per day: ${plan.mealsPerDay} • Source: meals.csv (fallback: prices.csv)`;
+      document.getElementById("enquire-btn").href = buildWhatsappLink(plan.label);
+
+      const meals = await loadMeals();
+      const pool = plan.diabeticOnly ? meals.filter(m => m.diabeticFriendly) : meals;
+      const usablePool = pool.length ? pool : meals;
+      const slots = slotNames(plan.mealsPerDay);
+
+      const grid = document.getElementById("days-grid");
+      const dayCards = [];
+      for (let day = 1; day <= 7; day++) {
+        const picks = pickMealsForDay(usablePool, plan.mealsPerDay, day - 1);
+        const rows = picks.map((meal, idx) => `
+          <div class="slot">
+            <strong>${slots[idx]}</strong>
+            <span>${meal.name}</span>
+            <span class="muted">${meal.category}</span>
+          </div>
+        `).join("");
+
+        dayCards.push(`
+          <article class="day-card">
+            <h3>Day ${day}</h3>
+            ${rows}
+          </article>
+        `);
+      }
+
+      grid.innerHTML = dayCards.join("");
+    }
+
+    init();
+  </script>
+</body>
+</html>

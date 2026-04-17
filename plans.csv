@@ -1,0 +1,6 @@
+plan_id,plan_name,duration_days,base_price,meals_per_day,status
+P_ELITE,Elite,30,14999,3,live
+P_DIABETIC,Diabetic,30,13999,3,live
+P_BUDGET,Budget,30,9999,2,live
+P_BASIC,Basic,30,7999,2,live
+P_ADDITIONAL,Additional,30,0,0,live

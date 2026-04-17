@@ -565,6 +565,7 @@
         <div>
           <h2 class="section-title">Our Menu</h2>
           <p>Healthy curated meals, drinks and desserts from Cherish Every Bite.</p>
+          <p id="menu-source" style="margin:6px 0 0;color:var(--muted);font-size:0.9rem;"></p>
         </div>
       </div>
       <div class="menu-grid" id="menu-grid"></div>
@@ -575,39 +576,60 @@
     <div class="container">
       <div class="subscription-section">
         <h3>Subscription Plans</h3>
-        <p>Use WhatsApp to enquire about recurring meal plans, office meal subscriptions or custom healthy meal packages.</p>
+        <p>Select a plan and enquire on WhatsApp. Our team will manually convert your request into TMbill, then share TMbill payment link / wallet instructions.</p>
         <div class="subscription-grid">
           <div class="subscription-card red-sub">
-            <h4>Weekly Reset Plan</h4>
-            <div class="sub-price">7 Days</div>
+            <h4>Elite Plan</h4>
+            <div class="sub-price">Premium</div>
             <ul>
-              <li>Ideal for trial customers</li>
-              <li>Healthy curated daily meals</li>
-              <li>Customise preferences on WhatsApp</li>
+              <li>Advanced curated healthy meals</li>
+              <li>Designed for stricter nutrition goals</li>
+              <li>Add-ons can be included as required</li>
             </ul>
-            <a class="btn btn-red" id="sub-weekly" href="#">Enquire Weekly Plan</a>
+            <a class="btn btn-red" href="plan.html?plan=elite">View Elite Plan Menu</a>
           </div>
           <div class="subscription-card green-sub">
-            <h4>Office Lunch Plan</h4>
-            <div class="sub-price">Mon–Fri</div>
+            <h4>Diabetic Plan</h4>
+            <div class="sub-price">Controlled</div>
             <ul>
-              <li>Great for working professionals</li>
-              <li>Lunch-focused subscription</li>
-              <li>Single or group enquiries</li>
+              <li>Built for diabetic-friendly meal preferences</li>
+              <li>Balanced and mindful portions</li>
+              <li>Custom notes can be shared on WhatsApp</li>
             </ul>
-            <a class="btn btn-green" id="sub-office" href="#">Enquire Office Plan</a>
+            <a class="btn btn-green" href="plan.html?plan=diabetic">View Diabetic Plan Menu</a>
           </div>
           <div class="subscription-card red-sub">
-            <h4>Monthly Wellness Plan</h4>
-            <div class="sub-price">30 Days</div>
+            <h4>Budget Plan</h4>
+            <div class="sub-price">Value</div>
             <ul>
-              <li>For long-term healthy eating</li>
-              <li>Custom meal scheduling</li>
-              <li>Best for repeat subscription customers</li>
+              <li>Affordable curated meal options</li>
+              <li>Good fit for everyday healthy eating</li>
+              <li>Optional paid add-ons available</li>
             </ul>
-            <a class="btn btn-red-outline" id="sub-monthly" href="#">Enquire Monthly Plan</a>
+            <a class="btn btn-red-outline" href="plan.html?plan=budget">View Budget Plan Menu</a>
+          </div>
+          <div class="subscription-card green-sub">
+            <h4>Basic Plan</h4>
+            <div class="sub-price">Starter</div>
+            <ul>
+              <li>Simple starter subscription format</li>
+              <li>Clean meals with manageable routine</li>
+              <li>Easy onboarding for first-time users</li>
+            </ul>
+            <a class="btn btn-green-outline" href="plan.html?plan=basic">View Basic Plan Menu</a>
+          </div>
+          <div class="subscription-card red-sub">
+            <h4>Additional (Custom)</h4>
+            <div class="sub-price">Flexible</div>
+            <ul>
+              <li>Complete customisation with rule-based options</li>
+              <li>Pick add-ons as per your preferences</li>
+              <li>Team will finalise quote and TMbill payment flow</li>
+            </ul>
+            <a class="btn btn-red" href="plan.html?plan=additional">View Additional Menu</a>
           </div>
         </div>
+        <p style="margin-top: 14px; color: var(--muted);"><strong>Note:</strong> Subscription confirmation, payment, wallet top-up and KOT are all processed only through TMbill.</p>
       </div>
     </div>
   </section>
@@ -643,6 +665,7 @@
 
   <script>
     const WHATSAPP_NUMBER = "918050113165";
+    const GOOGLE_SHEET_CSV_URL = "";
 
     function buildWhatsappLink(message) {
       return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
@@ -753,7 +776,7 @@
           status = ["yes", "true", "1", "live"].includes(rawActive) ? "live" : "hidden";
         }
 
-        if (!category || !name || Number.isNaN(no) || Number.isNaN(price) || status !== "live") {
+        if (!category || !name || Number.isNaN(no) || status !== "live") {
           continue;
         }
 
@@ -770,34 +793,49 @@
       }));
     }
 
-    async function loadMenuData() {
-      try {
-        const response = await fetch("prices.csv", { cache: "no-store" });
-        if (!response.ok) throw new Error("prices.csv not found");
-        const text = await response.text();
-        return parseCSV(text);
-      } catch (error) {
-        return [];
+    function setMenuSourceLabel(text) {
+      const sourceEl = document.getElementById("menu-source");
+      if (sourceEl) {
+        sourceEl.textContent = text;
       }
     }
 
-    function attachLinks() {
-      const weekly = buildWhatsappLink("Hi Cherish Every Bite, I am interested in the Weekly Reset Plan subscription. Please share menu, pricing and process.");
-      const office = buildWhatsappLink("Hi Cherish Every Bite, I am interested in the Office Lunch Plan subscription. Please share menu, pricing and process.");
-      const monthly = buildWhatsappLink("Hi Cherish Every Bite, I am interested in the Monthly Wellness Plan subscription. Please share menu, pricing and process.");
-      document.getElementById("sub-weekly").href = weekly;
-      document.getElementById("sub-office").href = office;
-      document.getElementById("sub-monthly").href = monthly;
-      ["sub-weekly", "sub-office", "sub-monthly"].forEach(id => {
-        const el = document.getElementById(id);
-        el.target = "_blank";
-        el.rel = "noopener";
-      });
+    async function tryLoadCSV(sourceUrl) {
+      const response = await fetch(sourceUrl, { cache: "no-store" });
+      if (!response.ok) {
+        throw new Error(`${sourceUrl} not found`);
+      }
+      return response.text();
+    }
+
+    async function loadMenuData() {
+      const sources = [];
+
+      if (GOOGLE_SHEET_CSV_URL.trim()) {
+        sources.push({ url: GOOGLE_SHEET_CSV_URL.trim(), label: "Menu source: Google Sheets" });
+      }
+
+      sources.push({ url: "prices.csv", label: "Menu source: Local prices.csv (fallback)" });
+
+      for (const source of sources) {
+        try {
+          const text = await tryLoadCSV(source.url);
+          const parsed = parseCSV(text);
+          if (parsed.length) {
+            setMenuSourceLabel(source.label);
+            return parsed;
+          }
+        } catch (error) {
+          // try next source
+        }
+      }
+
+      setMenuSourceLabel("Menu source: unavailable");
+      return [];
     }
 
     (async function init() {
       renderMenu(await loadMenuData());
-      attachLinks();
     })();
   </script>
 </body>
