@@ -356,6 +356,7 @@
   <script>
     const TM_BILL_ORDER_URL = "https://order.cherisheverybite.com/outlet/56752198194843";
     const WHATSAPP_NUMBER = "918050113165";
+    const GOOGLE_SHEET_CSV_URL = "";
 
     const plans = [
       {
@@ -476,6 +477,24 @@
       } catch (error) {
         return [];
       }
+
+      sources.push({ url: "prices.csv", label: "Menu source: Local prices.csv (fallback)" });
+
+      for (const source of sources) {
+        try {
+          const text = await tryLoadCSV(source.url);
+          const parsed = parseCSV(text);
+          if (parsed.length) {
+            setMenuSourceLabel(source.label);
+            return parsed;
+          }
+        } catch (error) {
+          // try next source
+        }
+      }
+
+      setMenuSourceLabel("Menu source: unavailable");
+      return [];
     }
 
     function renderMenuFilters(rows) {
