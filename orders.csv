@@ -1,0 +1,2 @@
+order_req_id,created_at,customer_name,phone_whatsapp,plan_id,duration_days,selections_json,subtotal,delivery_fee,taxes,grand_total,status,tmbill_order_ref,tmbill_payment_link,wallet_topup_required,payment_verified,kot_status,renewal_due_date,ops_notes
+OREQ-20260417-0001,2026-04-17T09:30:00Z,Ananya Rao,+918050111111,P_ELITE,30,"{\"meals\":[\"M001\",\"M004\",\"M007\"],\"addons\":[{\"addon_id\":\"A001\",\"qty\":1}]}",14999,500,750,16249,new_request,,,,false,false,pending,2026-05-17,
