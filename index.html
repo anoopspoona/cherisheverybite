@@ -3,9 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Cherish Every Bite | Curated Healthy Meals</title>
-  <meta name="description" content="Cherish Every Bite cloud kitchen — healthy curated meals, soups, salads, smoothies, bites, desserts and subscription meal options." />
-  <link rel="icon" type="image/jpeg" href="Cherish logo.jpg" />
+  <title>Cherish Every Bite | À La Carte + Subscription Meals</title>
+  <meta name="description" content="Order healthy à la carte meals or request subscription plans with add-ons. Payments and KOT are processed through TMbill." />
   <style>
     :root {
       --red: #c82027;
@@ -14,639 +13,396 @@
       --green: #1f6d47;
       --green-dark: #154d33;
       --green-soft: #f2fbf5;
-      --white: #ffffff;
       --text: #1f2937;
       --muted: #667085;
-      --shadow: 0 18px 48px rgba(0, 0, 0, 0.10);
-      --radius: 24px;
+      --border: rgba(0,0,0,0.08);
+      --shadow: 0 16px 40px rgba(0, 0, 0, 0.10);
+      --radius: 20px;
     }
 
     * { box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
     body {
       margin: 0;
       font-family: Arial, Helvetica, sans-serif;
       color: var(--text);
-      line-height: 1.6;
-      background:
-        radial-gradient(circle at top left, rgba(200,32,39,0.07), transparent 24%),
-        radial-gradient(circle at bottom right, rgba(31,109,71,0.07), transparent 24%),
-        linear-gradient(180deg, #ffffff 0%, #f8fbf9 100%);
+      background: linear-gradient(180deg, #fff, #f6faf7 40%, #fff);
     }
-    a { color: inherit; }
-    .container {
-      width: min(1180px, calc(100% - 32px));
-      margin: 0 auto;
-    }
+    .container { width: min(1140px, calc(100% - 28px)); margin: 0 auto; }
 
-    /* Splash */
-    #splash {
-      position: fixed;
-      inset: 0;
-      background: rgba(255,255,255,0.98);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 9999;
-      animation: splashFade 0.7s ease forwards;
-      animation-delay: 1.2s;
-    }
-    #splash img {
-      width: 110px;
-      height: 110px;
-      object-fit: contain;
-      animation: splashZoom 0.8s ease;
-    }
-    @keyframes splashZoom {
-      from { transform: scale(0.82); opacity: 0; }
-      to { transform: scale(1); opacity: 1; }
-    }
-    @keyframes splashFade {
-      to { opacity: 0; visibility: hidden; }
-    }
-
-    /* Header */
     header {
       position: sticky;
       top: 0;
-      z-index: 50;
-      backdrop-filter: blur(14px);
-      background: rgba(255,255,255,0.92);
-      border-bottom: 1px solid rgba(0,0,0,0.05);
-      box-shadow: 0 4px 18px rgba(0,0,0,0.04);
+      z-index: 60;
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
     }
     .nav {
-      min-height: 98px;
+      min-height: 78px;
       display: flex;
+      gap: 12px;
       justify-content: space-between;
       align-items: center;
-      gap: 16px;
       flex-wrap: wrap;
-      padding: 12px 0;
+      padding: 10px 0;
     }
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 18px;
-    }
-    .logo-wrap {
-      width: 92px;
-      height: 92px;
-      border-radius: 24px;
-      background: #fff;
-      box-shadow: 0 12px 28px rgba(0,0,0,0.10);
-      border: 1px solid rgba(0,0,0,0.05);
-      overflow: hidden;
-      display: grid;
-      place-items: center;
-      flex-shrink: 0;
-    }
-    .logo-img {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      background: #fff;
-    }
-    .brand-text h1 {
-      margin: 0;
-      font-size: clamp(1.9rem, 4vw, 2.7rem);
-      line-height: 1;
-      color: var(--red);
-      font-weight: 900;
-      letter-spacing: 0.2px;
-    }
-    .brand-text p {
-      margin: 6px 0 0;
-      font-size: 1.02rem;
-      color: var(--green);
-      font-weight: 700;
-      font-style: italic;
-    }
-    .nav-actions {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
+    .brand { display: flex; align-items: center; gap: 12px; }
+    .brand img { width: 54px; height: 54px; object-fit: contain; border-radius: 14px; background: #fff; border: 1px solid var(--border); }
+    .brand h1 { margin: 0; font-size: 1.2rem; color: var(--red); }
+    .brand p { margin: 0; color: var(--green); font-size: 0.88rem; }
 
-    /* Buttons */
+    .nav-links { display: flex; gap: 8px; flex-wrap: wrap; }
     .btn {
+      text-decoration: none;
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-weight: 700;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
-      padding: 12px 18px;
-      border-radius: 999px;
-      text-decoration: none;
-      font-weight: 700;
       border: 1px solid transparent;
-      transition: transform 0.18s ease, box-shadow 0.18s ease;
-    }
-    .btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 24px rgba(0,0,0,0.10);
+      cursor: pointer;
     }
     .btn-red { background: var(--red); color: #fff; }
     .btn-green { background: var(--green); color: #fff; }
-    .btn-red-outline { background: var(--red-soft); color: var(--red-dark); border-color: rgba(200,32,39,0.10); }
-    .btn-green-outline { background: var(--green-soft); color: var(--green-dark); border-color: rgba(31,109,71,0.10); }
+    .btn-soft-red { background: var(--red-soft); color: var(--red-dark); border-color: rgba(200,32,39,.15); }
+    .btn-soft-green { background: var(--green-soft); color: var(--green-dark); border-color: rgba(31,109,71,.14); }
 
-    /* Hero */
-    .hero { padding: 42px 0 22px; }
-    .hero-shell {
-      display: grid;
-      grid-template-columns: 1.08fr 0.92fr;
-      gap: 24px;
-      align-items: stretch;
-    }
-    .hero-main,
-    .hero-side,
-    .menu-section,
-    .subscription-section,
-    .cta-box,
-    .footer-card {
+    .hero { padding: 36px 0 16px; }
+    .hero-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 18px; }
+    .card {
+      background: #fff;
+      border: 1px solid var(--border);
       border-radius: var(--radius);
       box-shadow: var(--shadow);
-      border: 1px solid rgba(0,0,0,0.05);
-      background: #fff;
     }
     .hero-main {
-      min-height: 480px;
-      padding: 42px;
+      padding: 32px;
       color: #fff;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-end;
       background:
-        linear-gradient(135deg, rgba(31,109,71,0.85), rgba(31,109,71,0.65)),
+        linear-gradient(140deg, rgba(31,109,71,.89), rgba(31,109,71,.67)),
         url('https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=1400&q=80') center/cover;
-      position: relative;
-      overflow: hidden;
     }
-    .hero-main::before {
-      content: "BITES CURATED FOR YOU";
-      position: absolute;
-      top: 24px;
-      left: 24px;
-      background: #fff;
-      color: var(--green);
-      padding: 9px 14px;
-      border-radius: 999px;
-      font-size: 0.76rem;
-      font-weight: 800;
-      letter-spacing: 0.7px;
-      padding: 9px 14px;
-      border-radius: 999px;
-      font-size: 0.76rem;
-      font-weight: 800;
-      letter-spacing: 0.7px;
-    }
-    .hero-eyebrow {
-      display: inline-block;
-      width: fit-content;
-      margin-bottom: 14px;
-      padding: 8px 14px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,0.25);
-      background: rgba(255,255,255,0.12);
-      font-size: 0.9rem;
-    }
-    .hero-main h2 {
-      margin: 0 0 12px;
-      font-size: clamp(2.2rem, 4.9vw, 4rem);
-      line-height: 1.02;
-      max-width: 680px;
-    }
-    .hero-main p {
-      margin: 0 0 22px;
-      max-width: 650px;
-      color: rgba(255,255,255,0.94);
-      font-size: 1.03rem;
-    }
-    .hero-cta {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-    .hero-side {
-      padding: 22px;
-      display: grid;
-      gap: 16px;
-      background: linear-gradient(180deg, #fff, #f8fbf9);
-    }
-    .mini-card {
-      padding: 18px;
-      border-radius: 18px;
-      border: 1px solid rgba(0,0,0,0.05);
-      background: #fff;
-    }
-    .red-card { background: linear-gradient(180deg, #fff, #fff7f7); }
-    .green-card { background: linear-gradient(180deg, #fff, #f5fbf6); }
-    .mini-card h3 {
-      margin: 0 0 6px;
-      font-size: 1.12rem;
-    }
-    .red-card h3 { color: var(--red-dark); }
-    .green-card h3 { color: var(--green-dark); }
-    .mini-card p { margin: 0; color: var(--muted); }
-    .pill-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-top: 12px;
-    }
-    .pill {
-      padding: 7px 12px;
-      border-radius: 999px;
-      font-size: 0.84rem;
-      font-weight: 700;
-    }
-    .red-pill { background: var(--red-soft); color: var(--red-dark); }
-    .green-pill { background: var(--green-soft); color: var(--green-dark); }
+    .hero-main h2 { margin: 10px 0 10px; font-size: clamp(1.9rem, 4vw, 2.8rem); line-height: 1.05; }
+    .hero-main p { max-width: 620px; }
+    .hero-side { padding: 18px; display: grid; gap: 12px; }
+    .note { padding: 14px; border-radius: 14px; background: #fff; border: 1px solid var(--border); }
+    .note h3 { margin: 0 0 4px; }
 
-    /* Menu */
-    .section { padding: 10px 0 26px; }
-    .section-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: end;
-      gap: 16px;
-      margin-bottom: 18px;
-      flex-wrap: wrap;
-    }
-    .section-title {
-      margin: 0;
-      color: var(--green-dark);
-      font-size: 1.9rem;
-    }
-    .section-top p {
-      margin: 6px 0 0;
-      color: var(--muted);
-    }
-    .menu-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 22px;
-    }
-    .menu-section {
-      padding: 24px;
-      background: linear-gradient(180deg, #fff, #f9fcfa);
-    }
-    .menu-title-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 12px;
-      padding-bottom: 10px;
-      border-bottom: 1px solid rgba(0,0,0,0.06);
-    }
-    .menu-title {
-      margin: 0;
-      color: var(--green-dark);
-      font-size: 1.18rem;
-    }
-    .count {
-      white-space: nowrap;
-      font-size: 0.84rem;
-      font-weight: 700;
-      color: var(--green-dark);
-      background: var(--green-soft);
-      padding: 6px 10px;
-      border-radius: 999px;
-    }
-    .item-list {
-      list-style: none;
-      margin: 0;
-      padding: 0;
-    }
-    .item-list li {
-      display: grid;
-      grid-template-columns: 30px 1fr auto;
-      gap: 12px;
-      align-items: start;
-      padding: 12px 0;
-      border-bottom: 1px dashed rgba(0,0,0,0.10);
-    }
-    .item-list li:last-child { border-bottom: none; }
-    .item-number {
-      width: 30px;
-      height: 30px;
-      border-radius: 50%;
-      display: grid;
-      place-items: center;
-      background: var(--green-soft);
-      color: var(--green-dark);
-      font-size: 0.84rem;
-      font-weight: 800;
-    }
-    .item-name {
-      font-weight: 700;
-      display: block;
-    }
-    .item-note {
-      display: block;
-      font-size: 0.84rem;
-      color: var(--muted);
-      margin-top: 2px;
-    }
-    .price {
-      min-width: 74px;
-      text-align: right;
-      font-weight: 800;
-      color: var(--red);
-      background: var(--red-soft);
-      padding: 7px 10px;
-      border-radius: 999px;
-      font-size: 0.94rem;
+    .section { padding: 14px 0 26px; }
+    .section-title { margin: 0 0 6px; color: var(--green-dark); }
+    .section-sub { margin: 0 0 14px; color: var(--muted); }
+
+    .disclaimer {
+      margin-top: 10px;
+      padding: 12px;
+      border-radius: 12px;
+      background: #fffbe8;
+      border: 1px solid #f3e7b1;
+      color: #7a5d00;
+      font-size: .93rem;
     }
 
-    /* Subscription */
-    .subscription-wrap { padding: 0 0 28px; }
-    .subscription-section {
-      padding: 28px;
-      background: linear-gradient(180deg, #fff, #f5fbf6);
+    .menu-toolbar { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
+    .input, select, textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      font: inherit;
     }
-    .subscription-section h3 {
-      margin: 0;
-      color: var(--green-dark);
-      font-size: 1.7rem;
-    }
-    .subscription-section > p {
-      margin: 8px 0 0;
-      color: var(--muted);
-    }
-    .subscription-grid {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 18px;
-      margin-top: 18px;
-    }
-    .subscription-card {
-      background: #fff;
-      border: 1px solid rgba(0,0,0,0.05);
-      border-radius: 20px;
-      padding: 20px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.04);
-    }
-    .red-sub { background: linear-gradient(180deg, #fff, #fff7f7); }
-    .green-sub { background: linear-gradient(180deg, #fff, #f5fbf6); }
-    .subscription-card h4 {
-      margin: 0 0 6px;
-      font-size: 1.1rem;
-    }
-    .red-sub h4 { color: var(--red-dark); }
-    .green-sub h4 { color: var(--green-dark); }
-    .sub-price {
-      font-size: 1.55rem;
-      font-weight: 900;
-      margin: 6px 0 10px;
-      color: var(--text);
-    }
-    .subscription-card ul {
-      margin: 0 0 16px;
-      padding-left: 18px;
-      color: var(--muted);
-    }
+    .toolbar-field { flex: 1 1 220px; }
 
-    /* CTA + Footer */
-    .cta-wrap { padding: 0 0 72px; }
-    .cta-box {
-      padding: 30px;
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 18px;
-      align-items: center;
-      background: linear-gradient(180deg, #fff, #fff7f7);
-    }
-    .cta-box h3 {
-      margin: 0 0 8px;
-      color: var(--red-dark);
-      font-size: 1.7rem;
-    }
-    .cta-box p {
-      margin: 0;
-      color: var(--muted);
-    }
-    footer {
-      background: var(--green-dark);
-      padding: 42px 0 110px;
-      color: rgba(255,255,255,0.92);
-    }
-    .footer-grid {
-      display: grid;
-      grid-template-columns: 1.05fr 0.95fr;
-      gap: 22px;
-    }
-    .footer-card {
-      background: rgba(255,255,255,0.08);
-      border-color: rgba(255,255,255,0.12);
-      box-shadow: none;
-      color: rgba(255,255,255,0.92);
-      padding: 22px;
-    }
-    .footer-card h3 {
-      margin-top: 0;
-      color: #fff;
-    }
-    .footer-card p, .footer-card li {
-      color: rgba(255,255,255,0.86);
-    }
+    .menu-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 14px; }
+    .meal-card { padding: 14px; }
+    .meal-card h4 { margin: 0 0 8px; }
+    .meta { color: var(--muted); font-size: .9rem; }
+    .tags { margin: 8px 0; display: flex; gap: 6px; flex-wrap: wrap; }
+    .tag { font-size: .74rem; padding: 4px 8px; border-radius: 999px; background: var(--green-soft); color: var(--green-dark); }
+    .price { font-weight: 800; color: var(--red-dark); }
+
+    .plans-grid { display: grid; grid-template-columns: repeat(5, minmax(0,1fr)); gap: 12px; }
+    .plan-card { padding: 14px; }
+    .plan-card h4 { margin: 0 0 6px; }
+    .plan-card ul { margin: 0 0 10px; padding-left: 18px; color: var(--muted); font-size: .92rem; }
+
+    .builder { padding: 18px; margin-top: 12px; }
+    .builder-grid { display: grid; grid-template-columns: 1.2fr .8fr; gap: 16px; }
+    .addons-list { display: grid; gap: 8px; }
+    .addon-row { display: grid; grid-template-columns: 1fr auto auto; align-items: center; gap: 8px; padding: 10px; border: 1px solid var(--border); border-radius: 12px; }
+    .qty { width: 72px; }
+    .summary { padding: 14px; border: 1px solid var(--border); border-radius: 12px; background: #f9fcfa; }
+    .summary p { margin: 8px 0; display: flex; justify-content: space-between; }
+
+    .form-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 10px; }
+    .full { grid-column: 1 / -1; }
+    .checks { margin-top: 10px; display: grid; gap: 8px; color: var(--muted); }
+    .checks label { display: flex; gap: 8px; align-items: flex-start; }
+
+    .how-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 14px; }
+    .flow-card { padding: 16px; }
+    .flow-card ol { margin: 8px 0 0; padding-left: 20px; color: var(--muted); }
+
+    .status-box { margin-top: 12px; padding: 12px; border-radius: 12px; background: #eef7ff; border: 1px solid #cde4ff; color: #0b4f96; display: none; }
+
+    footer { background: var(--green-dark); color: rgba(255,255,255,0.92); padding: 28px 0 90px; margin-top: 24px; }
+    footer p { margin: 6px 0; }
+
     .floating-order {
       position: fixed;
-      right: 18px;
-      bottom: 18px;
-      z-index: 60;
-      box-shadow: 0 18px 36px rgba(0,0,0,0.18);
+      right: 16px;
+      bottom: 16px;
+      z-index: 70;
+      box-shadow: 0 18px 32px rgba(0,0,0,.22);
     }
 
-    @media (max-width: 980px) {
-      .hero-shell,
+    @media (max-width: 1024px) {
+      .hero-grid,
+      .builder-grid,
+      .how-grid,
       .menu-grid,
-      .subscription-grid,
-      .footer-grid,
-      .cta-box {
-        grid-template-columns: 1fr;
-      }
-      .hero-main {
-        min-height: 420px;
-        padding: 30px;
-      }
+      .plans-grid,
+      .form-grid { grid-template-columns: 1fr 1fr; }
+      .plans-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
     }
-    @media (max-width: 640px) {
-      .logo-wrap {
-        width: 78px;
-        height: 78px;
-      }
-      .brand-text h1 {
-        font-size: 1.8rem;
-      }
-      .item-list li {
-        grid-template-columns: 28px 1fr;
-      }
-      .price {
-        grid-column: 2;
-        width: fit-content;
-        text-align: left;
-      }
-      .nav-actions {
-        width: 100%;
-      }
-      .nav-actions .btn {
-        flex: 1 1 180px;
-      }
+    @media (max-width: 740px) {
+      .hero-grid,
+      .builder-grid,
+      .how-grid,
+      .menu-grid,
+      .form-grid,
+      .plans-grid { grid-template-columns: 1fr; }
+      .brand h1 { font-size: 1rem; }
     }
   </style>
 </head>
 <body>
-  <div id="splash">
-    <img src="cherish-logo.jpg" alt="Cherish Logo" />
-  </div>
-
   <header>
     <div class="container nav">
       <div class="brand">
-        <div class="logo-wrap">
-          <img class="logo-img" src="cherish-logo.jpg" alt="Cherish Every Bite logo" onerror="this.style.display='none'; this.parentNode.innerHTML='<div style=\'font-weight:bold;color:#c82027;font-size:1rem;text-align:center;padding:8px;line-height:1.1\'>Cherish</div>'" />
-        </div>
-        <div class="brand-text">
+        <img src="cherish-logo.jpg" alt="Cherish Every Bite logo" />
+        <div>
           <h1>Cherish Every Bite</h1>
           <p>Bites curated for you</p>
         </div>
       </div>
-      <div class="nav-actions">
-        <a class="btn btn-green-outline" href="#menu">View Menu</a>
-        <a class="btn btn-red" href="https://order.cherisheverybite.com/outlet/56752198194843" target="_blank" rel="noopener">Order Now</a>
+      <div class="nav-links">
+        <a href="#menu" class="btn btn-soft-green">À La Carte</a>
+        <a href="#plans" class="btn btn-soft-red">Subscriptions</a>
+        <a href="#how" class="btn btn-soft-green">How it works</a>
+        <a href="https://order.cherisheverybite.com/outlet/56752198194843" target="_blank" rel="noopener" class="btn btn-red">Order on TMbill</a>
       </div>
     </div>
   </header>
 
   <section class="hero">
-    <div class="container hero-shell">
-      <div class="hero-main">
-        <span class="hero-eyebrow">Healthy • Fresh • Hygienic</span>
-        <h2>Premium everyday food for health watchers.</h2>
-        <p>Nourishing soups, vibrant salads, mindful bites, protein-forward meals, curated drinks and clean desserts — crafted for customers who want healthier choices without compromising on taste.</p>
-        <div class="hero-cta">
-          <a class="btn btn-red" href="#menu">Explore Menu</a>
-          <a class="btn btn-green" href="https://order.cherisheverybite.com/outlet/56752198194843" target="_blank" rel="noopener">Order Now</a>
+    <div class="container hero-grid">
+      <article class="card hero-main">
+        <span class="tag" style="background: rgba(255,255,255,.17); color: #fff; border: 1px solid rgba(255,255,255,.2);">Healthy • Fresh • Hygienic</span>
+        <h2>Order à la carte or request subscription meal plans.</h2>
+        <p>Choose instant ordering through TMbill, or build a tailored subscription with add-ons (Elite, Diabetic, Budget, Basic, or Additional custom).</p>
+        <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;">
+          <a href="#menu" class="btn btn-red">Explore À La Carte</a>
+          <a href="#plans" class="btn btn-green">Build Subscription</a>
         </div>
-      </div>
+        <div class="disclaimer"><strong>Important:</strong> Payments and KOT are processed only through TMbill.</div>
+      </article>
 
-      <aside class="hero-side">
-        <div class="mini-card red-card">
-          <h3>Brand Promise</h3>
-          <p>Premium, clean and wholesome food presentation aligned with the Cherish brand.</p>
-          <div class="pill-row">
-            <span class="pill red-pill">Mindful eating</span>
-            <span class="pill red-pill">Freshly made</span>
-          </div>
+      <aside class="card hero-side">
+        <div class="note">
+          <h3>À La Carte (Fast)</h3>
+          <p class="meta">Browse menu and order directly on TMbill.</p>
         </div>
-
-        <div class="mini-card green-card">
-          <h3>Online Ordering</h3>
-          <p>Online ordering page for smooth outlet ordering and checkout.</p>
-          <div class="pill-row">
-            <span class="pill green-pill">Fast ordering</span>
-            <span class="pill green-pill">Mobile friendly</span>
-          </div>
+        <div class="note">
+          <h3>Subscriptions (Planned)</h3>
+          <p class="meta">Submit request → team creates TMbill order → you pay via TMbill link or wallet.</p>
         </div>
-
-        <div class="mini-card red-card">
-          <h3>Subscription Ordering</h3>
-          <p>Check out our curated subscriptions for weekly and monthly meal plans.</p>
+        <div class="note">
+          <h3>Manual Renewal</h3>
+          <p class="meta">We will remind you on WhatsApp before your plan ends.</p>
         </div>
       </aside>
     </div>
   </section>
 
-  <section class="section" id="menu">
+  <section id="menu" class="section">
     <div class="container">
-      <div class="section-top">
-        <div>
-          <h2 class="section-title">Our Menu</h2>
-          <p>Healthy curated meals, drinks and desserts from Cherish Every Bite.</p>
+      <h2 class="section-title">À La Carte Menu</h2>
+      <p class="section-sub">Filter and browse all live menu items from your catalog.</p>
+
+      <div class="menu-toolbar">
+        <div class="toolbar-field">
+          <input class="input" id="menu-search" placeholder="Search meal name" />
         </div>
+        <div class="toolbar-field">
+          <select id="menu-category"></select>
+        </div>
+        <a class="btn btn-red" href="https://order.cherisheverybite.com/outlet/56752198194843" target="_blank" rel="noopener">Order on TMbill</a>
       </div>
+
       <div class="menu-grid" id="menu-grid"></div>
+
+      <div class="disclaimer">À la carte order confirmation, payment and KOT happen only in TMbill.</div>
     </div>
   </section>
 
-  <section class="subscription-wrap" id="subscriptions">
+  <section id="plans" class="section">
     <div class="container">
-      <div class="subscription-section">
-        <h3>Subscription Plans</h3>
-        <p>Use WhatsApp to enquire about recurring meal plans, office meal subscriptions or custom healthy meal packages.</p>
-        <div class="subscription-grid">
-          <div class="subscription-card red-sub">
-            <h4>Weekly Reset Plan</h4>
-            <div class="sub-price">7 Days</div>
-            <ul>
-              <li>Ideal for trial customers</li>
-              <li>Healthy curated daily meals</li>
-              <li>Customise preferences on WhatsApp</li>
-            </ul>
-            <a class="btn btn-red" id="sub-weekly" href="#">Enquire Weekly Plan</a>
+      <h2 class="section-title">Subscription Plans</h2>
+      <p class="section-sub">Select a plan and configure add-ons. We will convert the request into a TMbill order manually.</p>
+
+      <div class="plans-grid" id="plans-grid"></div>
+
+      <article class="card builder" id="builder" style="display:none;">
+        <h3 id="builder-title" style="margin-top:0;"></h3>
+
+        <div class="builder-grid">
+          <div>
+            <label class="meta" for="duration">Duration (days)</label>
+            <select id="duration" class="input">
+              <option value="7">7</option>
+              <option value="15">15</option>
+              <option value="30" selected>30</option>
+            </select>
+
+            <h4>Add-ons</h4>
+            <div class="addons-list" id="addons-list"></div>
+
+            <h4 style="margin-bottom:6px;">Customer details</h4>
+            <form id="request-form">
+              <div class="form-grid">
+                <div>
+                  <input class="input" name="name" placeholder="Customer name" required />
+                </div>
+                <div>
+                  <input class="input" name="phone" placeholder="WhatsApp number" required />
+                </div>
+                <div class="full">
+                  <textarea class="input" name="address" rows="3" placeholder="Delivery address" required></textarea>
+                </div>
+                <div>
+                  <input class="input" type="date" name="startDate" required />
+                </div>
+                <div>
+                  <input class="input" name="notes" placeholder="Special notes (optional)" />
+                </div>
+              </div>
+
+              <div class="checks">
+                <label><input type="checkbox" name="ackPay" required /> Payment will be completed only via official TMbill payment link or wallet.</label>
+                <label><input type="checkbox" name="ackManual" required /> I understand order confirmation happens after team verification in TMbill.</label>
+              </div>
+
+              <div style="display:flex; gap:8px; flex-wrap: wrap; margin-top:12px;">
+                <button class="btn btn-green" type="submit">Submit Subscription Request</button>
+                <a class="btn btn-soft-red" id="whatsapp-preview" target="_blank" rel="noopener" href="#">Preview on WhatsApp</a>
+              </div>
+            </form>
           </div>
-          <div class="subscription-card green-sub">
-            <h4>Office Lunch Plan</h4>
-            <div class="sub-price">Mon–Fri</div>
-            <ul>
-              <li>Great for working professionals</li>
-              <li>Lunch-focused subscription</li>
-              <li>Single or group enquiries</li>
-            </ul>
-            <a class="btn btn-green" id="sub-office" href="#">Enquire Office Plan</a>
-          </div>
-          <div class="subscription-card red-sub">
-            <h4>Monthly Wellness Plan</h4>
-            <div class="sub-price">30 Days</div>
-            <ul>
-              <li>For long-term healthy eating</li>
-              <li>Custom meal scheduling</li>
-              <li>Best for repeat subscription customers</li>
-            </ul>
-            <a class="btn btn-red-outline" id="sub-monthly" href="#">Enquire Monthly Plan</a>
-          </div>
+
+          <aside class="summary">
+            <h4 style="margin-top:0;">Estimate Summary</h4>
+            <p><span>Base plan</span> <strong id="base-price">₹0</strong></p>
+            <p><span>Add-ons</span> <strong id="addons-price">₹0</strong></p>
+            <p><span>Duration multiplier</span> <strong id="duration-multiplier">x1</strong></p>
+            <hr style="border:none; border-top:1px solid var(--border);" />
+            <p><span>Total estimate</span> <strong id="total-price">₹0</strong></p>
+            <div class="disclaimer" style="margin-top:10px;">Final payment link/wallet instruction is shared by team through WhatsApp after TMbill order creation.</div>
+            <div class="status-box" id="request-status"></div>
+          </aside>
         </div>
-      </div>
+      </article>
     </div>
   </section>
 
-  <section class="cta-wrap">
+  <section id="how" class="section">
     <div class="container">
-      <div class="cta-box">
-        <div>
-          <h3>Ready to order?</h3>
-          <p>Place your order directly through our online ordering page or contact us on WhatsApp for subscriptions.</p>
-        </div>
-        <a class="btn btn-green" href="https://order.cherisheverybite.com/outlet/56752198194843" target="_blank" rel="noopener">Order Now</a>
+      <h2 class="section-title">How it works</h2>
+      <p class="section-sub">Two separate journeys for instant orders and subscriptions.</p>
+      <div class="how-grid">
+        <article class="card flow-card">
+          <h3>À La Carte flow</h3>
+          <ol>
+            <li>Browse live menu from catalog.</li>
+            <li>Click <strong>Order on TMbill</strong>.</li>
+            <li>Pay and complete order in TMbill.</li>
+            <li>KOT is generated in TMbill.</li>
+          </ol>
+        </article>
+        <article class="card flow-card">
+          <h3>Subscription flow</h3>
+          <ol>
+            <li>Select Elite / Diabetic / Budget / Basic / Additional.</li>
+            <li>Add optional add-ons and submit request.</li>
+            <li>Team creates TMbill order and shares payment link / wallet top-up instruction.</li>
+            <li>After payment in TMbill, KOT processing starts in TMbill.</li>
+          </ol>
+        </article>
       </div>
     </div>
   </section>
 
-  <footer id="contact">
-    <div class="container footer-grid">
-      <div class="footer-card">
-        <h3>Cherish Every Bite</h3>
-        <p>Healthy curated meals with a premium, clean and modern presentation.</p>
-      </div>
-      <div class="footer-card">
-        <h3>Contact</h3>
-        <p><strong>Phone / WhatsApp:</strong> +91 80501 13165</p>
-        <p><strong>Email:</strong> cherisheverybiteforever@gmail.com</p>
-        <p><strong>FSSAI:</strong> 21326131000079</p>
-      </div>
+  <footer>
+    <div class="container">
+      <h3 style="margin-top:0;">Cherish Every Bite</h3>
+      <p>Phone / WhatsApp: +91 80501 13165</p>
+      <p>Email: cherisheverybiteforever@gmail.com</p>
+      <p>FSSAI: 21326131000079</p>
     </div>
   </footer>
 
   <a class="btn btn-green floating-order" href="https://order.cherisheverybite.com/outlet/56752198194843" target="_blank" rel="noopener">Order Now</a>
 
   <script>
+    const TM_BILL_ORDER_URL = "https://order.cherisheverybite.com/outlet/56752198194843";
     const WHATSAPP_NUMBER = "918050113165";
 
-    function buildWhatsappLink(message) {
-      return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
-    }
+    const plans = [
+      {
+        id: "P_ELITE",
+        name: "Elite",
+        basePrice: 14999,
+        features: ["Premium selection", "Higher protein options", "Best for intensive wellness"],
+        allowedAddonTypes: ["protein", "drink", "dessert", "bites"]
+      },
+      {
+        id: "P_DIABETIC",
+        name: "Diabetic",
+        basePrice: 13999,
+        features: ["Sugar-aware planning", "Curated low-spike options", "Balanced portions"],
+        allowedAddonTypes: ["protein", "drink", "bites"]
+      },
+      {
+        id: "P_BUDGET",
+        name: "Budget",
+        basePrice: 9999,
+        features: ["Value focused", "Simple healthy combinations", "Daily essentials"],
+        allowedAddonTypes: ["protein", "drink", "dessert"]
+      },
+      {
+        id: "P_BASIC",
+        name: "Basic",
+        basePrice: 7999,
+        features: ["Light starter plan", "Affordable health meals", "Easy to maintain"],
+        allowedAddonTypes: ["protein", "dessert"]
+      },
+      {
+        id: "P_ADDITIONAL",
+        name: "Additional",
+        basePrice: 0,
+        features: ["Fully customizable", "Rule-based selection", "Great for special needs"],
+        allowedAddonTypes: ["protein", "drink", "dessert", "bites"]
+      }
+    ];
+
+    const addons = [
+      { id: "A001", name: "Herbs marinated chicken breast", type: "protein", price: 160 },
+      { id: "A002", name: "CBP Protein Smoothie", type: "drink", price: 220 },
+      { id: "A003", name: "Chia-Protein Smoothie", type: "drink", price: 210 },
+      { id: "A004", name: "Steamed edamame", type: "bites", price: 150 },
+      { id: "A005", name: "Protein Peanut Butter Brownie", type: "dessert", price: 190 },
+      { id: "A006", name: "Greek yogurt granola", type: "bites", price: 170 }
+    ];
 
     function escapeHtml(value) {
       return String(value ?? "")
@@ -657,48 +413,10 @@
         .replace(/'/g, "&#39;");
     }
 
-    function renderMenu(menuData) {
-      const menuGrid = document.getElementById("menu-grid");
-      if (!menuData.length) {
-        menuGrid.innerHTML = `
-          <article class="menu-section">
-            <div class="menu-title-row">
-              <h3 class="menu-title">Menu updating soon</h3>
-            </div>
-            <p>Please upload a valid prices.csv file with category, name, price and status columns.</p>
-          </article>
-        `;
-        return;
-      }
-
-      menuGrid.innerHTML = menuData.map(section => {
-        const items = section.items.map(item => `
-          <li>
-            <span class="item-number">${escapeHtml(item.no)}</span>
-            <div>
-              <span class="item-name">${escapeHtml(item.name)}</span>
-            </div>
-            <span class="price">₹${escapeHtml(item.price)}</span>
-          </li>
-        `).join("");
-
-        return `
-          <article class="menu-section">
-            <div class="menu-title-row">
-              <h3 class="menu-title">${escapeHtml(section.category)}</h3>
-              <span class="count">${section.items.length} item${section.items.length > 1 ? "s" : ""}</span>
-            </div>
-            <ul class="item-list">${items}</ul>
-          </article>
-        `;
-      }).join("");
-    }
-
     function parseCSVLine(line) {
       const out = [];
       let current = "";
       let inQuotes = false;
-
       for (let i = 0; i < line.length; i++) {
         const ch = line[i];
         if (ch === '"') {
@@ -723,57 +441,36 @@
       const lines = text.trim().split(/\r?\n/).filter(Boolean);
       if (lines.length < 2) return [];
 
-      const cleanHeader = lines[0].replace(/^﻿/, "");
-      const headers = parseCSVLine(cleanHeader).map(h => h.trim().toLowerCase());
-      const noIndex = headers.indexOf("no");
-      const categoryIndex = headers.indexOf("category");
-      const nameIndex = headers.indexOf("name");
-      const priceIndex = headers.indexOf("price");
-      const statusIndex = headers.indexOf("status");
-      const activeIndex = headers.indexOf("active");
+      const headers = parseCSVLine(lines[0].replace(/^﻿/, "")).map(h => h.toLowerCase());
+      const idx = {
+        no: headers.indexOf("no"),
+        category: headers.indexOf("category"),
+        name: headers.indexOf("name"),
+        price: headers.indexOf("price"),
+        status: headers.indexOf("status")
+      };
 
-      if (noIndex === -1 || categoryIndex === -1 || nameIndex === -1 || priceIndex === -1) {
-        return [];
-      }
+      if (idx.category === -1 || idx.name === -1 || idx.price === -1) return [];
 
-      const grouped = new Map();
-
+      const rows = [];
       for (let i = 1; i < lines.length; i++) {
         const cols = parseCSVLine(lines[i]);
-        const no = Number(cols[noIndex] || "");
-        const category = (cols[categoryIndex] || "").trim();
-        const name = (cols[nameIndex] || "").trim();
-        const rawPrice = (cols[priceIndex] || "").trim();
-        const price = rawPrice;
-        const rawStatus = statusIndex !== -1 ? (cols[statusIndex] || "").trim().toLowerCase() : "";
-        const rawActive = activeIndex !== -1 ? (cols[activeIndex] || "").trim().toLowerCase() : "";
-
-        let status = rawStatus || "live";
-        if (!rawStatus && activeIndex !== -1) {
-          status = ["yes", "true", "1", "live"].includes(rawActive) ? "live" : "hidden";
-        }
-
-        if (!category || !name || Number.isNaN(no) || Number.isNaN(price) || status !== "live") {
-          continue;
-        }
-
-        if (!grouped.has(category)) {
-          grouped.set(category, []);
-        }
-
-        grouped.get(category).push({ no, name, price });
+        const status = (idx.status !== -1 ? (cols[idx.status] || "").trim().toLowerCase() : "live");
+        if (status !== "live") continue;
+        rows.push({
+          no: idx.no !== -1 ? Number(cols[idx.no] || "") : i,
+          category: (cols[idx.category] || "").trim(),
+          name: (cols[idx.name] || "").trim(),
+          price: (cols[idx.price] || "").trim()
+        });
       }
-
-      return Array.from(grouped.entries()).map(([category, items]) => ({
-        category,
-        items: items.sort((a, b) => a.no - b.no)
-      }));
+      return rows;
     }
 
-    async function loadMenuData() {
+    async function loadMenuRows() {
       try {
         const response = await fetch("prices.csv", { cache: "no-store" });
-        if (!response.ok) throw new Error("prices.csv not found");
+        if (!response.ok) throw new Error("prices.csv missing");
         const text = await response.text();
         return parseCSV(text);
       } catch (error) {
@@ -781,23 +478,209 @@
       }
     }
 
-    function attachLinks() {
-      const weekly = buildWhatsappLink("Hi Cherish Every Bite, I am interested in the Weekly Reset Plan subscription. Please share menu, pricing and process.");
-      const office = buildWhatsappLink("Hi Cherish Every Bite, I am interested in the Office Lunch Plan subscription. Please share menu, pricing and process.");
-      const monthly = buildWhatsappLink("Hi Cherish Every Bite, I am interested in the Monthly Wellness Plan subscription. Please share menu, pricing and process.");
-      document.getElementById("sub-weekly").href = weekly;
-      document.getElementById("sub-office").href = office;
-      document.getElementById("sub-monthly").href = monthly;
-      ["sub-weekly", "sub-office", "sub-monthly"].forEach(id => {
-        const el = document.getElementById(id);
-        el.target = "_blank";
-        el.rel = "noopener";
+    function renderMenuFilters(rows) {
+      const select = document.getElementById("menu-category");
+      const categories = Array.from(new Set(rows.map(r => r.category))).sort((a, b) => a.localeCompare(b));
+      select.innerHTML = ["<option value=''>All categories</option>", ...categories.map(c => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`)].join("");
+    }
+
+    function renderMenu(rows) {
+      const query = document.getElementById("menu-search").value.trim().toLowerCase();
+      const category = document.getElementById("menu-category").value.trim().toLowerCase();
+      const grid = document.getElementById("menu-grid");
+
+      const filtered = rows.filter(item => {
+        const hitName = item.name.toLowerCase().includes(query);
+        const hitCategory = !category || item.category.toLowerCase() === category;
+        return hitName && hitCategory;
+      });
+
+      if (!filtered.length) {
+        grid.innerHTML = `<article class="card meal-card"><h4>No matching items</h4><p class="meta">Try a different keyword or category.</p></article>`;
+        return;
+      }
+
+      grid.innerHTML = filtered.map(item => {
+        const numericPrice = Number(item.price);
+        const displayPrice = Number.isFinite(numericPrice) ? `₹${numericPrice}` : `₹${escapeHtml(item.price)}`;
+        return `
+          <article class="card meal-card">
+            <h4>${escapeHtml(item.name)}</h4>
+            <div class="meta">${escapeHtml(item.category)}</div>
+            <div class="tags"><span class="tag">Live</span></div>
+            <div class="price">${displayPrice}</div>
+            <div style="margin-top:10px;">
+              <a class="btn btn-soft-red" href="${TM_BILL_ORDER_URL}" target="_blank" rel="noopener">Order on TMbill</a>
+            </div>
+          </article>
+        `;
+      }).join("");
+    }
+
+    function renderPlans() {
+      const grid = document.getElementById("plans-grid");
+      grid.innerHTML = plans.map(plan => `
+        <article class="card plan-card">
+          <h4>${escapeHtml(plan.name)}</h4>
+          <div class="price">Base: ₹${plan.basePrice}</div>
+          <ul>${plan.features.map(item => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
+          <button class="btn btn-green" data-plan="${plan.id}">Select ${escapeHtml(plan.name)}</button>
+        </article>
+      `).join("");
+
+      grid.querySelectorAll("button[data-plan]").forEach(btn => {
+        btn.addEventListener("click", () => startBuilder(btn.dataset.plan));
       });
     }
 
+    let selectedPlan = null;
+
+    function startBuilder(planId) {
+      selectedPlan = plans.find(p => p.id === planId);
+      if (!selectedPlan) return;
+
+      const builder = document.getElementById("builder");
+      builder.style.display = "block";
+      builder.scrollIntoView({ behavior: "smooth", block: "start" });
+
+      document.getElementById("builder-title").textContent = `${selectedPlan.name} Plan Builder`;
+
+      const addonWrap = document.getElementById("addons-list");
+      addonWrap.innerHTML = addons
+        .filter(addon => selectedPlan.allowedAddonTypes.includes(addon.type))
+        .map(addon => `
+          <label class="addon-row">
+            <span>
+              <strong>${escapeHtml(addon.name)}</strong>
+              <div class="meta">${escapeHtml(addon.type)} • ₹${addon.price}</div>
+            </span>
+            <input type="checkbox" data-addon-id="${addon.id}" data-addon-price="${addon.price}" class="addon-check" />
+            <input type="number" min="0" max="10" value="0" class="input qty" data-addon-qty="${addon.id}" />
+          </label>
+        `).join("");
+
+      attachBuilderEvents();
+      recalcEstimate();
+      updateWhatsappPreview();
+    }
+
+    function getDurationMultiplier() {
+      const days = Number(document.getElementById("duration").value || 30);
+      return days / 30;
+    }
+
+    function getAddonSelections() {
+      const checks = Array.from(document.querySelectorAll(".addon-check"));
+      return checks.map(check => {
+        const addonId = check.dataset.addonId;
+        const addon = addons.find(a => a.id === addonId);
+        const qtyInput = document.querySelector(`[data-addon-qty='${addonId}']`);
+        const qty = Number(qtyInput?.value || 0);
+        return {
+          addon,
+          selected: check.checked,
+          qty: qty > 0 ? qty : 0
+        };
+      }).filter(x => x.selected && x.qty > 0);
+    }
+
+    function recalcEstimate() {
+      if (!selectedPlan) return;
+      const durationMultiplier = getDurationMultiplier();
+      const addonTotal = getAddonSelections().reduce((acc, item) => acc + (item.addon.price * item.qty), 0);
+      const total = Math.round((selectedPlan.basePrice + addonTotal) * durationMultiplier);
+
+      document.getElementById("base-price").textContent = `₹${selectedPlan.basePrice}`;
+      document.getElementById("addons-price").textContent = `₹${addonTotal}`;
+      document.getElementById("duration-multiplier").textContent = `x${durationMultiplier.toFixed(2)}`;
+      document.getElementById("total-price").textContent = `₹${total}`;
+    }
+
+    function buildWhatsappText(formData) {
+      const selectedAddons = getAddonSelections();
+      const days = Number(document.getElementById("duration").value || 30);
+      const durationMultiplier = getDurationMultiplier();
+      const addonTotal = selectedAddons.reduce((acc, item) => acc + item.addon.price * item.qty, 0);
+      const total = Math.round((selectedPlan.basePrice + addonTotal) * durationMultiplier);
+
+      const addonLine = selectedAddons.length
+        ? selectedAddons.map(item => `${item.addon.name} x ${item.qty}`).join(", ")
+        : "None";
+
+      return [
+        "Hi Cherish Every Bite, I want to request a subscription plan.",
+        `Plan: ${selectedPlan.name}`,
+        `Duration: ${days} days`,
+        `Add-ons: ${addonLine}`,
+        `Estimated total: ₹${total}`,
+        `Customer: ${formData.get("name") || ""}`,
+        `Phone: ${formData.get("phone") || ""}`,
+        `Start date: ${formData.get("startDate") || ""}`,
+        `Address: ${formData.get("address") || ""}`,
+        `Notes: ${formData.get("notes") || "-"}`,
+        "I understand payment should be completed only through official TMbill payment link/wallet."
+      ].join("\n");
+    }
+
+    function updateWhatsappPreview() {
+      const form = document.getElementById("request-form");
+      const data = new FormData(form);
+      const msg = buildWhatsappText(data);
+      const href = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
+      document.getElementById("whatsapp-preview").href = href;
+    }
+
+    function attachBuilderEvents() {
+      document.querySelectorAll(".addon-check, .qty").forEach(el => {
+        el.addEventListener("input", () => {
+          recalcEstimate();
+          updateWhatsappPreview();
+        });
+      });
+
+      document.getElementById("duration").addEventListener("change", () => {
+        recalcEstimate();
+        updateWhatsappPreview();
+      });
+
+      document.getElementById("request-form").addEventListener("input", updateWhatsappPreview);
+    }
+
+    function initRequestForm() {
+      const form = document.getElementById("request-form");
+      const status = document.getElementById("request-status");
+
+      form.addEventListener("submit", event => {
+        event.preventDefault();
+        if (!selectedPlan) return;
+
+        const formData = new FormData(form);
+        const requestId = `OREQ-${Date.now()}`;
+        const message = buildWhatsappText(formData);
+        const whatsappLink = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+
+        status.style.display = "block";
+        status.innerHTML = `
+          Request ID: <strong>${requestId}</strong><br />
+          Your request is captured. Our team will create a TMbill order and share payment link/wallet instructions on WhatsApp.<br />
+          <a href="${whatsappLink}" target="_blank" rel="noopener">Open WhatsApp request</a>
+        `;
+      });
+    }
+
+    async function initMenu() {
+      const rows = await loadMenuRows();
+      renderMenuFilters(rows);
+      renderMenu(rows);
+
+      document.getElementById("menu-search").addEventListener("input", () => renderMenu(rows));
+      document.getElementById("menu-category").addEventListener("change", () => renderMenu(rows));
+    }
+
     (async function init() {
-      renderMenu(await loadMenuData());
-      attachLinks();
+      await initMenu();
+      renderPlans();
+      initRequestForm();
     })();
   </script>
 </body>
