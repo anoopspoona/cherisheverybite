@@ -6,6 +6,9 @@
   <title>Cherish Every Bite | Curated Healthy Meals</title>
   <meta name="description" content="Cherish Every Bite cloud kitchen — healthy curated meals, soups, salads, smoothies, bites, desserts and subscription meal options." />
   <link rel="icon" type="image/jpeg" href="Cherish logo.jpg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <style>
     :root {
       --red: #c82027;
@@ -25,13 +28,14 @@
     html { scroll-behavior: smooth; }
     body {
       margin: 0;
-      font-family: Arial, Helvetica, sans-serif;
+      font-family: 'Inter', Arial, Helvetica, sans-serif;
       color: var(--text);
       line-height: 1.6;
       background:
         radial-gradient(circle at top left, rgba(200,32,39,0.07), transparent 24%),
         radial-gradient(circle at bottom right, rgba(31,109,71,0.07), transparent 24%),
         linear-gradient(180deg, #ffffff 0%, #f8fbf9 100%);
+      letter-spacing: 0.01em;
     }
     a { color: inherit; }
     .container {
@@ -145,6 +149,7 @@
       transform: translateY(-2px);
       box-shadow: 0 10px 24px rgba(0,0,0,0.10);
     }
+    .btn:active { transform: translateY(0); }
     .btn-red { background: var(--red); color: #fff; }
     .btn-green { background: var(--green); color: #fff; }
     .btn-red-outline { background: var(--red-soft); color: var(--red-dark); border-color: rgba(200,32,39,0.10); }
@@ -290,6 +295,11 @@
     .menu-section {
       padding: 24px;
       background: linear-gradient(180deg, #fff, #f9fcfa);
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
+    }
+    .menu-section:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 30px rgba(0,0,0,0.07);
     }
     .menu-title-row {
       display: flex;
@@ -387,6 +397,11 @@
       border-radius: 20px;
       padding: 20px;
       box-shadow: 0 8px 20px rgba(0,0,0,0.04);
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
+    }
+    .subscription-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 14px 28px rgba(0,0,0,0.08);
     }
     .red-sub { background: linear-gradient(180deg, #fff, #fff7f7); }
     .green-sub { background: linear-gradient(180deg, #fff, #f5fbf6); }
@@ -407,6 +422,106 @@
       padding-left: 18px;
       color: var(--muted);
     }
+
+    /* How it works + social proof */
+    .how-wrap,
+    .testimonials-wrap,
+    .faq-wrap,
+    .diet-wrap { padding: 0 0 28px; }
+    .process-grid {
+      margin-top: 18px;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+    }
+    .process-card {
+      background: #fff;
+      border: 1px solid rgba(0,0,0,0.06);
+      border-radius: 20px;
+      padding: 18px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.04);
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
+    }
+    .process-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 24px rgba(0,0,0,0.07);
+    }
+    .process-step {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: var(--green-soft);
+      color: var(--green-dark);
+      font-weight: 800;
+      margin-bottom: 10px;
+    }
+    .testimonial-grid {
+      margin-top: 16px;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+    .testimonial-card {
+      background: #fff;
+      border: 1px solid rgba(0,0,0,0.06);
+      border-radius: 20px;
+      padding: 18px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.04);
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
+    }
+    .testimonial-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 24px rgba(0,0,0,0.07);
+    }
+    .testimonial-name {
+      margin-top: 10px;
+      color: var(--green-dark);
+      font-weight: 700;
+    }
+    .faq-list {
+      margin-top: 14px;
+      display: grid;
+      gap: 10px;
+    }
+    .faq-list details {
+      background: #fff;
+      border: 1px solid rgba(0,0,0,0.06);
+      border-radius: 14px;
+      padding: 12px 14px;
+    }
+    .faq-list summary {
+      cursor: pointer;
+      font-weight: 700;
+      color: var(--green-dark);
+    }
+    .faq-list details[open] {
+      border-color: rgba(31,109,71,0.25);
+      box-shadow: 0 6px 14px rgba(0,0,0,0.04);
+    }
+    .diet-form {
+      margin-top: 16px;
+      background: #fff;
+      border: 1px solid rgba(0,0,0,0.06);
+      border-radius: 20px;
+      padding: 18px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.04);
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+    .diet-form input {
+      width: 100%;
+      border: 1px solid rgba(0,0,0,0.12);
+      border-radius: 12px;
+      padding: 11px 12px;
+      font: inherit;
+      background: #fff;
+      color: var(--text);
+    }
+    .diet-form .btn { width: 100%; }
+    .diet-form .btn { min-height: 44px; }
 
     /* CTA + Footer */
     .cta-wrap { padding: 0 0 72px; }
@@ -463,6 +578,9 @@
       .hero-shell,
       .menu-grid,
       .subscription-grid,
+      .process-grid,
+      .testimonial-grid,
+      .diet-form,
       .footer-grid,
       .cta-box {
         grid-template-columns: 1fr;
@@ -565,6 +683,7 @@
         <div>
           <h2 class="section-title">Our Menu</h2>
           <p>Healthy curated meals, drinks and desserts from Cherish Every Bite.</p>
+          <p id="menu-source" style="margin:6px 0 0;color:var(--muted);font-size:0.9rem;"></p>
         </div>
       </div>
       <div class="menu-grid" id="menu-grid"></div>
@@ -575,39 +694,156 @@
     <div class="container">
       <div class="subscription-section">
         <h3>Subscription Plans</h3>
-        <p>Use WhatsApp to enquire about recurring meal plans, office meal subscriptions or custom healthy meal packages.</p>
+        <p>Select a plan and choose either one meal (Lunch/Dinner) or two meals per day on the plan page. Our team will manually convert your request and share the final Order now payment instructions.</p>
         <div class="subscription-grid">
           <div class="subscription-card red-sub">
-            <h4>Weekly Reset Plan</h4>
-            <div class="sub-price">7 Days</div>
+            <h4>Elite Plan</h4>
+            <div class="sub-price">Premium</div>
             <ul>
-              <li>Ideal for trial customers</li>
-              <li>Healthy curated daily meals</li>
-              <li>Customise preferences on WhatsApp</li>
+              <li>Advanced curated healthy meals</li>
+              <li>Designed for stricter nutrition goals</li>
+              <li>Add-ons can be included as required</li>
             </ul>
-            <a class="btn btn-red" id="sub-weekly" href="#">Enquire Weekly Plan</a>
+            <a class="btn btn-red" href="plan.html?plan=elite">View Elite Plan Menu</a>
           </div>
           <div class="subscription-card green-sub">
-            <h4>Office Lunch Plan</h4>
-            <div class="sub-price">Mon–Fri</div>
+            <h4>Diabetic Plan</h4>
+            <div class="sub-price">Controlled</div>
             <ul>
-              <li>Great for working professionals</li>
-              <li>Lunch-focused subscription</li>
-              <li>Single or group enquiries</li>
+              <li>Built for diabetic-friendly meal preferences</li>
+              <li>Balanced and mindful portions</li>
+              <li>Custom notes can be shared on WhatsApp</li>
             </ul>
-            <a class="btn btn-green" id="sub-office" href="#">Enquire Office Plan</a>
+            <a class="btn btn-green" href="plan.html?plan=diabetic">View Diabetic Plan Menu</a>
           </div>
           <div class="subscription-card red-sub">
-            <h4>Monthly Wellness Plan</h4>
-            <div class="sub-price">30 Days</div>
+            <h4>Budget Plan</h4>
+            <div class="sub-price">Value</div>
             <ul>
-              <li>For long-term healthy eating</li>
-              <li>Custom meal scheduling</li>
-              <li>Best for repeat subscription customers</li>
+              <li>Affordable curated meal options</li>
+              <li>Good fit for everyday healthy eating</li>
+              <li>Optional paid add-ons available</li>
             </ul>
-            <a class="btn btn-red-outline" id="sub-monthly" href="#">Enquire Monthly Plan</a>
+            <a class="btn btn-red-outline" href="plan.html?plan=budget">View Budget Plan Menu</a>
+          </div>
+          <div class="subscription-card green-sub">
+            <h4>Basic Plan</h4>
+            <div class="sub-price">Starter</div>
+            <ul>
+              <li>Simple starter subscription format</li>
+              <li>Clean meals with manageable routine</li>
+              <li>Easy onboarding for first-time users</li>
+            </ul>
+            <a class="btn btn-green-outline" href="plan.html?plan=basic">View Basic Plan Menu</a>
+          </div>
+          <div class="subscription-card red-sub">
+            <h4>Additional (Custom)</h4>
+            <div class="sub-price">Flexible</div>
+            <ul>
+              <li>Complete customisation with rule-based options</li>
+              <li>Pick add-ons as per your preferences</li>
+              <li>Team will finalise quote and Order now payment flow</li>
+            </ul>
+            <a class="btn btn-red" href="plan.html?plan=additional">View Additional Menu</a>
           </div>
         </div>
+        <p style="margin-top: 14px; color: var(--muted);"><strong>Note:</strong> Subscription confirmation and payment are completed through our Order now process.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="how-wrap" id="how-it-works">
+    <div class="container">
+      <div class="subscription-section">
+        <h3>How It Works</h3>
+        <p>Simple 4-step journey inspired by modern subscription wellness brands.</p>
+        <div class="process-grid">
+          <article class="process-card">
+            <div class="process-step">1</div>
+            <h4>Start Here</h4>
+            <p>Tell us your goal and pick a plan: Elite, Diabetic, Budget, Basic or Additional.</p>
+          </article>
+          <article class="process-card">
+            <div class="process-step">2</div>
+            <h4>Decide</h4>
+            <p>Choose a plan page and review your day-wise sample menu before enquiring.</p>
+          </article>
+          <article class="process-card">
+            <div class="process-step">3</div>
+            <h4>Enjoy Service</h4>
+            <p>Our team finalizes your meals and shares your Order now payment flow details.</p>
+          </article>
+          <article class="process-card">
+            <div class="process-step">4</div>
+            <h4>Live Healthy</h4>
+            <p>Track your consistency weekly and renew manually as per your convenience.</p>
+          </article>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="testimonials-wrap">
+    <div class="container">
+      <div class="subscription-section">
+        <h3>What Our Customers Say</h3>
+        <p>Real feedback from users focused on clean and consistent meals.</p>
+        <div class="testimonial-grid">
+          <article class="testimonial-card">
+            <p>“I finally found a subscription I can stick to. Portions are balanced and fresh.”</p>
+            <div class="testimonial-name">— Nisha, Pune</div>
+          </article>
+          <article class="testimonial-card">
+            <p>“Diabetic-friendly options are reliable, and support on WhatsApp is super quick.”</p>
+            <div class="testimonial-name">— Arun, Trivandrum</div>
+          </article>
+          <article class="testimonial-card">
+            <p>“Great as a working professional. I use Budget plan on weekdays and add-ons when needed.”</p>
+            <div class="testimonial-name">— Farhan, Bengaluru</div>
+          </article>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="faq-wrap" id="faq">
+    <div class="container">
+      <div class="subscription-section">
+        <h3>FAQ</h3>
+        <p>Common questions about subscriptions, customizations and Order now flow.</p>
+        <div class="faq-list">
+          <details>
+            <summary>Is there a minimum subscription period?</summary>
+            <p>No strict minimum. You can choose weekly or monthly cycles and renew manually.</p>
+          </details>
+          <details>
+            <summary>Can I customize items and add-ons?</summary>
+            <p>Yes. Use Additional plan for full customization and discuss rule-based preferences on WhatsApp.</p>
+          </details>
+          <details>
+            <summary>How is payment processed?</summary>
+            <p>All payments are processed through the official Order now payment flow shared by our team.</p>
+          </details>
+          <details>
+            <summary>Can I pause or skip?</summary>
+            <p>Yes, our team can help you adjust your schedule and meal sequence manually.</p>
+          </details>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="diet-wrap">
+    <div class="container">
+      <div class="subscription-section">
+        <h3>Get Your Free Personalized Diet Chart</h3>
+        <p>Share your details and we’ll send a starter diet chart along with plan recommendations.</p>
+        <form class="diet-form" id="diet-form">
+          <input class="btn-green-outline" type="text" id="diet-name" placeholder="Name" required />
+          <input class="btn-green-outline" type="tel" id="diet-phone" placeholder="WhatsApp Number" required />
+          <input class="btn-green-outline" type="email" id="diet-email" placeholder="Email" required />
+          <button type="submit" class="btn btn-red">Get My Free Diet Chart</button>
+        </form>
       </div>
     </div>
   </section>
@@ -632,7 +868,7 @@
       </div>
       <div class="footer-card">
         <h3>Contact</h3>
-        <p><strong>Phone / WhatsApp:</strong> +91 80501 13165</p>
+        <p><strong>Phone / WhatsApp:</strong> +91 6282023762</p>
         <p><strong>Email:</strong> cherisheverybiteforever@gmail.com</p>
         <p><strong>FSSAI:</strong> 21326131000079</p>
       </div>
@@ -642,7 +878,8 @@
   <a class="btn btn-green floating-order" href="https://order.cherisheverybite.com/outlet/56752198194843" target="_blank" rel="noopener">Order Now</a>
 
   <script>
-    const WHATSAPP_NUMBER = "918050113165";
+    const WHATSAPP_NUMBER = "916282023762";
+    const GOOGLE_SHEET_CSV_URL = "";
 
     function buildWhatsappLink(message) {
       return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
@@ -753,7 +990,7 @@
           status = ["yes", "true", "1", "live"].includes(rawActive) ? "live" : "hidden";
         }
 
-        if (!category || !name || Number.isNaN(no) || Number.isNaN(price) || status !== "live") {
+        if (!category || !name || Number.isNaN(no) || status !== "live") {
           continue;
         }
 
@@ -770,34 +1007,69 @@
       }));
     }
 
-    async function loadMenuData() {
-      try {
-        const response = await fetch("prices.csv", { cache: "no-store" });
-        if (!response.ok) throw new Error("prices.csv not found");
-        const text = await response.text();
-        return parseCSV(text);
-      } catch (error) {
-        return [];
+    function setMenuSourceLabel(text) {
+      const sourceEl = document.getElementById("menu-source");
+      if (sourceEl) {
+        sourceEl.textContent = text;
       }
     }
 
-    function attachLinks() {
-      const weekly = buildWhatsappLink("Hi Cherish Every Bite, I am interested in the Weekly Reset Plan subscription. Please share menu, pricing and process.");
-      const office = buildWhatsappLink("Hi Cherish Every Bite, I am interested in the Office Lunch Plan subscription. Please share menu, pricing and process.");
-      const monthly = buildWhatsappLink("Hi Cherish Every Bite, I am interested in the Monthly Wellness Plan subscription. Please share menu, pricing and process.");
-      document.getElementById("sub-weekly").href = weekly;
-      document.getElementById("sub-office").href = office;
-      document.getElementById("sub-monthly").href = monthly;
-      ["sub-weekly", "sub-office", "sub-monthly"].forEach(id => {
-        const el = document.getElementById(id);
-        el.target = "_blank";
-        el.rel = "noopener";
+    async function tryLoadCSV(sourceUrl) {
+      const response = await fetch(sourceUrl, { cache: "no-store" });
+      if (!response.ok) {
+        throw new Error(`${sourceUrl} not found`);
+      }
+      return response.text();
+    }
+
+    async function loadMenuData() {
+      const sources = [];
+
+      if (GOOGLE_SHEET_CSV_URL.trim()) {
+        sources.push({ url: GOOGLE_SHEET_CSV_URL.trim(), label: "Menu source: Google Sheets" });
+      }
+
+      sources.push({ url: "prices.csv", label: "Menu source: Local prices.csv (fallback)" });
+
+      for (const source of sources) {
+        try {
+          const text = await tryLoadCSV(source.url);
+          const parsed = parseCSV(text);
+          if (parsed.length) {
+            setMenuSourceLabel(source.label);
+            return parsed;
+          }
+        } catch (error) {
+          // try next source
+        }
+      }
+
+      setMenuSourceLabel("Menu source: unavailable");
+      return [];
+    }
+
+    function attachDietChartForm() {
+      const form = document.getElementById("diet-form");
+      if (!form) return;
+      form.addEventListener("submit", event => {
+        event.preventDefault();
+        const name = document.getElementById("diet-name").value.trim();
+        const phone = document.getElementById("diet-phone").value.trim();
+        const email = document.getElementById("diet-email").value.trim();
+        const message = [
+          "Hi Cherish Every Bite, I would like my free personalized diet chart.",
+          `Name: ${name}`,
+          `WhatsApp: ${phone}`,
+          `Email: ${email}`
+        ].join("\\n");
+        const link = buildWhatsappLink(message);
+        window.open(link, "_blank", "noopener");
       });
     }
 
     (async function init() {
       renderMenu(await loadMenuData());
-      attachLinks();
+      attachDietChartForm();
     })();
   </script>
 </body>
