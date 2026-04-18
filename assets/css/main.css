@@ -8,6 +8,7 @@
   --bg: #f7fbf8;
   --radius: 20px;
   --shadow: 0 10px 28px rgba(0, 0, 0, 0.08);
+  --hero-image: url("https://images.unsplash.com/photo-1771762211132-2f0598b44dbb?auto=format&fit=crop&fm=webp&q=70&w=1920");
   --space-1: 4px;
   --space-2: 8px;
   --space-3: 12px;
@@ -23,6 +24,8 @@ body {
   font-family: 'Inter', Arial, sans-serif;
   color: var(--text);
   background: linear-gradient(180deg, #fff 0%, var(--bg) 100%);
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
 }
 
 .container {
@@ -31,6 +34,21 @@ body {
 }
 
 .section { padding: var(--space-6) 0; }
+.section { content-visibility: auto; contain-intrinsic-size: 1px 560px; }
+
+.menu-section,
+.plan-card,
+.hero-main-panel,
+.hero-note-card {
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+
+.menu-section:hover,
+.plan-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+}
+
 .card {
   background: var(--surface);
   border: 1px solid rgba(0,0,0,.08);
@@ -87,9 +105,21 @@ body {
 .btn-soft { background: #eef8f2; color: #165b3a; border-color: rgba(31,109,71,.25); }
 
 .ingredients-theme {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
   background:
-    linear-gradient(135deg, rgba(13, 87, 54, 0.92), rgba(23, 122, 74, 0.86)),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='280' height='280' viewBox='0 0 280 280'%3E%3Cg fill='none' stroke='%23ffffff' stroke-opacity='0.22' stroke-width='2'%3E%3Cpath d='M38 92c18-24 46-18 56 2-18 10-38 8-56-2Z'/%3E%3Cpath d='M146 54c20-16 44-4 48 18-20 6-38 0-48-18Z'/%3E%3Cpath d='M220 140c22-12 42 8 40 30-22 2-36-10-40-30Z'/%3E%3Ccircle cx='76' cy='190' r='18'/%3E%3Ccircle cx='170' cy='198' r='14'/%3E%3Ccircle cx='238' cy='58' r='12'/%3E%3Cpath d='M108 136c14-20 34-18 44 0-16 8-30 8-44 0Z'/%3E%3C/g%3E%3C/svg%3E") center/320px repeat;
+    linear-gradient(130deg, rgba(8, 48, 31, 0.84), rgba(17, 89, 56, 0.72)),
+    var(--hero-image) center/cover no-repeat;
+}
+
+.ingredients-theme::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: linear-gradient(15deg, rgba(4, 36, 23, 0.72) 0%, rgba(4, 36, 23, 0.35) 45%, rgba(4, 36, 23, 0.12) 100%);
 }
 
 .hero-grid {
@@ -104,19 +134,20 @@ body {
 .hero-main-panel {
   border-radius: 16px;
   padding: var(--space-5);
-  background: rgba(255, 255, 255, 0.12);
-  backdrop-filter: blur(2px);
-  border: 1px solid rgba(255,255,255,.22);
+  background: rgba(6, 37, 24, 0.48);
+  border: 1px solid rgba(255,255,255,.28);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
   color: #fff;
 }
 
-.hero-main-panel p { color: rgba(255,255,255,.95); }
+.hero-main-panel p { color: rgba(255,255,255,.98); max-width: 58ch; }
 
 .hero-note-card {
   border-radius: 16px;
   padding: var(--space-5);
-  background: rgba(255, 255, 255, 0.92);
+  background: rgba(255, 255, 255, 0.94);
   border: 1px solid rgba(255,255,255,.24);
+  box-shadow: 0 16px 28px rgba(0, 0, 0, 0.16);
 }
 
 .hero-note-card h3 { margin-top: 0; color: var(--green); }
