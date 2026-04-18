@@ -3,8 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Cherish Every Bite | À La Carte + Subscription Meals</title>
-  <meta name="description" content="Order healthy à la carte meals or request subscription plans with add-ons. Payments and KOT are processed through TMbill." />
+  <title>Cherish Every Bite | Curated Healthy Meals</title>
+  <meta name="description" content="Cherish Every Bite cloud kitchen — healthy curated meals, soups, salads, smoothies, bites, desserts and subscription meal options." />
+  <link rel="icon" type="image/jpeg" href="Cherish logo.jpg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <style>
     :root {
       --red: #c82027;
@@ -23,9 +27,45 @@
     * { box-sizing: border-box; }
     body {
       margin: 0;
-      font-family: Arial, Helvetica, sans-serif;
+      font-family: 'Inter', Arial, Helvetica, sans-serif;
       color: var(--text);
-      background: linear-gradient(180deg, #fff, #f6faf7 40%, #fff);
+      line-height: 1.6;
+      background:
+        radial-gradient(circle at top left, rgba(200,32,39,0.07), transparent 24%),
+        radial-gradient(circle at bottom right, rgba(31,109,71,0.07), transparent 24%),
+        linear-gradient(180deg, #ffffff 0%, #f8fbf9 100%);
+      letter-spacing: 0.01em;
+    }
+    a { color: inherit; }
+    .container {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+
+    /* Splash */
+    #splash {
+      position: fixed;
+      inset: 0;
+      background: rgba(255,255,255,0.98);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      animation: splashFade 0.7s ease forwards;
+      animation-delay: 1.2s;
+    }
+    #splash img {
+      width: 110px;
+      height: 110px;
+      object-fit: contain;
+      animation: splashZoom 0.8s ease;
+    }
+    @keyframes splashZoom {
+      from { transform: scale(0.82); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+    @keyframes splashFade {
+      to { opacity: 0; visibility: hidden; }
     }
     .container { width: min(1140px, calc(100% - 28px)); margin: 0 auto; }
 
@@ -63,6 +103,7 @@
       border: 1px solid transparent;
       cursor: pointer;
     }
+    .btn:active { transform: translateY(0); }
     .btn-red { background: var(--red); color: #fff; }
     .btn-green { background: var(--green); color: #fff; }
     .btn-soft-red { background: var(--red-soft); color: var(--red-dark); border-color: rgba(200,32,39,.15); }
@@ -89,65 +130,304 @@
     .note { padding: 14px; border-radius: 14px; background: #fff; border: 1px solid var(--border); }
     .note h3 { margin: 0 0 4px; }
 
-    .section { padding: 14px 0 26px; }
-    .section-title { margin: 0 0 6px; color: var(--green-dark); }
-    .section-sub { margin: 0 0 14px; color: var(--muted); }
+    /* Menu */
+    .section { padding: 10px 0 26px; }
+    .section-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      gap: 16px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+    .section-title {
+      margin: 0;
+      color: var(--green-dark);
+      font-size: 1.9rem;
+    }
+    .section-top p {
+      margin: 6px 0 0;
+      color: var(--muted);
+    }
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 22px;
+    }
+    .menu-section {
+      padding: 24px;
+      background: linear-gradient(180deg, #fff, #f9fcfa);
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
+    }
+    .menu-section:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 30px rgba(0,0,0,0.07);
+    }
+    .menu-title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+    }
+    .menu-title {
+      margin: 0;
+      color: var(--green-dark);
+      font-size: 1.18rem;
+    }
+    .count {
+      white-space: nowrap;
+      font-size: 0.84rem;
+      font-weight: 700;
+      color: var(--green-dark);
+      background: var(--green-soft);
+      padding: 6px 10px;
+      border-radius: 999px;
+    }
+    .item-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    .item-list li {
+      display: grid;
+      grid-template-columns: 30px 1fr auto;
+      gap: 12px;
+      align-items: start;
+      padding: 12px 0;
+      border-bottom: 1px dashed rgba(0,0,0,0.10);
+    }
+    .item-list li:last-child { border-bottom: none; }
+    .item-number {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: var(--green-soft);
+      color: var(--green-dark);
+      font-size: 0.84rem;
+      font-weight: 800;
+    }
+    .item-name {
+      font-weight: 700;
+      display: block;
+    }
+    .item-note {
+      display: block;
+      font-size: 0.84rem;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+    .price {
+      min-width: 74px;
+      text-align: right;
+      font-weight: 800;
+      color: var(--red);
+      background: var(--red-soft);
+      padding: 7px 10px;
+      border-radius: 999px;
+      font-size: 0.94rem;
+    }
 
-    .disclaimer {
+    /* Subscription */
+    .subscription-wrap { padding: 0 0 28px; }
+    .subscription-section {
+      padding: 28px;
+      background: linear-gradient(180deg, #fff, #f5fbf6);
+    }
+    .subscription-section h3 {
+      margin: 0;
+      color: var(--green-dark);
+      font-size: 1.7rem;
+    }
+    .subscription-section > p {
+      margin: 8px 0 0;
+      color: var(--muted);
+    }
+    .subscription-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+      margin-top: 18px;
+    }
+    .subscription-card {
+      background: #fff;
+      border: 1px solid rgba(0,0,0,0.05);
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.04);
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
+    }
+    .subscription-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 14px 28px rgba(0,0,0,0.08);
+    }
+    .red-sub { background: linear-gradient(180deg, #fff, #fff7f7); }
+    .green-sub { background: linear-gradient(180deg, #fff, #f5fbf6); }
+    .subscription-card h4 {
+      margin: 0 0 6px;
+      font-size: 1.1rem;
+    }
+    .red-sub h4 { color: var(--red-dark); }
+    .green-sub h4 { color: var(--green-dark); }
+    .sub-price {
+      font-size: 1.55rem;
+      font-weight: 900;
+      margin: 6px 0 10px;
+      color: var(--text);
+    }
+    .subscription-card ul {
+      margin: 0 0 16px;
+      padding-left: 18px;
+      color: var(--muted);
+    }
+
+    /* How it works + social proof */
+    .how-wrap,
+    .testimonials-wrap,
+    .faq-wrap,
+    .diet-wrap { padding: 0 0 28px; }
+    .process-grid {
+      margin-top: 18px;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+    }
+    .process-card {
+      background: #fff;
+      border: 1px solid rgba(0,0,0,0.06);
+      border-radius: 20px;
+      padding: 18px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.04);
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
+    }
+    .process-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 24px rgba(0,0,0,0.07);
+    }
+    .process-step {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: var(--green-soft);
+      color: var(--green-dark);
+      font-weight: 800;
+      margin-bottom: 10px;
+    }
+    .testimonial-grid {
+      margin-top: 16px;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+    .testimonial-card {
+      background: #fff;
+      border: 1px solid rgba(0,0,0,0.06);
+      border-radius: 20px;
+      padding: 18px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.04);
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
+    }
+    .testimonial-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 24px rgba(0,0,0,0.07);
+    }
+    .testimonial-name {
       margin-top: 10px;
-      padding: 12px;
-      border-radius: 12px;
-      background: #fffbe8;
-      border: 1px solid #f3e7b1;
-      color: #7a5d00;
-      font-size: .93rem;
+      color: var(--green-dark);
+      font-weight: 700;
     }
-
-    .menu-toolbar { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
-    .input, select, textarea {
+    .faq-list {
+      margin-top: 14px;
+      display: grid;
+      gap: 10px;
+    }
+    .faq-list details {
+      background: #fff;
+      border: 1px solid rgba(0,0,0,0.06);
+      border-radius: 14px;
+      padding: 12px 14px;
+    }
+    .faq-list summary {
+      cursor: pointer;
+      font-weight: 700;
+      color: var(--green-dark);
+    }
+    .faq-list details[open] {
+      border-color: rgba(31,109,71,0.25);
+      box-shadow: 0 6px 14px rgba(0,0,0,0.04);
+    }
+    .diet-form {
+      margin-top: 16px;
+      background: #fff;
+      border: 1px solid rgba(0,0,0,0.06);
+      border-radius: 20px;
+      padding: 18px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.04);
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+    .diet-form input {
       width: 100%;
-      padding: 10px 12px;
+      border: 1px solid rgba(0,0,0,0.12);
       border-radius: 12px;
-      border: 1px solid var(--border);
+      padding: 11px 12px;
       font: inherit;
+      background: #fff;
+      color: var(--text);
     }
-    .toolbar-field { flex: 1 1 220px; }
+    .diet-form .btn { width: 100%; }
+    .diet-form .btn { min-height: 44px; }
 
-    .menu-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 14px; }
-    .meal-card { padding: 14px; }
-    .meal-card h4 { margin: 0 0 8px; }
-    .meta { color: var(--muted); font-size: .9rem; }
-    .tags { margin: 8px 0; display: flex; gap: 6px; flex-wrap: wrap; }
-    .tag { font-size: .74rem; padding: 4px 8px; border-radius: 999px; background: var(--green-soft); color: var(--green-dark); }
-    .price { font-weight: 800; color: var(--red-dark); }
-
-    .plans-grid { display: grid; grid-template-columns: repeat(5, minmax(0,1fr)); gap: 12px; }
-    .plan-card { padding: 14px; }
-    .plan-card h4 { margin: 0 0 6px; }
-    .plan-card ul { margin: 0 0 10px; padding-left: 18px; color: var(--muted); font-size: .92rem; }
-
-    .builder { padding: 18px; margin-top: 12px; }
-    .builder-grid { display: grid; grid-template-columns: 1.2fr .8fr; gap: 16px; }
-    .addons-list { display: grid; gap: 8px; }
-    .addon-row { display: grid; grid-template-columns: 1fr auto auto; align-items: center; gap: 8px; padding: 10px; border: 1px solid var(--border); border-radius: 12px; }
-    .qty { width: 72px; }
-    .summary { padding: 14px; border: 1px solid var(--border); border-radius: 12px; background: #f9fcfa; }
-    .summary p { margin: 8px 0; display: flex; justify-content: space-between; }
-
-    .form-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 10px; }
-    .full { grid-column: 1 / -1; }
-    .checks { margin-top: 10px; display: grid; gap: 8px; color: var(--muted); }
-    .checks label { display: flex; gap: 8px; align-items: flex-start; }
-
-    .how-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 14px; }
-    .flow-card { padding: 16px; }
-    .flow-card ol { margin: 8px 0 0; padding-left: 20px; color: var(--muted); }
-
-    .status-box { margin-top: 12px; padding: 12px; border-radius: 12px; background: #eef7ff; border: 1px solid #cde4ff; color: #0b4f96; display: none; }
-
-    footer { background: var(--green-dark); color: rgba(255,255,255,0.92); padding: 28px 0 90px; margin-top: 24px; }
-    footer p { margin: 6px 0; }
-
+    /* CTA + Footer */
+    .cta-wrap { padding: 0 0 72px; }
+    .cta-box {
+      padding: 30px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 18px;
+      align-items: center;
+      background: linear-gradient(180deg, #fff, #fff7f7);
+    }
+    .cta-box h3 {
+      margin: 0 0 8px;
+      color: var(--red-dark);
+      font-size: 1.7rem;
+    }
+    .cta-box p {
+      margin: 0;
+      color: var(--muted);
+    }
+    footer {
+      background: var(--green-dark);
+      padding: 42px 0 110px;
+      color: rgba(255,255,255,0.92);
+    }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 22px;
+    }
+    .footer-card {
+      background: rgba(255,255,255,0.08);
+      border-color: rgba(255,255,255,0.12);
+      box-shadow: none;
+      color: rgba(255,255,255,0.92);
+      padding: 22px;
+    }
+    .footer-card h3 {
+      margin-top: 0;
+      color: #fff;
+    }
+    .footer-card p, .footer-card li {
+      color: rgba(255,255,255,0.86);
+    }
     .floating-order {
       position: fixed;
       right: 16px;
@@ -161,18 +441,41 @@
       .builder-grid,
       .how-grid,
       .menu-grid,
-      .plans-grid,
-      .form-grid { grid-template-columns: 1fr 1fr; }
-      .plans-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .subscription-grid,
+      .process-grid,
+      .testimonial-grid,
+      .diet-form,
+      .footer-grid,
+      .cta-box {
+        grid-template-columns: 1fr;
+      }
+      .hero-main {
+        min-height: 420px;
+        padding: 30px;
+      }
     }
-    @media (max-width: 740px) {
-      .hero-grid,
-      .builder-grid,
-      .how-grid,
-      .menu-grid,
-      .form-grid,
-      .plans-grid { grid-template-columns: 1fr; }
-      .brand h1 { font-size: 1rem; }
+    @media (max-width: 640px) {
+      .logo-wrap {
+        width: 78px;
+        height: 78px;
+      }
+      .brand-text h1 {
+        font-size: 1.8rem;
+      }
+      .item-list li {
+        grid-template-columns: 28px 1fr;
+      }
+      .price {
+        grid-column: 2;
+        width: fit-content;
+        text-align: left;
+      }
+      .nav-actions {
+        width: 100%;
+      }
+      .nav-actions .btn {
+        flex: 1 1 180px;
+      }
     }
   </style>
 </head>
@@ -227,15 +530,11 @@
 
   <section id="menu" class="section">
     <div class="container">
-      <h2 class="section-title">À La Carte Menu</h2>
-      <p class="section-sub">Filter and browse all live menu items from your catalog.</p>
-
-      <div class="menu-toolbar">
-        <div class="toolbar-field">
-          <input class="input" id="menu-search" placeholder="Search meal name" />
-        </div>
-        <div class="toolbar-field">
-          <select id="menu-category"></select>
+      <div class="section-top">
+        <div>
+          <h2 class="section-title">Our Menu</h2>
+          <p>Healthy curated meals, drinks and desserts from Cherish Every Bite.</p>
+          <p id="menu-source" style="margin:6px 0 0;color:var(--muted);font-size:0.9rem;"></p>
         </div>
         <a class="btn btn-red" href="https://order.cherisheverybite.com/outlet/56752198194843" target="_blank" rel="noopener">Order on TMbill</a>
       </div>
@@ -248,74 +547,163 @@
 
   <section id="plans" class="section">
     <div class="container">
-      <h2 class="section-title">Subscription Plans</h2>
-      <p class="section-sub">Select a plan and configure add-ons. We will convert the request into a TMbill order manually.</p>
-
-      <div class="plans-grid" id="plans-grid"></div>
-
-      <article class="card builder" id="builder" style="display:none;">
-        <h3 id="builder-title" style="margin-top:0;"></h3>
-
-        <div class="builder-grid">
-          <div>
-            <label class="meta" for="duration">Duration (days)</label>
-            <select id="duration" class="input">
-              <option value="7">7</option>
-              <option value="15">15</option>
-              <option value="30" selected>30</option>
-            </select>
-
-            <h4>Add-ons</h4>
-            <div class="addons-list" id="addons-list"></div>
-
-            <h4 style="margin-bottom:6px;">Customer details</h4>
-            <form id="request-form">
-              <div class="form-grid">
-                <div>
-                  <input class="input" name="name" placeholder="Customer name" required />
-                </div>
-                <div>
-                  <input class="input" name="phone" placeholder="WhatsApp number" required />
-                </div>
-                <div class="full">
-                  <textarea class="input" name="address" rows="3" placeholder="Delivery address" required></textarea>
-                </div>
-                <div>
-                  <input class="input" type="date" name="startDate" required />
-                </div>
-                <div>
-                  <input class="input" name="notes" placeholder="Special notes (optional)" />
-                </div>
-              </div>
-
-              <div class="checks">
-                <label><input type="checkbox" name="ackPay" required /> Payment will be completed only via official TMbill payment link or wallet.</label>
-                <label><input type="checkbox" name="ackManual" required /> I understand order confirmation happens after team verification in TMbill.</label>
-              </div>
-
-              <div style="display:flex; gap:8px; flex-wrap: wrap; margin-top:12px;">
-                <button class="btn btn-green" type="submit">Submit Subscription Request</button>
-                <a class="btn btn-soft-red" id="whatsapp-preview" target="_blank" rel="noopener" href="#">Preview on WhatsApp</a>
-              </div>
-            </form>
+      <div class="subscription-section">
+        <h3>Subscription Plans</h3>
+        <p>Select a plan and choose either one meal (Lunch/Dinner) or two meals per day on the plan page. Our team will manually convert your request and share the final Order now payment instructions.</p>
+        <div class="subscription-grid">
+          <div class="subscription-card red-sub">
+            <h4>Elite Plan</h4>
+            <div class="sub-price">Premium</div>
+            <ul>
+              <li>Advanced curated healthy meals</li>
+              <li>Designed for stricter nutrition goals</li>
+              <li>Add-ons can be included as required</li>
+            </ul>
+            <a class="btn btn-red" href="plan.html?plan=elite">View Elite Plan Menu</a>
           </div>
+          <div class="subscription-card green-sub">
+            <h4>Diabetic Plan</h4>
+            <div class="sub-price">Controlled</div>
+            <ul>
+              <li>Built for diabetic-friendly meal preferences</li>
+              <li>Balanced and mindful portions</li>
+              <li>Custom notes can be shared on WhatsApp</li>
+            </ul>
+            <a class="btn btn-green" href="plan.html?plan=diabetic">View Diabetic Plan Menu</a>
+          </div>
+          <div class="subscription-card red-sub">
+            <h4>Budget Plan</h4>
+            <div class="sub-price">Value</div>
+            <ul>
+              <li>Affordable curated meal options</li>
+              <li>Good fit for everyday healthy eating</li>
+              <li>Optional paid add-ons available</li>
+            </ul>
+            <a class="btn btn-red-outline" href="plan.html?plan=budget">View Budget Plan Menu</a>
+          </div>
+          <div class="subscription-card green-sub">
+            <h4>Basic Plan</h4>
+            <div class="sub-price">Starter</div>
+            <ul>
+              <li>Simple starter subscription format</li>
+              <li>Clean meals with manageable routine</li>
+              <li>Easy onboarding for first-time users</li>
+            </ul>
+            <a class="btn btn-green-outline" href="plan.html?plan=basic">View Basic Plan Menu</a>
+          </div>
+          <div class="subscription-card red-sub">
+            <h4>Additional (Custom)</h4>
+            <div class="sub-price">Flexible</div>
+            <ul>
+              <li>Complete customisation with rule-based options</li>
+              <li>Pick add-ons as per your preferences</li>
+              <li>Team will finalise quote and Order now payment flow</li>
+            </ul>
+            <a class="btn btn-red" href="plan.html?plan=additional">View Additional Menu</a>
+          </div>
+        </div>
+        <p style="margin-top: 14px; color: var(--muted);"><strong>Note:</strong> Subscription confirmation and payment are completed through our Order now process.</p>
+      </div>
+    </div>
+  </section>
 
-          <aside class="summary">
-            <h4 style="margin-top:0;">Estimate Summary</h4>
-            <p><span>Base plan</span> <strong id="base-price">₹0</strong></p>
-            <p><span>Add-ons</span> <strong id="addons-price">₹0</strong></p>
-            <p><span>Duration multiplier</span> <strong id="duration-multiplier">x1</strong></p>
-            <hr style="border:none; border-top:1px solid var(--border);" />
-            <p><span>Total estimate</span> <strong id="total-price">₹0</strong></p>
-            <div class="disclaimer" style="margin-top:10px;">Final payment link/wallet instruction is shared by team through WhatsApp after TMbill order creation.</div>
-            <div class="status-box" id="request-status"></div>
-          </aside>
+  <section class="how-wrap" id="how-it-works">
+    <div class="container">
+      <div class="subscription-section">
+        <h3>How It Works</h3>
+        <p>Simple 4-step journey inspired by modern subscription wellness brands.</p>
+        <div class="process-grid">
+          <article class="process-card">
+            <div class="process-step">1</div>
+            <h4>Start Here</h4>
+            <p>Tell us your goal and pick a plan: Elite, Diabetic, Budget, Basic or Additional.</p>
+          </article>
+          <article class="process-card">
+            <div class="process-step">2</div>
+            <h4>Decide</h4>
+            <p>Choose a plan page and review your day-wise sample menu before enquiring.</p>
+          </article>
+          <article class="process-card">
+            <div class="process-step">3</div>
+            <h4>Enjoy Service</h4>
+            <p>Our team finalizes your meals and shares your Order now payment flow details.</p>
+          </article>
+          <article class="process-card">
+            <div class="process-step">4</div>
+            <h4>Live Healthy</h4>
+            <p>Track your consistency weekly and renew manually as per your convenience.</p>
+          </article>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="testimonials-wrap">
+    <div class="container">
+      <div class="subscription-section">
+        <h3>What Our Customers Say</h3>
+        <p>Real feedback from users focused on clean and consistent meals.</p>
+        <div class="testimonial-grid">
+          <article class="testimonial-card">
+            <p>“I finally found a subscription I can stick to. Portions are balanced and fresh.”</p>
+            <div class="testimonial-name">— Nisha, Pune</div>
+          </article>
+          <article class="testimonial-card">
+            <p>“Diabetic-friendly options are reliable, and support on WhatsApp is super quick.”</p>
+            <div class="testimonial-name">— Arun, Trivandrum</div>
+          </article>
+          <article class="testimonial-card">
+            <p>“Great as a working professional. I use Budget plan on weekdays and add-ons when needed.”</p>
+            <div class="testimonial-name">— Farhan, Bengaluru</div>
+          </article>
         </div>
       </article>
     </div>
   </section>
 
-  <section id="how" class="section">
+  <section class="faq-wrap" id="faq">
+    <div class="container">
+      <div class="subscription-section">
+        <h3>FAQ</h3>
+        <p>Common questions about subscriptions, customizations and Order now flow.</p>
+        <div class="faq-list">
+          <details>
+            <summary>Is there a minimum subscription period?</summary>
+            <p>No strict minimum. You can choose weekly or monthly cycles and renew manually.</p>
+          </details>
+          <details>
+            <summary>Can I customize items and add-ons?</summary>
+            <p>Yes. Use Additional plan for full customization and discuss rule-based preferences on WhatsApp.</p>
+          </details>
+          <details>
+            <summary>How is payment processed?</summary>
+            <p>All payments are processed through the official Order now payment flow shared by our team.</p>
+          </details>
+          <details>
+            <summary>Can I pause or skip?</summary>
+            <p>Yes, our team can help you adjust your schedule and meal sequence manually.</p>
+          </details>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="diet-wrap">
+    <div class="container">
+      <div class="subscription-section">
+        <h3>Get Your Free Personalized Diet Chart</h3>
+        <p>Share your details and we’ll send a starter diet chart along with plan recommendations.</p>
+        <form class="diet-form" id="diet-form">
+          <input class="btn-green-outline" type="text" id="diet-name" placeholder="Name" required />
+          <input class="btn-green-outline" type="tel" id="diet-phone" placeholder="WhatsApp Number" required />
+          <input class="btn-green-outline" type="email" id="diet-email" placeholder="Email" required />
+          <button type="submit" class="btn btn-red">Get My Free Diet Chart</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-wrap">
     <div class="container">
       <h2 class="section-title">How it works</h2>
       <p class="section-sub">Two separate journeys for instant orders and subscriptions.</p>
@@ -342,20 +730,26 @@
     </div>
   </section>
 
-  <footer>
-    <div class="container">
-      <h3 style="margin-top:0;">Cherish Every Bite</h3>
-      <p>Phone / WhatsApp: +91 80501 13165</p>
-      <p>Email: cherisheverybiteforever@gmail.com</p>
-      <p>FSSAI: 21326131000079</p>
+  <footer id="contact">
+    <div class="container footer-grid">
+      <div class="footer-card">
+        <h3>Cherish Every Bite</h3>
+        <p>Healthy curated meals with a premium, clean and modern presentation.</p>
+      </div>
+      <div class="footer-card">
+        <h3>Contact</h3>
+        <p><strong>Phone / WhatsApp:</strong> +91 6282023762</p>
+        <p><strong>Email:</strong> cherisheverybiteforever@gmail.com</p>
+        <p><strong>FSSAI:</strong> 21326131000079</p>
+      </div>
     </div>
   </footer>
 
   <a class="btn btn-green floating-order" href="https://order.cherisheverybite.com/outlet/56752198194843" target="_blank" rel="noopener">Order Now</a>
 
   <script>
-    const TM_BILL_ORDER_URL = "https://order.cherisheverybite.com/outlet/56752198194843";
-    const WHATSAPP_NUMBER = "918050113165";
+    const WHATSAPP_NUMBER = "916282023762";
+    const GOOGLE_SHEET_CSV_URL = "";
 
     const plans = [
       {
@@ -455,26 +849,52 @@
       const rows = [];
       for (let i = 1; i < lines.length; i++) {
         const cols = parseCSVLine(lines[i]);
-        const status = (idx.status !== -1 ? (cols[idx.status] || "").trim().toLowerCase() : "live");
-        if (status !== "live") continue;
-        rows.push({
-          no: idx.no !== -1 ? Number(cols[idx.no] || "") : i,
-          category: (cols[idx.category] || "").trim(),
-          name: (cols[idx.name] || "").trim(),
-          price: (cols[idx.price] || "").trim()
-        });
+        const no = Number(cols[noIndex] || "");
+        const category = (cols[categoryIndex] || "").trim();
+        const name = (cols[nameIndex] || "").trim();
+        const rawPrice = (cols[priceIndex] || "").trim();
+        const price = rawPrice;
+        const rawStatus = statusIndex !== -1 ? (cols[statusIndex] || "").trim().toLowerCase() : "";
+        const rawActive = activeIndex !== -1 ? (cols[activeIndex] || "").trim().toLowerCase() : "";
+
+        let status = rawStatus || "live";
+        if (!rawStatus && activeIndex !== -1) {
+          status = ["yes", "true", "1", "live"].includes(rawActive) ? "live" : "hidden";
+        }
+
+        if (!category || !name || Number.isNaN(no) || status !== "live") {
+          continue;
+        }
+
+        if (!grouped.has(category)) {
+          grouped.set(category, []);
+        }
+
+        grouped.get(category).push({ no, name, price });
       }
       return rows;
     }
 
-    async function loadMenuRows() {
-      try {
-        const response = await fetch("prices.csv", { cache: "no-store" });
-        if (!response.ok) throw new Error("prices.csv missing");
-        const text = await response.text();
-        return parseCSV(text);
-      } catch (error) {
-        return [];
+    function setMenuSourceLabel(text) {
+      const sourceEl = document.getElementById("menu-source");
+      if (sourceEl) {
+        sourceEl.textContent = text;
+      }
+    }
+
+    async function tryLoadCSV(sourceUrl) {
+      const response = await fetch(sourceUrl, { cache: "no-store" });
+      if (!response.ok) {
+        throw new Error(`${sourceUrl} not found`);
+      }
+      return response.text();
+    }
+
+    async function loadMenuData() {
+      const sources = [];
+
+      if (GOOGLE_SHEET_CSV_URL.trim()) {
+        sources.push({ url: GOOGLE_SHEET_CSV_URL.trim(), label: "Menu source: Google Sheets" });
       }
 
       sources.push({ url: "prices.csv", label: "Menu source: Local prices.csv (fallback)" });
@@ -496,21 +916,22 @@
       return [];
     }
 
-    function renderMenuFilters(rows) {
-      const select = document.getElementById("menu-category");
-      const categories = Array.from(new Set(rows.map(r => r.category))).sort((a, b) => a.localeCompare(b));
-      select.innerHTML = ["<option value=''>All categories</option>", ...categories.map(c => `<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`)].join("");
-    }
-
-    function renderMenu(rows) {
-      const query = document.getElementById("menu-search").value.trim().toLowerCase();
-      const category = document.getElementById("menu-category").value.trim().toLowerCase();
-      const grid = document.getElementById("menu-grid");
-
-      const filtered = rows.filter(item => {
-        const hitName = item.name.toLowerCase().includes(query);
-        const hitCategory = !category || item.category.toLowerCase() === category;
-        return hitName && hitCategory;
+    function attachDietChartForm() {
+      const form = document.getElementById("diet-form");
+      if (!form) return;
+      form.addEventListener("submit", event => {
+        event.preventDefault();
+        const name = document.getElementById("diet-name").value.trim();
+        const phone = document.getElementById("diet-phone").value.trim();
+        const email = document.getElementById("diet-email").value.trim();
+        const message = [
+          "Hi Cherish Every Bite, I would like my free personalized diet chart.",
+          `Name: ${name}`,
+          `WhatsApp: ${phone}`,
+          `Email: ${email}`
+        ].join("\\n");
+        const link = buildWhatsappLink(message);
+        window.open(link, "_blank", "noopener");
       });
 
       if (!filtered.length) {
@@ -696,9 +1117,8 @@
     }
 
     (async function init() {
-      await initMenu();
-      renderPlans();
-      initRequestForm();
+      renderMenu(await loadMenuData());
+      attachDietChartForm();
     })();
   </script>
 </body>
