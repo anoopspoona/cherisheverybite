@@ -1,13 +1,27 @@
 # cherisheverybite
-Cloud kitchen
+Cloud kitchen static website for curated healthy meals.
 
-## Google Sheets menu connection
+## Quickstart
 
-Use `google_sheet_setup.md` for the starter sheet template and connection steps.
+```bash
+python -m http.server 8000
+```
 
-## Root CSV data files
+Open:
+- `http://localhost:8000/index.html`
+- `http://localhost:8000/plan.html?plan=elite`
 
-The repository now includes tab-equivalent CSV files in the root:
+## Project structure
+
+- `index.html` — landing page and dynamic menu render.
+- `plan.html` — plan detail page with 7-day meal preview.
+- `assets/css/main.css` — landing page styles.
+- `assets/css/plan.css` — plan page styles.
+- `assets/js/common.js` — shared helpers.
+- `assets/js/menu.js` — menu loading/rendering and lead form behavior.
+- `assets/js/plan.js` — plan meal preview and package behavior.
+
+## Data files (root)
 
 - `meals.csv`
 - `plans.csv`
@@ -18,20 +32,13 @@ The repository now includes tab-equivalent CSV files in the root:
 - `renewals.csv`
 - `prices.csv`
 
-## Plan detail page
+## Data source behavior
 
-- `plan.html` renders a 7-day preview menu for each plan (`elite`, `diabetic`, `budget`, `basic`, `additional`).
-- Subscription cards in `index.html` now link to `plan.html?plan=<plan_key>`.
-- Each plan page supports package selection:
-  - One Meal (`Lunch/Dinner`)
-  - Two Meals (`Lunch + Dinner`)
+Homepage menu attempts Google Sheets CSV first (if configured), then falls back to local `prices.csv`.
 
-## Landing page sections
+To configure Google Sheets source, see `google_sheet_setup.md`.
 
-`index.html` includes:
-- menu from CSV (`prices.csv` / optional Google Sheets URL),
-- plan cards linking to per-plan pages,
-- How It Works (4 steps),
-- testimonials,
-- FAQ,
-- free diet chart lead form (WhatsApp handoff).
+## Docs
+
+- `docs/data-schema.md`
+- `docs/content-ops.md`
