@@ -92,6 +92,18 @@ body {
   grid-template-columns: 1.2fr .8fr;
 }
 .hero h2 { margin-top: 0; font-size: clamp(1.6rem, 3vw, 2rem); color: var(--red-dark); }
+
+.hero-main-panel {
+  border-radius: 16px;
+  padding: var(--space-5);
+  background:
+    linear-gradient(rgba(31, 109, 71, 0.72), rgba(21, 77, 51, 0.72)),
+    url("../../cherish-logo.jpg") center/cover no-repeat;
+  color: #fff;
+}
+.hero-main-panel p { color: rgba(255,255,255,.92); }
+.hero-main-panel h2 { color: #fff; }
+
 .hero p { color: var(--muted); }
 .hero-note h3 { margin-top: 0; color: var(--green); }
 
