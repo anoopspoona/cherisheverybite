@@ -4,20 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Cherish Every Bite | Curated Healthy Meals</title>
-  <meta name="description" content="Cherish Every Bite cloud kitchen — healthy curated meals, soups, salads, smoothies, bites, desserts and subscription meal options." />
-  <link rel="icon" type="image/jpeg" href="cherish-logo.jpg" />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preconnect" href="https://images.unsplash.com" crossorigin>
-  <link rel="preload" as="image" href="https://images.unsplash.com/photo-1771762211132-2f0598b44dbb?auto=format&fit=crop&fm=webp&q=70&w=1920" imagesrcset="https://images.unsplash.com/photo-1771762211132-2f0598b44dbb?auto=format&fit=crop&fm=webp&q=70&w=1200 1200w, https://images.unsplash.com/photo-1771762211132-2f0598b44dbb?auto=format&fit=crop&fm=webp&q=70&w=1920 1920w" imagesizes="100vw">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/main.css">
+  <link rel="stylesheet" href="assets/css/main.css" />
 </head>
 <body>
   <header class="site-header">
     <div class="container nav">
       <div class="brand">
-        <img src="cherish-logo.jpg" alt="Cherish Every Bite logo" width="64" height="64" loading="eager" />
+        <img src="cherish-logo.jpg" alt="Cherish Every Bite logo" style="height:52px;border-radius:12px;" onerror="this.style.display='none'">
         <div>
           <h1>Cherish Every Bite</h1>
           <p>Healthy curated meals</p>
@@ -30,89 +23,57 @@
     </div>
   </header>
 
-  <main>
-    <section class="hero section ingredients-theme">
-      <div class="container hero-grid">
-        <div class="hero-main-panel">
-          <h2>Nutritious meals made simple.</h2>
-          <p>Choose from soups, salads, beverages, bites and desserts — order instantly or explore subscription plans.</p>
-          <div class="hero-actions">
-            <a class="btn btn-primary" href="#subscriptions">View Plans</a>
-            <a class="btn btn-soft" href="#menu">Browse Menu</a>
-          </div>
-        </div>
-        <div class="hero-note-card">
-          <h3>What we offer</h3>
-          <ul>
-            <li>Daily healthy meal options</li>
-            <li>Diabetic-friendly subscriptions</li>
-            <li>Quick WhatsApp support</li>
-          </ul>
+  <section class="section ingredients-theme hero">
+    <div class="container hero-grid">
+      <div class="hero-main-panel">
+        <h2>Nutritious meals made simple.</h2>
+        <p>Explore your complete Cherish menu and subscription plans from CSV files, so updating dishes and prices no longer requires editing HTML.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="#plans">View Plans</a>
+          <a class="btn btn-soft" href="#menu">Browse Menu</a>
         </div>
       </div>
-    </section>
-
-    <section class="section" id="menu">
-      <div class="container">
-        <div class="section-top">
-          <div>
-            <h2>Our Menu</h2>
-            <p>Healthy curated meals, drinks and desserts from Cherish Every Bite.</p>
-            <p id="menu-source" class="muted"></p>
-          </div>
-        </div>
-        <div class="menu-grid" id="menu-grid"></div>
+      <div class="hero-note-card">
+        <h3>What we offer</h3>
+        <p class="muted">Daily healthy meal options, curated subscription plans, and premium add-ons tailored to your routine.</p>
+        <p class="muted">CSV-powered website setup for faster updates.</p>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <section class="section" id="subscriptions">
-      <div class="container card">
+  <section id="menu" class="section">
+    <div class="container">
+      <div class="section-top">
+        <h2>Our Menu</h2>
+        <p>Healthy curated meals, drinks and desserts from Cherish Every Bite.</p>
+      </div>
+      <div id="menu-grid" class="menu-grid"></div>
+    </div>
+  </section>
+
+  <section id="plans" class="section">
+    <div class="container">
+      <div class="section-top">
         <h2>Subscription Plans</h2>
-        <p>Select a plan and choose package options on the plan page.</p>
-        <div class="plan-grid">
-          <article class="plan-card">
-            <h3>Elite Plan</h3>
-            <p>Premium</p>
-            <a class="btn btn-primary" href="plan.html?plan=elite">View Elite Plan Menu</a>
-          </article>
-          <article class="plan-card">
-            <h3>Diabetic Plan</h3>
-            <p>Controlled</p>
-            <a class="btn btn-primary" href="plan.html?plan=diabetic">View Diabetic Plan Menu</a>
-          </article>
-          <article class="plan-card">
-            <h3>Budget Plan</h3>
-            <p>Value</p>
-            <a class="btn btn-soft" href="plan.html?plan=budget">View Budget Plan Menu</a>
-          </article>
-          <article class="plan-card">
-            <h3>Basic Plan</h3>
-            <p>Starter</p>
-            <a class="btn btn-soft" href="plan.html?plan=basic">View Basic Plan Menu</a>
-          </article>
-          <article class="plan-card">
-            <h3>Additional (Custom)</h3>
-            <p>Flexible</p>
-            <a class="btn btn-primary" href="plan.html?plan=additional">View Additional Menu</a>
-          </article>
-        </div>
+        <p>Each plan now reads from the uploaded Excel-derived CSV files.</p>
       </div>
-    </section>
+      <div id="plan-grid" class="plan-grid"></div>
+    </div>
+  </section>
 
-    <section class="section">
-      <div class="container card">
-        <h2>Get Your Free Personalized Diet Chart</h2>
-        <p>Share your details and we’ll send a starter diet chart.</p>
-        <form class="diet-form" id="diet-form" novalidate>
-          <input type="text" id="diet-name" placeholder="Name" required />
-          <input type="tel" id="diet-phone" placeholder="WhatsApp Number" required />
-          <input type="email" id="diet-email" placeholder="Email" required />
-          <button type="submit" class="btn btn-primary">Get My Free Diet Chart</button>
-          <p id="diet-form-feedback" class="muted" aria-live="polite"></p>
-        </form>
-      </div>
-    </section>
-  </main>
+  <section class="section">
+    <div class="container card">
+      <h2>Get Your Free Personalized Diet Chart</h2>
+      <p class="muted">Share your details and we’ll send a starter diet chart on WhatsApp.</p>
+      <form id="diet-form" class="diet-form">
+        <input id="diet-name" type="text" placeholder="Your name" required />
+        <input id="diet-phone" type="tel" placeholder="WhatsApp number" required />
+        <input id="diet-email" type="email" placeholder="Email address" required />
+        <button class="btn btn-primary" type="submit">Get My Free Diet Chart</button>
+      </form>
+      <p id="diet-form-feedback" class="muted"></p>
+    </div>
+  </section>
 
   <footer class="site-footer">
     <div class="container footer-grid">
@@ -122,16 +83,16 @@
       </div>
       <div>
         <h3>Contact</h3>
-        <p><strong>Phone / WhatsApp:</strong> +91 6282023762</p>
-        <p><strong>Email:</strong> cherisheverybiteforever@gmail.com</p>
-        <p><strong>FSSAI:</strong> 21326131000079</p>
+        <p>Phone / WhatsApp: +91 6282023762</p>
+        <p>Email: cherisheverybiteforever@gmail.com</p>
+        <p>FSSAI: 21326131000079</p>
       </div>
     </div>
   </footer>
 
   <a class="btn btn-primary floating-order" href="https://order.cherisheverybite.com/outlet/56752198194843" target="_blank" rel="noopener">Order Now</a>
 
-  <script src="assets/js/common.js" defer></script>
-  <script src="assets/js/menu.js" defer></script>
+  <script src="assets/js/common.js"></script>
+  <script src="assets/js/menu.js"></script>
 </body>
 </html>
