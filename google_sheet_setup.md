@@ -37,7 +37,7 @@ https://docs.google.com/spreadsheets/d/<SHEET_ID>/gviz/tq?tqx=out:csv&sheet=pric
 
 ## 3) Connect in code
 
-Open `index.html` and set:
+Open `assets/js/menu.js` and set:
 
 ```js
 const GOOGLE_SHEET_CSV_URL = "<PASTE_PUBLISHED_CSV_URL_HERE>";
@@ -53,7 +53,7 @@ Run local server:
 python -m http.server 8000
 ```
 
-Open `http://localhost:8000` and check the menu source text under "Our Menu":
+Open `http://localhost:8000/index.html` and check the menu source text under "Our Menu":
 - `Menu source: Google Sheets` (connected), or
 - `Menu source: Local prices.csv (fallback)`.
 
