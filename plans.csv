@@ -1,6 +1,10 @@
-plan_id,plan_name,duration_days,base_price,meals_per_day,status
-P_ELITE,Elite,30,14999,3,live
-P_DIABETIC,Diabetic,30,13999,3,live
-P_BUDGET,Budget,30,9999,2,live
-P_BASIC,Basic,30,7999,2,live
-P_ADDITIONAL,Additional,30,0,0,live
+Plan_Key,Plan_Name,Variant_Key,Variant_Name,Duration_Days,Meals_Per_Day,Status,Description
+elite,Elite Plan,veg,Veg,24,3-4,live,"Premium weekly rotation with lunch, snack, drink and dinner options."
+elite,Elite Plan,nonveg,Non-Veg,24,3-4,live,Premium weekly rotation with higher-protein non-veg selections.
+salad,Salad Plan,veg,Veg,24,2,live,Light lunch and dinner salad rotation.
+salad,Salad Plan,nonveg,Non-Veg,24,2,live,Protein-forward salad rotation for lunch and dinner.
+weightloss,Weight Loss Plan,veg,Veg,24,3,live,"Calorie-conscious lunch, drink and dinner combinations."
+weightloss,Weight Loss Plan,nonveg,Non-Veg,24,3,live,Calorie-conscious non-veg meal combinations.
+basic,Basic Plan,veg,Veg,24,2,live,Simple lunch and dinner combinations for everyday healthy eating.
+basic,Basic Plan,nonveg,Non-Veg,24,2,live,Simple non-veg lunch and dinner combinations.
+customised,Customised Plan,custom,Custom,0,Flexible,live,Build your own combination from curated categories.

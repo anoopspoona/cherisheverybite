@@ -4,47 +4,43 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Subscription Plan Menu | Cherish Every Bite</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="assets/css/plan.css">
-
+  <link rel="stylesheet" href="assets/css/plan.css" />
 </head>
 <body>
   <header>
     <div class="container nav">
-      <a class="btn btn-soft" href="index.html#subscriptions">← Back to Plans</a>
+      <a class="btn btn-soft" href="index.html#plans">← Back to Plans</a>
       <a class="btn btn-red" href="https://order.cherisheverybite.com/outlet/56752198194843" target="_blank" rel="noopener">Order À La Carte</a>
     </div>
   </header>
 
-  <section class="hero">
-    <div class="container">
-      <article class="hero-card">
-        <h1 id="plan-title">Plan Menu</h1>
-        <p class="muted" id="plan-desc">Daily preview for selected subscription plan.</p>
-        <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;">
-          <a class="btn btn-green" id="enquire-btn" target="_blank" rel="noopener" href="#">Enquire this Plan on WhatsApp</a>
-          <a class="btn btn-soft" href="index.html#menu">View À La Carte Menu</a>
-        </div>
-        <div class="package-picker">
-          <label for="meal-package">Meal Package</label>
-          <select id="meal-package">
-            <option value="lunch">Lunch</option>
-            <option value="dinner">Dinner</option>
-            <option value="two_meal" selected>Two meal (Lunch & Dinner)</option>
-          </select>
-        </div>
-        <div class="note">This is a sample per-day menu preview. Final order and payment are handled through our Order now process by our team.</div>
-      </article>
+  <main class="container hero">
+    <section class="hero-card">
+      <h1 id="plan-title">Plan Menu</h1>
+      <p id="plan-desc" class="muted">Daily preview for the selected subscription plan.</p>
+      <p id="plan-meta" class="legend"></p>
 
-      <div class="legend" id="plan-meta"></div>
-      <div class="grid" id="days-grid"></div>
-    </div>
-  </section>
+      <div id="variant-wrap" class="package-picker" style="display:none;">
+        <label for="variant-select">Choose variant</label>
+        <select id="variant-select"></select>
+      </div>
 
-    <script src="assets/js/common.js"></script>
+      <p class="legend">Selected variant: <strong id="selected-variant">—</strong></p>
+
+      <div class="note">
+        This page is now connected to your uploaded plan spreadsheets through <code>plans.csv</code>, <code>plan_meals.csv</code>, and <code>customization_options.csv</code>.
+      </div>
+
+      <p style="margin-top:16px;">
+        <a id="enquire-btn" class="btn btn-green" href="#" target="_blank" rel="noopener">Enquire this Plan on WhatsApp</a>
+        <a class="btn btn-soft" href="index.html#menu">View À La Carte Menu</a>
+      </p>
+    </section>
+
+    <section id="days-grid" class="grid" aria-live="polite"></section>
+  </main>
+
+  <script src="assets/js/common.js"></script>
   <script src="assets/js/plan.js"></script>
-
 </body>
 </html>

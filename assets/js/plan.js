@@ -1,154 +1,156 @@
 const WHATSAPP_NUMBER = "916282023762";
 
-const planConfigs = {
-  elite: {
-    label: "Elite Plan",
-    description: "Premium variety available in lunch, dinner, or two-meal package.",
-    diabeticOnly: false
-  },
-  diabetic: {
-    label: "Diabetic Plan",
-    description: "Diabetic-friendly selection with lunch, dinner, or two-meal package.",
-    diabeticOnly: true
-  },
-  budget: {
-    label: "Budget Plan",
-    description: "Value-focused package with lunch, dinner, or two meals per day.",
-    diabeticOnly: false
-  },
-  basic: {
-    label: "Basic Plan",
-    description: "Starter plan with lunch, dinner, or two-meal options.",
-    diabeticOnly: false
-  },
-  additional: {
-    label: "Additional (Custom)",
-    description: "Customizable plan preview; final menu is rule-based by request.",
-    diabeticOnly: false
-  }
-};
-
-function parseMealsCSV(text) {
-  const lines = text.trim().split(/\r?\n/).filter(Boolean);
-  if (lines.length < 2) return [];
-
-  const headers = parseCSVLine(lines[0]).map(h => h.toLowerCase());
-  const idx = {
-    name: headers.indexOf("name"),
-    category: headers.indexOf("category"),
-    status: headers.indexOf("status"),
-    diabetic: headers.indexOf("diabetic_friendly")
+function getPlanLabel(planKey) {
+  const labels = {
+    elite: "Elite Plan",
+    salad: "Salad Plan",
+    weightloss: "Weight Loss Plan",
+    basic: "Basic Plan",
+    customised: "Customised Plan"
   };
-
-  if (idx.name === -1 || idx.category === -1 || idx.status === -1) return [];
-
-  const rows = [];
-  for (let i = 1; i < lines.length; i++) {
-    const cols = parseCSVLine(lines[i]);
-    if ((cols[idx.status] || "").toLowerCase() !== "live") continue;
-    rows.push({
-      name: cols[idx.name] || "",
-      category: cols[idx.category] || "",
-      diabeticFriendly: idx.diabetic !== -1 ? (cols[idx.diabetic] || "").toLowerCase() === "true" : false
-    });
-  }
-  return rows;
+  return labels[planKey] || "Plan";
 }
 
-async function loadMeals() {
-  try {
-    const response = await fetch("meals.csv", { cache: "no-store" });
-    if (response.ok) return parseMealsCSV(await response.text());
-  } catch (error) {
-    // fallback below
-  }
-
-  const fallback = await fetch("prices.csv", { cache: "no-store" });
-  const text = await fallback.text();
-  const lines = text.trim().split(/\r?\n/).filter(Boolean);
-  const headers = parseCSVLine(lines[0]).map(h => h.toLowerCase());
-  const idxName = headers.indexOf("name");
-  const idxCategory = headers.indexOf("category");
-  const idxStatus = headers.indexOf("status");
-
+function uniqueVariants(rows) {
   const out = [];
-  for (let i = 1; i < lines.length; i++) {
-    const cols = parseCSVLine(lines[i]);
-    if ((cols[idxStatus] || "").toLowerCase() !== "live") continue;
-    out.push({ name: cols[idxName] || "", category: cols[idxCategory] || "", diabeticFriendly: false });
+  const seen = new Set();
+  for (const row of rows) {
+    const key = `${row.Variant_Key}`;
+    if (!seen.has(key)) {
+      seen.add(key);
+      out.push({ key: row.Variant_Key, label: row.Variant_Name });
+    }
   }
   return out;
 }
 
-function pickMealsForDay(pool, count, dayIndex) {
-  if (!pool.length) return [];
-  return Array.from({ length: count }, (_, i) => pool[(dayIndex * count + i) % pool.length]);
+function sortWeekValue(week) {
+  const match = String(week || "").match(/(\d+)/);
+  return match ? Number(match[1]) : 999;
 }
 
-function packageConfig(packageValue) {
-  if (packageValue === "lunch") return { slots: ["Lunch"], count: 1, label: "Lunch" };
-  if (packageValue === "dinner") return { slots: ["Dinner"], count: 1, label: "Dinner" };
-  return { slots: ["Lunch", "Dinner"], count: 2, label: "Two meal (Lunch & Dinner)" };
+function renderVariantOptions(rows) {
+  const select = document.getElementById("variant-select");
+  if (!select) return;
+  const variants = uniqueVariants(rows);
+  select.innerHTML = variants.map(v => `<option value="${escapeHtml(v.key)}">${escapeHtml(v.label)}</option>`).join("");
+  document.getElementById("variant-wrap").style.display = variants.length > 1 ? "grid" : "none";
 }
 
-function renderPlanPreview(plan, packageValue, meals) {
-  const pool = plan.diabeticOnly ? meals.filter(m => m.diabeticFriendly) : meals;
-  const usablePool = pool.length ? pool : meals;
-  const cfg = packageConfig(packageValue);
+function renderPlanMeta(planRows) {
+  if (!planRows.length) return;
+  const first = planRows[0];
+  document.getElementById("plan-title").textContent = first.Plan_Name;
+  document.getElementById("plan-desc").textContent = first.Description || "";
+  document.getElementById("plan-meta").textContent = `Duration: ${first.Duration_Days} days • Meals/day: ${first.Meals_Per_Day}`;
+}
 
+function renderCustomOptions(options) {
   const grid = document.getElementById("days-grid");
-  const dayCards = [];
-
-  for (let day = 1; day <= 7; day++) {
-    const picks = pickMealsForDay(usablePool, cfg.count, day - 1);
-    const rows = picks.map((meal, idx) => `
-      <div class="slot">
-        <strong>${cfg.slots[idx]}</strong>
-        <span>${escapeHtml(meal.name)}</span>
-        <span class="muted">${escapeHtml(meal.category)}</span>
-      </div>
-    `).join("");
-
-    dayCards.push(`
-      <article class="day-card">
-        <h3>Day ${day}</h3>
-        ${rows}
-      </article>
-    `);
+  if (!grid) return;
+  const grouped = new Map();
+  for (const row of options) {
+    const key = row.Category || "Options";
+    if (!grouped.has(key)) grouped.set(key, []);
+    grouped.get(key).push(row.Option_Name);
   }
 
-  grid.innerHTML = dayCards.join("");
+  grid.innerHTML = Array.from(grouped.entries()).map(([category, items]) => `
+    <article class="day-card">
+      <h3>${escapeHtml(category)}</h3>
+      <div class="slot"><span>${items.map(item => escapeHtml(item)).join("<br>")}</span></div>
+    </article>
+  `).join("");
 }
 
-function buildPlanWhatsappLink(planLabel, packageLabel) {
+function renderPlanDays(rows) {
+  const grid = document.getElementById("days-grid");
+  if (!grid) return;
+
+  const grouped = new Map();
+  for (const row of rows) {
+    const key = `${row.Week}__${row.Day}`;
+    if (!grouped.has(key)) grouped.set(key, []);
+    grouped.get(key).push(row);
+  }
+
+  const cards = Array.from(grouped.entries())
+    .sort((a, b) => {
+      const [weekA, dayA] = a[0].split("__");
+      const [weekB, dayB] = b[0].split("__");
+      const wDiff = sortWeekValue(weekA) - sortWeekValue(weekB);
+      if (wDiff) return wDiff;
+      const dayOrderA = Number((a[1][0] || {}).Day_Order || 99);
+      const dayOrderB = Number((b[1][0] || {}).Day_Order || 99);
+      return dayOrderA - dayOrderB;
+    })
+    .map(([key, items]) => {
+      const [week, day] = key.split("__");
+      const byMeal = new Map();
+      for (const item of items) {
+        const meal = item.Meal_Type || "Meal";
+        if (!byMeal.has(meal)) byMeal.set(meal, []);
+        byMeal.get(meal).push(item);
+      }
+      const mealHtml = Array.from(byMeal.entries()).map(([meal, entries]) => `
+        <div class="slot">
+          <strong>${escapeHtml(meal)}</strong>
+          <span>${entries.map(entry => escapeHtml(entry.Item_Name)).join(" • ")}</span>
+        </div>
+      `).join("");
+
+      return `
+        <article class="day-card">
+          <h3>${escapeHtml(week)} • ${escapeHtml(day)}</h3>
+          ${mealHtml}
+        </article>
+      `;
+    });
+
+  grid.innerHTML = cards.join("");
+}
+
+function updateWhatsapp(planName, variantName) {
+  const link = document.getElementById("enquire-btn");
+  if (!link) return;
   const text = [
-    `Hi Cherish Every Bite, I am interested in the ${planLabel} subscription plan.`,
-    `Preferred package: ${packageLabel}.`,
-    "Please share detailed per-day menu, add-on options, pricing and Order now payment process."
-  ].join(" ");
-
-  return buildWhatsappLink(WHATSAPP_NUMBER, text);
+    `Hi Cherish Every Bite, I am interested in the ${planName}.`,
+    variantName ? `Preferred variant: ${variantName}.` : "",
+    "Please share pricing, add-ons and subscription details."
+  ].filter(Boolean).join(" ");
+  link.href = buildWhatsappLink(WHATSAPP_NUMBER, text);
 }
 
-async function init() {
-  const planKey = new URLSearchParams(window.location.search).get("plan") || "elite";
-  const plan = planConfigs[planKey] || planConfigs.elite;
-  const packageSelect = document.getElementById("meal-package");
-  const meals = await loadMeals();
+(async function init() {
+  const params = new URLSearchParams(window.location.search);
+  const planKey = params.get("plan") || "elite";
 
-  document.getElementById("plan-title").textContent = `${plan.label} – 7 Day Menu Preview`;
-  document.getElementById("plan-desc").textContent = plan.description;
+  const [plans, meals, options] = await Promise.all([
+    fetchCSV("plans.csv"),
+    fetchCSV("plan_meals.csv"),
+    fetchCSV("customization_options.csv").catch(() => [])
+  ]);
 
-  function refreshByPackage() {
-    const selected = packageSelect.value || "two_meal";
-    const cfg = packageConfig(selected);
-    document.getElementById("plan-meta").textContent = `Package: ${cfg.label} • Source: meals.csv (fallback: prices.csv)`;
-    document.getElementById("enquire-btn").href = buildPlanWhatsappLink(plan.label, cfg.label);
-    renderPlanPreview(plan, selected, meals);
+  const planRows = plans.filter(row => row.Plan_Key === planKey && String(row.Status || "").toLowerCase() === "live");
+  renderPlanMeta(planRows);
+  renderVariantOptions(planRows);
+
+  const variantSelect = document.getElementById("variant-select");
+  function refresh() {
+    const variantKey = variantSelect?.value || (planRows[0] ? planRows[0].Variant_Key : "");
+    const selectedPlan = planRows.find(row => row.Variant_Key === variantKey) || planRows[0];
+    document.getElementById("selected-variant").textContent = selectedPlan ? selectedPlan.Variant_Name : "";
+    updateWhatsapp(selectedPlan?.Plan_Name || getPlanLabel(planKey), selectedPlan?.Variant_Name || "");
+
+    if (planKey === "customised") {
+      renderCustomOptions(options);
+      return;
+    }
+
+    const filteredMeals = meals.filter(row => row.Plan_Key === planKey && row.Variant_Key === variantKey);
+    renderPlanDays(filteredMeals);
   }
 
-  packageSelect.addEventListener("change", refreshByPackage);
-  refreshByPackage();
-}
-
-init();
+  if (variantSelect) variantSelect.addEventListener("change", refresh);
+  refresh();
+})();
