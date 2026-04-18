@@ -17,14 +17,15 @@
       --green: #1f6d47;
       --green-dark: #154d33;
       --green-soft: #f2fbf5;
+      --white: #ffffff;
       --text: #1f2937;
       --muted: #667085;
-      --border: rgba(0,0,0,0.08);
-      --shadow: 0 16px 40px rgba(0, 0, 0, 0.10);
-      --radius: 20px;
+      --shadow: 0 18px 48px rgba(0, 0, 0, 0.10);
+      --radius: 24px;
     }
 
     * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
     body {
       margin: 0;
       font-family: 'Inter', Arial, Helvetica, sans-serif;
@@ -60,78 +61,59 @@
       object-fit: contain;
       animation: splashZoom 0.8s ease;
     }
-    @keyframes splashZoom {
-      from { transform: scale(0.82); opacity: 0; }
-      to { transform: scale(1); opacity: 1; }
+@@ -123,50 +127,51 @@
+      font-style: italic;
     }
-    @keyframes splashFade {
-      to { opacity: 0; visibility: hidden; }
-    }
-    .container { width: min(1140px, calc(100% - 28px)); margin: 0 auto; }
-
-    header {
-      position: sticky;
-      top: 0;
-      z-index: 60;
-      background: rgba(255,255,255,0.95);
-      backdrop-filter: blur(10px);
-      border-bottom: 1px solid var(--border);
-    }
-    .nav {
-      min-height: 78px;
+    .nav-actions {
       display: flex;
-      gap: 12px;
-      justify-content: space-between;
-      align-items: center;
+      gap: 10px;
       flex-wrap: wrap;
-      padding: 10px 0;
     }
-    .brand { display: flex; align-items: center; gap: 12px; }
-    .brand img { width: 54px; height: 54px; object-fit: contain; border-radius: 14px; background: #fff; border: 1px solid var(--border); }
-    .brand h1 { margin: 0; font-size: 1.2rem; color: var(--red); }
-    .brand p { margin: 0; color: var(--green); font-size: 0.88rem; }
 
-    .nav-links { display: flex; gap: 8px; flex-wrap: wrap; }
+    /* Buttons */
     .btn {
-      text-decoration: none;
-      border-radius: 999px;
-      padding: 10px 14px;
-      font-weight: 700;
       display: inline-flex;
       align-items: center;
       justify-content: center;
+      gap: 8px;
+      padding: 12px 18px;
+      border-radius: 999px;
+      text-decoration: none;
+      font-weight: 700;
       border: 1px solid transparent;
-      cursor: pointer;
+      transition: transform 0.18s ease, box-shadow 0.18s ease;
+    }
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 24px rgba(0,0,0,0.10);
     }
     .btn:active { transform: translateY(0); }
     .btn-red { background: var(--red); color: #fff; }
     .btn-green { background: var(--green); color: #fff; }
-    .btn-soft-red { background: var(--red-soft); color: var(--red-dark); border-color: rgba(200,32,39,.15); }
-    .btn-soft-green { background: var(--green-soft); color: var(--green-dark); border-color: rgba(31,109,71,.14); }
+    .btn-red-outline { background: var(--red-soft); color: var(--red-dark); border-color: rgba(200,32,39,0.10); }
+    .btn-green-outline { background: var(--green-soft); color: var(--green-dark); border-color: rgba(31,109,71,0.10); }
 
-    .hero { padding: 36px 0 16px; }
-    .hero-grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 18px; }
-    .card {
-      background: #fff;
-      border: 1px solid var(--border);
+    /* Hero */
+    .hero { padding: 42px 0 22px; }
+    .hero-shell {
+      display: grid;
+      grid-template-columns: 1.08fr 0.92fr;
+      gap: 24px;
+      align-items: stretch;
+    }
+    .hero-main,
+    .hero-side,
+    .menu-section,
+    .subscription-section,
+    .cta-box,
+    .footer-card {
       border-radius: var(--radius);
       box-shadow: var(--shadow);
+      border: 1px solid rgba(0,0,0,0.05);
+      background: #fff;
     }
     .hero-main {
-      padding: 32px;
-      color: #fff;
-      background:
-        linear-gradient(140deg, rgba(31,109,71,.89), rgba(31,109,71,.67)),
-        url('https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=1400&q=80') center/cover;
-    }
-    .hero-main h2 { margin: 10px 0 10px; font-size: clamp(1.9rem, 4vw, 2.8rem); line-height: 1.05; }
-    .hero-main p { max-width: 620px; }
-    .hero-side { padding: 18px; display: grid; gap: 12px; }
-    .note { padding: 14px; border-radius: 14px; background: #fff; border: 1px solid var(--border); }
-    .note h3 { margin: 0 0 4px; }
-
-    /* Menu */
-    .section { padding: 10px 0 26px; }
+@@ -268,50 +273,55 @@
     .section-top {
       display: flex;
       justify-content: space-between;
@@ -187,53 +169,7 @@
       border-radius: 999px;
     }
     .item-list {
-      list-style: none;
-      margin: 0;
-      padding: 0;
-    }
-    .item-list li {
-      display: grid;
-      grid-template-columns: 30px 1fr auto;
-      gap: 12px;
-      align-items: start;
-      padding: 12px 0;
-      border-bottom: 1px dashed rgba(0,0,0,0.10);
-    }
-    .item-list li:last-child { border-bottom: none; }
-    .item-number {
-      width: 30px;
-      height: 30px;
-      border-radius: 50%;
-      display: grid;
-      place-items: center;
-      background: var(--green-soft);
-      color: var(--green-dark);
-      font-size: 0.84rem;
-      font-weight: 800;
-    }
-    .item-name {
-      font-weight: 700;
-      display: block;
-    }
-    .item-note {
-      display: block;
-      font-size: 0.84rem;
-      color: var(--muted);
-      margin-top: 2px;
-    }
-    .price {
-      min-width: 74px;
-      text-align: right;
-      font-weight: 800;
-      color: var(--red);
-      background: var(--red-soft);
-      padding: 7px 10px;
-      border-radius: 999px;
-      font-size: 0.94rem;
-    }
-
-    /* Subscription */
-    .subscription-wrap { padding: 0 0 28px; }
+@@ -365,71 +375,176 @@
     .subscription-section {
       padding: 28px;
       background: linear-gradient(180deg, #fff, #f5fbf6);
@@ -410,11 +346,7 @@
       color: rgba(255,255,255,0.92);
     }
     .footer-grid {
-      display: grid;
-      grid-template-columns: 1.05fr 0.95fr;
-      gap: 22px;
-    }
-    .footer-card {
+@@ -441,50 +556,53 @@
       background: rgba(255,255,255,0.08);
       border-color: rgba(255,255,255,0.12);
       box-shadow: none;
@@ -430,16 +362,14 @@
     }
     .floating-order {
       position: fixed;
-      right: 16px;
-      bottom: 16px;
-      z-index: 70;
-      box-shadow: 0 18px 32px rgba(0,0,0,.22);
+      right: 18px;
+      bottom: 18px;
+      z-index: 60;
+      box-shadow: 0 18px 36px rgba(0,0,0,0.18);
     }
 
-    @media (max-width: 1024px) {
-      .hero-grid,
-      .builder-grid,
-      .how-grid,
+    @media (max-width: 980px) {
+      .hero-shell,
       .menu-grid,
       .subscription-grid,
       .process-grid,
@@ -470,65 +400,27 @@
         width: fit-content;
         text-align: left;
       }
-      .nav-actions {
-        width: 100%;
-      }
-      .nav-actions .btn {
-        flex: 1 1 180px;
-      }
-    }
-  </style>
-</head>
-<body>
-  <header>
-    <div class="container nav">
-      <div class="brand">
-        <img src="cherish-logo.jpg" alt="Cherish Every Bite logo" />
-        <div>
-          <h1>Cherish Every Bite</h1>
-          <p>Bites curated for you</p>
+@@ -543,128 +661,247 @@
         </div>
-      </div>
-      <div class="nav-links">
-        <a href="#menu" class="btn btn-soft-green">À La Carte</a>
-        <a href="#plans" class="btn btn-soft-red">Subscriptions</a>
-        <a href="#how" class="btn btn-soft-green">How it works</a>
-        <a href="https://order.cherisheverybite.com/outlet/56752198194843" target="_blank" rel="noopener" class="btn btn-red">Order on TMbill</a>
-      </div>
-    </div>
-  </header>
 
-  <section class="hero">
-    <div class="container hero-grid">
-      <article class="card hero-main">
-        <span class="tag" style="background: rgba(255,255,255,.17); color: #fff; border: 1px solid rgba(255,255,255,.2);">Healthy • Fresh • Hygienic</span>
-        <h2>Order à la carte or request subscription meal plans.</h2>
-        <p>Choose instant ordering through TMbill, or build a tailored subscription with add-ons (Elite, Diabetic, Budget, Basic, or Additional custom).</p>
-        <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;">
-          <a href="#menu" class="btn btn-red">Explore À La Carte</a>
-          <a href="#plans" class="btn btn-green">Build Subscription</a>
+        <div class="mini-card green-card">
+          <h3>Online Ordering</h3>
+          <p>Online ordering page for smooth outlet ordering and checkout.</p>
+          <div class="pill-row">
+            <span class="pill green-pill">Fast ordering</span>
+            <span class="pill green-pill">Mobile friendly</span>
+          </div>
         </div>
-        <div class="disclaimer"><strong>Important:</strong> Payments and KOT are processed only through TMbill.</div>
-      </article>
 
-      <aside class="card hero-side">
-        <div class="note">
-          <h3>À La Carte (Fast)</h3>
-          <p class="meta">Browse menu and order directly on TMbill.</p>
-        </div>
-        <div class="note">
-          <h3>Subscriptions (Planned)</h3>
-          <p class="meta">Submit request → team creates TMbill order → you pay via TMbill link or wallet.</p>
-        </div>
-        <div class="note">
-          <h3>Manual Renewal</h3>
-          <p class="meta">We will remind you on WhatsApp before your plan ends.</p>
+        <div class="mini-card red-card">
+          <h3>Subscription Ordering</h3>
+          <p>Check out our curated subscriptions for weekly and monthly meal plans.</p>
         </div>
       </aside>
     </div>
   </section>
 
-  <section id="menu" class="section">
+  <section class="section" id="menu">
     <div class="container">
       <div class="section-top">
         <div>
@@ -536,16 +428,12 @@
           <p>Healthy curated meals, drinks and desserts from Cherish Every Bite.</p>
           <p id="menu-source" style="margin:6px 0 0;color:var(--muted);font-size:0.9rem;"></p>
         </div>
-        <a class="btn btn-red" href="https://order.cherisheverybite.com/outlet/56752198194843" target="_blank" rel="noopener">Order on TMbill</a>
       </div>
-
       <div class="menu-grid" id="menu-grid"></div>
-
-      <div class="disclaimer">À la carte order confirmation, payment and KOT happen only in TMbill.</div>
     </div>
   </section>
 
-  <section id="plans" class="section">
+  <section class="subscription-wrap" id="subscriptions">
     <div class="container">
       <div class="subscription-section">
         <h3>Subscription Plans</h3>
@@ -657,7 +545,7 @@
             <div class="testimonial-name">— Farhan, Bengaluru</div>
           </article>
         </div>
-      </article>
+      </div>
     </div>
   </section>
 
@@ -705,27 +593,12 @@
 
   <section class="cta-wrap">
     <div class="container">
-      <h2 class="section-title">How it works</h2>
-      <p class="section-sub">Two separate journeys for instant orders and subscriptions.</p>
-      <div class="how-grid">
-        <article class="card flow-card">
-          <h3>À La Carte flow</h3>
-          <ol>
-            <li>Browse live menu from catalog.</li>
-            <li>Click <strong>Order on TMbill</strong>.</li>
-            <li>Pay and complete order in TMbill.</li>
-            <li>KOT is generated in TMbill.</li>
-          </ol>
-        </article>
-        <article class="card flow-card">
-          <h3>Subscription flow</h3>
-          <ol>
-            <li>Select Elite / Diabetic / Budget / Basic / Additional.</li>
-            <li>Add optional add-ons and submit request.</li>
-            <li>Team creates TMbill order and shares payment link / wallet top-up instruction.</li>
-            <li>After payment in TMbill, KOT processing starts in TMbill.</li>
-          </ol>
-        </article>
+      <div class="cta-box">
+        <div>
+          <h3>Ready to order?</h3>
+          <p>Place your order directly through our online ordering page or contact us on WhatsApp for subscriptions.</p>
+        </div>
+        <a class="btn btn-green" href="https://order.cherisheverybite.com/outlet/56752198194843" target="_blank" rel="noopener">Order Now</a>
       </div>
     </div>
   </section>
@@ -751,52 +624,9 @@
     const WHATSAPP_NUMBER = "916282023762";
     const GOOGLE_SHEET_CSV_URL = "";
 
-    const plans = [
-      {
-        id: "P_ELITE",
-        name: "Elite",
-        basePrice: 14999,
-        features: ["Premium selection", "Higher protein options", "Best for intensive wellness"],
-        allowedAddonTypes: ["protein", "drink", "dessert", "bites"]
-      },
-      {
-        id: "P_DIABETIC",
-        name: "Diabetic",
-        basePrice: 13999,
-        features: ["Sugar-aware planning", "Curated low-spike options", "Balanced portions"],
-        allowedAddonTypes: ["protein", "drink", "bites"]
-      },
-      {
-        id: "P_BUDGET",
-        name: "Budget",
-        basePrice: 9999,
-        features: ["Value focused", "Simple healthy combinations", "Daily essentials"],
-        allowedAddonTypes: ["protein", "drink", "dessert"]
-      },
-      {
-        id: "P_BASIC",
-        name: "Basic",
-        basePrice: 7999,
-        features: ["Light starter plan", "Affordable health meals", "Easy to maintain"],
-        allowedAddonTypes: ["protein", "dessert"]
-      },
-      {
-        id: "P_ADDITIONAL",
-        name: "Additional",
-        basePrice: 0,
-        features: ["Fully customizable", "Rule-based selection", "Great for special needs"],
-        allowedAddonTypes: ["protein", "drink", "dessert", "bites"]
-      }
-    ];
-
-    const addons = [
-      { id: "A001", name: "Herbs marinated chicken breast", type: "protein", price: 160 },
-      { id: "A002", name: "CBP Protein Smoothie", type: "drink", price: 220 },
-      { id: "A003", name: "Chia-Protein Smoothie", type: "drink", price: 210 },
-      { id: "A004", name: "Steamed edamame", type: "bites", price: 150 },
-      { id: "A005", name: "Protein Peanut Butter Brownie", type: "dessert", price: 190 },
-      { id: "A006", name: "Greek yogurt granola", type: "bites", price: 170 }
-    ];
+    function buildWhatsappLink(message) {
+      return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+    }
 
     function escapeHtml(value) {
       return String(value ?? "")
@@ -807,46 +637,28 @@
         .replace(/'/g, "&#39;");
     }
 
-    function parseCSVLine(line) {
-      const out = [];
-      let current = "";
-      let inQuotes = false;
-      for (let i = 0; i < line.length; i++) {
-        const ch = line[i];
-        if (ch === '"') {
-          if (inQuotes && line[i + 1] === '"') {
-            current += '"';
-            i++;
-          } else {
-            inQuotes = !inQuotes;
-          }
-        } else if (ch === ',' && !inQuotes) {
-          out.push(current);
-          current = "";
-        } else {
-          current += ch;
-        }
+    function renderMenu(menuData) {
+      const menuGrid = document.getElementById("menu-grid");
+      if (!menuData.length) {
+        menuGrid.innerHTML = `
+          <article class="menu-section">
+            <div class="menu-title-row">
+              <h3 class="menu-title">Menu updating soon</h3>
+            </div>
+            <p>Please upload a valid prices.csv file with category, name, price and status columns.</p>
+          </article>
+        `;
+@@ -731,74 +968,109 @@
+      const priceIndex = headers.indexOf("price");
+      const statusIndex = headers.indexOf("status");
+      const activeIndex = headers.indexOf("active");
+
+      if (noIndex === -1 || categoryIndex === -1 || nameIndex === -1 || priceIndex === -1) {
+        return [];
       }
-      out.push(current);
-      return out.map(v => v.trim());
-    }
 
-    function parseCSV(text) {
-      const lines = text.trim().split(/\r?\n/).filter(Boolean);
-      if (lines.length < 2) return [];
+      const grouped = new Map();
 
-      const headers = parseCSVLine(lines[0].replace(/^﻿/, "")).map(h => h.toLowerCase());
-      const idx = {
-        no: headers.indexOf("no"),
-        category: headers.indexOf("category"),
-        name: headers.indexOf("name"),
-        price: headers.indexOf("price"),
-        status: headers.indexOf("status")
-      };
-
-      if (idx.category === -1 || idx.name === -1 || idx.price === -1) return [];
-
-      const rows = [];
       for (let i = 1; i < lines.length; i++) {
         const cols = parseCSVLine(lines[i]);
         const no = Number(cols[noIndex] || "");
@@ -872,7 +684,11 @@
 
         grouped.get(category).push({ no, name, price });
       }
-      return rows;
+
+      return Array.from(grouped.entries()).map(([category, items]) => ({
+        category,
+        items: items.sort((a, b) => a.no - b.no)
+      }));
     }
 
     function setMenuSourceLabel(text) {
@@ -933,187 +749,6 @@
         const link = buildWhatsappLink(message);
         window.open(link, "_blank", "noopener");
       });
-
-      if (!filtered.length) {
-        grid.innerHTML = `<article class="card meal-card"><h4>No matching items</h4><p class="meta">Try a different keyword or category.</p></article>`;
-        return;
-      }
-
-      grid.innerHTML = filtered.map(item => {
-        const numericPrice = Number(item.price);
-        const displayPrice = Number.isFinite(numericPrice) ? `₹${numericPrice}` : `₹${escapeHtml(item.price)}`;
-        return `
-          <article class="card meal-card">
-            <h4>${escapeHtml(item.name)}</h4>
-            <div class="meta">${escapeHtml(item.category)}</div>
-            <div class="tags"><span class="tag">Live</span></div>
-            <div class="price">${displayPrice}</div>
-            <div style="margin-top:10px;">
-              <a class="btn btn-soft-red" href="${TM_BILL_ORDER_URL}" target="_blank" rel="noopener">Order on TMbill</a>
-            </div>
-          </article>
-        `;
-      }).join("");
-    }
-
-    function renderPlans() {
-      const grid = document.getElementById("plans-grid");
-      grid.innerHTML = plans.map(plan => `
-        <article class="card plan-card">
-          <h4>${escapeHtml(plan.name)}</h4>
-          <div class="price">Base: ₹${plan.basePrice}</div>
-          <ul>${plan.features.map(item => `<li>${escapeHtml(item)}</li>`).join("")}</ul>
-          <button class="btn btn-green" data-plan="${plan.id}">Select ${escapeHtml(plan.name)}</button>
-        </article>
-      `).join("");
-
-      grid.querySelectorAll("button[data-plan]").forEach(btn => {
-        btn.addEventListener("click", () => startBuilder(btn.dataset.plan));
-      });
-    }
-
-    let selectedPlan = null;
-
-    function startBuilder(planId) {
-      selectedPlan = plans.find(p => p.id === planId);
-      if (!selectedPlan) return;
-
-      const builder = document.getElementById("builder");
-      builder.style.display = "block";
-      builder.scrollIntoView({ behavior: "smooth", block: "start" });
-
-      document.getElementById("builder-title").textContent = `${selectedPlan.name} Plan Builder`;
-
-      const addonWrap = document.getElementById("addons-list");
-      addonWrap.innerHTML = addons
-        .filter(addon => selectedPlan.allowedAddonTypes.includes(addon.type))
-        .map(addon => `
-          <label class="addon-row">
-            <span>
-              <strong>${escapeHtml(addon.name)}</strong>
-              <div class="meta">${escapeHtml(addon.type)} • ₹${addon.price}</div>
-            </span>
-            <input type="checkbox" data-addon-id="${addon.id}" data-addon-price="${addon.price}" class="addon-check" />
-            <input type="number" min="0" max="10" value="0" class="input qty" data-addon-qty="${addon.id}" />
-          </label>
-        `).join("");
-
-      attachBuilderEvents();
-      recalcEstimate();
-      updateWhatsappPreview();
-    }
-
-    function getDurationMultiplier() {
-      const days = Number(document.getElementById("duration").value || 30);
-      return days / 30;
-    }
-
-    function getAddonSelections() {
-      const checks = Array.from(document.querySelectorAll(".addon-check"));
-      return checks.map(check => {
-        const addonId = check.dataset.addonId;
-        const addon = addons.find(a => a.id === addonId);
-        const qtyInput = document.querySelector(`[data-addon-qty='${addonId}']`);
-        const qty = Number(qtyInput?.value || 0);
-        return {
-          addon,
-          selected: check.checked,
-          qty: qty > 0 ? qty : 0
-        };
-      }).filter(x => x.selected && x.qty > 0);
-    }
-
-    function recalcEstimate() {
-      if (!selectedPlan) return;
-      const durationMultiplier = getDurationMultiplier();
-      const addonTotal = getAddonSelections().reduce((acc, item) => acc + (item.addon.price * item.qty), 0);
-      const total = Math.round((selectedPlan.basePrice + addonTotal) * durationMultiplier);
-
-      document.getElementById("base-price").textContent = `₹${selectedPlan.basePrice}`;
-      document.getElementById("addons-price").textContent = `₹${addonTotal}`;
-      document.getElementById("duration-multiplier").textContent = `x${durationMultiplier.toFixed(2)}`;
-      document.getElementById("total-price").textContent = `₹${total}`;
-    }
-
-    function buildWhatsappText(formData) {
-      const selectedAddons = getAddonSelections();
-      const days = Number(document.getElementById("duration").value || 30);
-      const durationMultiplier = getDurationMultiplier();
-      const addonTotal = selectedAddons.reduce((acc, item) => acc + item.addon.price * item.qty, 0);
-      const total = Math.round((selectedPlan.basePrice + addonTotal) * durationMultiplier);
-
-      const addonLine = selectedAddons.length
-        ? selectedAddons.map(item => `${item.addon.name} x ${item.qty}`).join(", ")
-        : "None";
-
-      return [
-        "Hi Cherish Every Bite, I want to request a subscription plan.",
-        `Plan: ${selectedPlan.name}`,
-        `Duration: ${days} days`,
-        `Add-ons: ${addonLine}`,
-        `Estimated total: ₹${total}`,
-        `Customer: ${formData.get("name") || ""}`,
-        `Phone: ${formData.get("phone") || ""}`,
-        `Start date: ${formData.get("startDate") || ""}`,
-        `Address: ${formData.get("address") || ""}`,
-        `Notes: ${formData.get("notes") || "-"}`,
-        "I understand payment should be completed only through official TMbill payment link/wallet."
-      ].join("\n");
-    }
-
-    function updateWhatsappPreview() {
-      const form = document.getElementById("request-form");
-      const data = new FormData(form);
-      const msg = buildWhatsappText(data);
-      const href = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
-      document.getElementById("whatsapp-preview").href = href;
-    }
-
-    function attachBuilderEvents() {
-      document.querySelectorAll(".addon-check, .qty").forEach(el => {
-        el.addEventListener("input", () => {
-          recalcEstimate();
-          updateWhatsappPreview();
-        });
-      });
-
-      document.getElementById("duration").addEventListener("change", () => {
-        recalcEstimate();
-        updateWhatsappPreview();
-      });
-
-      document.getElementById("request-form").addEventListener("input", updateWhatsappPreview);
-    }
-
-    function initRequestForm() {
-      const form = document.getElementById("request-form");
-      const status = document.getElementById("request-status");
-
-      form.addEventListener("submit", event => {
-        event.preventDefault();
-        if (!selectedPlan) return;
-
-        const formData = new FormData(form);
-        const requestId = `OREQ-${Date.now()}`;
-        const message = buildWhatsappText(formData);
-        const whatsappLink = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
-
-        status.style.display = "block";
-        status.innerHTML = `
-          Request ID: <strong>${requestId}</strong><br />
-          Your request is captured. Our team will create a TMbill order and share payment link/wallet instructions on WhatsApp.<br />
-          <a href="${whatsappLink}" target="_blank" rel="noopener">Open WhatsApp request</a>
-        `;
-      });
-    }
-
-    async function initMenu() {
-      const rows = await loadMenuRows();
-      renderMenuFilters(rows);
-      renderMenu(rows);
-
-      document.getElementById("menu-search").addEventListener("input", () => renderMenu(rows));
-      document.getElementById("menu-category").addEventListener("change", () => renderMenu(rows));
     }
 
     (async function init() {
