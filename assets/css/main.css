@@ -86,26 +86,40 @@ body {
 .btn-primary { background: var(--red); color: #fff; }
 .btn-soft { background: #eef8f2; color: #165b3a; border-color: rgba(31,109,71,.25); }
 
+.ingredients-theme {
+  background:
+    linear-gradient(135deg, rgba(13, 87, 54, 0.92), rgba(23, 122, 74, 0.86)),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='280' height='280' viewBox='0 0 280 280'%3E%3Cg fill='none' stroke='%23ffffff' stroke-opacity='0.22' stroke-width='2'%3E%3Cpath d='M38 92c18-24 46-18 56 2-18 10-38 8-56-2Z'/%3E%3Cpath d='M146 54c20-16 44-4 48 18-20 6-38 0-48-18Z'/%3E%3Cpath d='M220 140c22-12 42 8 40 30-22 2-36-10-40-30Z'/%3E%3Ccircle cx='76' cy='190' r='18'/%3E%3Ccircle cx='170' cy='198' r='14'/%3E%3Ccircle cx='238' cy='58' r='12'/%3E%3Cpath d='M108 136c14-20 34-18 44 0-16 8-30 8-44 0Z'/%3E%3C/g%3E%3C/svg%3E") center/320px repeat;
+}
+
 .hero-grid {
   display: grid;
   gap: var(--space-5);
   grid-template-columns: 1.2fr .8fr;
+  align-items: stretch;
 }
-.hero h2 { margin-top: 0; font-size: clamp(1.6rem, 3vw, 2rem); color: var(--red-dark); }
+
+.hero h2 { margin-top: 0; font-size: clamp(1.6rem, 3vw, 2rem); color: #fff; }
 
 .hero-main-panel {
   border-radius: 16px;
   padding: var(--space-5);
-  background:
-    linear-gradient(rgba(31, 109, 71, 0.72), rgba(21, 77, 51, 0.72)),
-    url("../../cherish-logo.jpg") center/cover no-repeat;
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(2px);
+  border: 1px solid rgba(255,255,255,.22);
   color: #fff;
 }
-.hero-main-panel p { color: rgba(255,255,255,.92); }
-.hero-main-panel h2 { color: #fff; }
 
-.hero p { color: var(--muted); }
-.hero-note h3 { margin-top: 0; color: var(--green); }
+.hero-main-panel p { color: rgba(255,255,255,.95); }
+
+.hero-note-card {
+  border-radius: 16px;
+  padding: var(--space-5);
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(255,255,255,.24);
+}
+
+.hero-note-card h3 { margin-top: 0; color: var(--green); }
 
 .section-top h2, .card h2 { margin: 0 0 var(--space-2); color: var(--green); }
 .section-top p, .muted { color: var(--muted); }
