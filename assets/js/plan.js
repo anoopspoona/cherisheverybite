@@ -123,7 +123,8 @@ function updateWhatsapp(planName, variantName) {
 
 (async function init() {
   const params = new URLSearchParams(window.location.search);
-  const planKey = params.get("plan") || "elite";
+  const pagePlanKey = document.body?.dataset?.planKey || "";
+  const planKey = pagePlanKey || params.get("plan") || "elite";
 
   const [plans, meals, options] = await Promise.all([
     fetchCSV("plans.csv"),
