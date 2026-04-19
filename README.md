@@ -11,6 +11,12 @@ Open:
 - `http://localhost:8000/index.html`
 - `http://localhost:8000/plan.html?plan=elite`
 
+Validate runtime CSV contracts:
+
+```bash
+python3 scripts/validate_data.py
+```
+
 ## Project structure
 
 - `index.html` — landing page and dynamic menu render.
@@ -41,4 +47,7 @@ To configure Google Sheets source, see `google_sheet_setup.md`.
 ## Docs
 
 - `docs/data-schema.md`
+- `docs/data-contracts.md`
 - `docs/content-ops.md`
+- `docs/codebase-audit.md`
+- `docs/website-from-scratch-plan.md`
