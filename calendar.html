@@ -47,7 +47,28 @@
           <option value="smoothie">Smoothie</option>
         </select>
       </div>
+      <div>
+        <label for="customer-name">Name</label>
+        <input type="text" id="customer-name" placeholder="Your full name" />
+      </div>
+      <div>
+        <label for="customer-phone">Mobile Number</label>
+        <input type="tel" id="customer-phone" placeholder="WhatsApp number" />
+      </div>
+      <div>
+        <label for="customer-location">Map Location</label>
+        <input type="text" id="customer-location" placeholder="Google Maps link or address pin" />
+      </div>
+      <div>
+        <label for="customer-notes">Notes</label>
+        <input type="text" id="customer-notes" placeholder="Any preferences / comments" />
+      </div>
     </section>
+
+    <p>
+      <a id="confirm-subscription" class="btn btn-green" href="#" target="_blank" rel="noopener">Confirm Subscription</a>
+    </p>
+    <p id="confirm-feedback" class="legend"></p>
 
     <section id="calendar-grid" class="calendar-grid"></section>
   </main>

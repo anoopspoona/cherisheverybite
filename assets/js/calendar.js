@@ -5,6 +5,7 @@ const PLAN_LABELS = {
   diabetic: "Diabetic",
   smoothie: "Smoothie"
 };
+const WHATSAPP_NUMBER = "916282023762";
 
 function csvFor(plan, meal) {
   return `calendar_${plan}_${meal}.csv`;
@@ -92,6 +93,12 @@ async function loadDishes(plan, meal) {
   const planSelect = document.getElementById("plan-select");
   const title = document.getElementById("title");
   const back = document.getElementById("back-plan");
+  const confirmBtn = document.getElementById("confirm-subscription");
+  const feedback = document.getElementById("confirm-feedback");
+  const nameInput = document.getElementById("customer-name");
+  const phoneInput = document.getElementById("customer-phone");
+  const locationInput = document.getElementById("customer-location");
+  const notesInput = document.getElementById("customer-notes");
 
   if (planSelect) planSelect.value = plan;
   if (mealSelect) mealSelect.value = meal;
@@ -100,6 +107,7 @@ async function loadDishes(plan, meal) {
 
   const today = new Date();
   if (startInput) startInput.value = formatIso(today);
+  let currentSelection = null;
 
   async function refresh() {
     const selectedPlan = planSelect?.value || plan;
@@ -120,12 +128,69 @@ async function loadDishes(plan, meal) {
       activeMap.set(iso, dishes[idx % dishes.length]);
     });
 
+    currentSelection = {
+      plan: selectedPlan,
+      meal: selectedMeal,
+      period: selectedPeriod,
+      start: formatIso(start),
+      end: dates[dates.length - 1] || formatIso(start),
+      activeDays: activeCount
+    };
+
     renderCalendarMonths(start, activeMap);
   }
 
+  function updateConfirmLink() {
+    if (!confirmBtn || !currentSelection) return;
+    const name = nameInput?.value.trim() || "";
+    const phone = phoneInput?.value.trim() || "";
+    const location = locationInput?.value.trim() || "";
+    const notes = notesInput?.value.trim() || "";
+    const phoneOk = /^\+?[0-9\-\s]{8,15}$/.test(phone);
+
+    if (!name || !phoneOk || !location) {
+      confirmBtn.href = "#";
+      if (feedback) feedback.textContent = "Enter name, valid mobile number and map location to confirm subscription.";
+      return;
+    }
+
+    const message = [
+      "Hi Cherish Every Bite, please confirm my subscription.",
+      `Name: ${name}`,
+      `Mobile: ${phone}`,
+      `Map Location: ${location}`,
+      `Plan: ${PLAN_LABELS[currentSelection.plan] || currentSelection.plan}`,
+      `Meal Slot: ${currentSelection.meal}`,
+      `Period: ${currentSelection.period}`,
+      `Active Days: ${currentSelection.activeDays}`,
+      `Start Date: ${currentSelection.start}`,
+      `End Date: ${currentSelection.end}`,
+      notes ? `Notes: ${notes}` : ""
+    ].filter(Boolean).join("\n");
+
+    confirmBtn.href = buildWhatsappLink(WHATSAPP_NUMBER, message);
+    if (feedback) feedback.textContent = "Tap confirm to open WhatsApp with your subscription details.";
+  }
+
+  if (confirmBtn) {
+    confirmBtn.addEventListener("click", event => {
+      if (!confirmBtn.href || confirmBtn.getAttribute("href") === "#") {
+        event.preventDefault();
+      }
+    });
+  }
+
   [startInput, periodSelect, mealSelect, planSelect].forEach(el => {
-    if (el) el.addEventListener("change", refresh);
+    if (el) el.addEventListener("change", async () => {
+      await refresh();
+      updateConfirmLink();
+    });
   });
 
-  refresh();
+  [nameInput, phoneInput, locationInput, notesInput].forEach(el => {
+    if (el) el.addEventListener("input", updateConfirmLink);
+  });
+
+  await refresh();
+  updateConfirmLink();
 })();
