@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Subscription Plan Menu | Cherish Every Bite</title>
+  <title>Diabetic Plan | Cherish Every Bite</title>
   <link rel="stylesheet" href="assets/css/plan.css" />
 </head>
-<body>
+<body data-plan-key="diabetic">
   <header>
     <div class="container nav">
       <a class="btn btn-soft" href="plans.html">← Back to Plans</a>
@@ -16,8 +16,8 @@
 
   <main class="container hero">
     <section class="hero-card">
-      <h1 id="plan-title">Plan Menu</h1>
-      <p id="plan-desc" class="muted">Daily preview for the selected subscription plan.</p>
+      <h1 id="plan-title">Diabetic Plan</h1>
+      <p id="plan-desc" class="muted">Low-glycemic curated meals for diabetic-friendly nutrition.</p>
       <p id="plan-meta" class="legend"></p>
 
       <div id="variant-wrap" class="package-picker" style="display:none;">
@@ -26,10 +26,6 @@
       </div>
 
       <p class="legend">Selected variant: <strong id="selected-variant">—</strong></p>
-
-      <div class="note">
-        This page is now connected to your uploaded plan spreadsheets through <code>plans.csv</code>, <code>plan_meals.csv</code>, and <code>customization_options.csv</code>.
-      </div>
 
       <p style="margin-top:16px;" class="hero-actions">
         <a id="lunch-btn" class="btn btn-soft" href="#">Lunch Calendar</a>

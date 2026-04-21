@@ -8,3 +8,5 @@ weightloss,Weight Loss Plan,nonveg,Non-Veg,24,3,live,Calorie-conscious non-veg m
 basic,Basic Plan,veg,Veg,24,2,live,Simple lunch and dinner combinations for everyday healthy eating.
 basic,Basic Plan,nonveg,Non-Veg,24,2,live,Simple non-veg lunch and dinner combinations.
 customised,Customised Plan,custom,Custom,0,Flexible,live,Build your own combination from curated categories.
+smoothie,Smoothie Plan,standard,Standard,24,2,live,"Smoothie-focused breakfast and snack routine with curated rotations."
+diabetic,Diabetic Plan,standard,Standard,24,3,live,"Low-glycemic curated dishes designed for diabetic-friendly meal cycles."
