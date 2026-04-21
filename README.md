@@ -43,6 +43,7 @@ python3 scripts/validate_data.py
 - `prices.csv`
 - `hero_slides.csv`
 - `calendar_<plan>_<meal>.csv` (example: `calendar_elite_lunch.csv`)
+- `delivery_locations.csv`
 
 ## Data source behavior
 
