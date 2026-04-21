@@ -1,0 +1,4 @@
+slide_id,title,subtitle,image_url,cta_label,cta_href,alt_text,status,sort_order
+H001,Ragi Collagen Chicken Soup,Protein-rich warm starter,assets/images/hero/ragi-soup.jpg,Explore Menu,#menu,Ragi collagen chicken soup in a bowl,live,1
+H002,Mesclun Quinoa Salad,Fresh and filling lunch option,assets/images/hero/quinoa-salad.jpg,View Plans,plans.html,Mesclun quinoa salad with greens and seeds,live,2
+H003,ABC Smoothie,Clean fruit-and-veg blend,assets/images/hero/abc-smoothie.jpg,Order Now,https://order.cherisheverybite.com/outlet/56752198194843,ABC smoothie in a glass bottle,live,3
