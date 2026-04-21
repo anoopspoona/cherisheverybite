@@ -138,10 +138,6 @@ function renderHeroSlideshow(rows) {
       <div class="hero-slide-copy">
         <h3>${escapeHtml(slide.title)}</h3>
         ${slide.subtitle ? `<p>${escapeHtml(slide.subtitle)}</p>` : ""}
-        <div class="hero-actions">
-          ${slide.ctaHref && slide.ctaLabel ? `<a class="btn btn-primary" href="${escapeHtml(slide.ctaHref)}">${escapeHtml(slide.ctaLabel)}</a>` : `<a class="btn btn-primary" href="plans.html">View Plans</a>`}
-          <a class="btn btn-soft" href="#menu">Browse Menu</a>
-        </div>
       </div>
     `;
     wrap.insertBefore(card, wrap.querySelector(".hero-controls"));
