@@ -4,7 +4,9 @@ const PLAN_PAGE_BY_KEY = {
   salad: "salad-plan.html",
   weightloss: "weightloss-plan.html",
   basic: "basic-plan.html",
-  customised: "customised-plan.html"
+  customised: "customised-plan.html",
+  smoothie: "smoothie-plan.html",
+  diabetic: "diabetic-plan.html"
 };
 
 function planUrl(planKey) {

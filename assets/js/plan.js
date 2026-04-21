@@ -6,7 +6,9 @@ function getPlanLabel(planKey) {
     salad: "Salad Plan",
     weightloss: "Weight Loss Plan",
     basic: "Basic Plan",
-    customised: "Customised Plan"
+    customised: "Customised Plan",
+    smoothie: "Smoothie Plan",
+    diabetic: "Diabetic Plan"
   };
   return labels[planKey] || "Plan";
 }
@@ -121,6 +123,14 @@ function updateWhatsapp(planName, variantName) {
   link.href = buildWhatsappLink(WHATSAPP_NUMBER, text);
 }
 
+function updateCalendarLinks(planKey, variantKey) {
+  const lunchBtn = document.getElementById("lunch-btn");
+  const dinnerBtn = document.getElementById("dinner-btn");
+  const base = `calendar.html?plan=${encodeURIComponent(planKey)}&variant=${encodeURIComponent(variantKey || "standard")}`;
+  if (lunchBtn) lunchBtn.href = `${base}&meal=lunch`;
+  if (dinnerBtn) dinnerBtn.href = `${base}&meal=dinner`;
+}
+
 (async function init() {
   const params = new URLSearchParams(window.location.search);
   const pagePlanKey = document.body?.dataset?.planKey || "";
@@ -142,6 +152,7 @@ function updateWhatsapp(planName, variantName) {
     const selectedPlan = planRows.find(row => row.Variant_Key === variantKey) || planRows[0];
     document.getElementById("selected-variant").textContent = selectedPlan ? selectedPlan.Variant_Name : "";
     updateWhatsapp(selectedPlan?.Plan_Name || getPlanLabel(planKey), selectedPlan?.Variant_Name || "");
+    updateCalendarLinks(planKey, variantKey);
 
     if (planKey === "customised") {
       renderCustomOptions(options);

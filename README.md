@@ -20,9 +20,11 @@ python3 scripts/validate_data.py
 ## Project structure
 
 - `index.html` — landing page and dynamic menu render.
+- `menu.html` — dedicated à la carte menu page.
 - `plans.html` — subscription plans hub with links to individual plan pages.
 - `plan.html` — plan detail page with 7-day meal preview.
-- `elite-plan.html`, `salad-plan.html`, `weightloss-plan.html`, `basic-plan.html`, `customised-plan.html` — individual plan pages.
+- `elite-plan.html`, `salad-plan.html`, `weightloss-plan.html`, `basic-plan.html`, `customised-plan.html`, `smoothie-plan.html`, `diabetic-plan.html` — individual plan pages.
+- `calendar.html` — plan calendar planner for lunch/dinner weekly or monthly slots.
 - `assets/css/main.css` — landing page styles.
 - `assets/css/plan.css` — plan page styles.
 - `assets/js/common.js` — shared helpers.
@@ -40,6 +42,7 @@ python3 scripts/validate_data.py
 - `renewals.csv`
 - `prices.csv`
 - `hero_slides.csv`
+- `calendar_<plan>_<meal>.csv` (example: `calendar_elite_lunch.csv`)
 
 ## Data source behavior
 
