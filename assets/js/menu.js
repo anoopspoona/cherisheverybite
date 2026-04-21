@@ -1,4 +1,16 @@
 const WHATSAPP_NUMBER = "916282023762";
+const PLAN_PAGE_BY_KEY = {
+  elite: "elite-plan.html",
+  salad: "salad-plan.html",
+  weightloss: "weightloss-plan.html",
+  basic: "basic-plan.html",
+  customised: "customised-plan.html"
+};
+
+function planUrl(planKey) {
+  const key = String(planKey || "").trim().toLowerCase();
+  return PLAN_PAGE_BY_KEY[key] || `plan.html?plan=${encodeURIComponent(planKey || "")}`;
+}
 
 function normalizePrice(price) {
   const value = String(price || "").trim();
@@ -83,7 +95,7 @@ function renderPlans(rows) {
       <h3>${escapeHtml(row.Plan_Name)}</h3>
       <p class="muted">${escapeHtml(row.Description || "")}</p>
       <p class="muted">Duration: ${escapeHtml(row.Duration_Days)} days • Meals/day: ${escapeHtml(row.Meals_Per_Day)}</p>
-      <a class="btn btn-soft" href="plan.html?plan=${encodeURIComponent(row.Plan_Key)}">View ${escapeHtml(row.Plan_Name)}</a>
+      <a class="btn btn-soft" href="${escapeHtml(planUrl(row.Plan_Key))}">View ${escapeHtml(row.Plan_Name)}</a>
     </article>
   `).join("");
 }
