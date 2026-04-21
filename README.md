@@ -44,6 +44,7 @@ python3 scripts/validate_data.py
 ## Data source behavior
 
 Homepage menu attempts Google Sheets CSV first (if configured), then falls back to local `prices.csv`.
+Homepage featured dish slideshow reads from `hero_slides.csv` (if present and `status=live` rows exist).
 
 To configure Google Sheets source, see `google_sheet_setup.md`.
 

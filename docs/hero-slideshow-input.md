@@ -71,6 +71,9 @@ To proceed quickly, send:
 
 Then I can do the full setup (CSV entries + slideshow rendering wiring in the homepage).
 
+Current sample in repo expects hero files named:
+`assets/images/hero/dish-01.jpg` through `assets/images/hero/dish-11.jpg`.
+
 ## Rendering behavior recommendation
 
 - Only render rows where `status=live`

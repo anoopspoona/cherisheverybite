@@ -100,6 +100,105 @@ function renderPlans(rows) {
   `).join("");
 }
 
+function normalizeSlides(rows) {
+  return rows
+    .filter(row => String(row.status || row.Status || "live").toLowerCase() === "live")
+    .map(row => ({
+      id: row.slide_id || row.Slide_ID || "",
+      title: row.title || row.Title || "Featured Dish",
+      subtitle: row.subtitle || row.Subtitle || "",
+      imageUrl: row.image_url || row.Image_URL || "",
+      ctaLabel: row.cta_label || row.CTA_Label || "",
+      ctaHref: row.cta_href || row.CTA_Href || "",
+      altText: row.alt_text || row.Alt_Text || row.title || "Featured dish",
+      sortOrder: Number(row.sort_order || row.Sort_Order || 999)
+    }))
+    .filter(slide => slide.imageUrl)
+    .sort((a, b) => a.sortOrder - b.sortOrder);
+}
+
+function renderHeroSlideshow(rows) {
+  const wrap = document.getElementById("hero-slideshow");
+  const dotsWrap = document.getElementById("hero-dots");
+  const prevBtn = document.getElementById("hero-prev");
+  const nextBtn = document.getElementById("hero-next");
+  if (!wrap || !dotsWrap || !prevBtn || !nextBtn) return;
+
+  const slides = normalizeSlides(rows);
+  if (!slides.length) return;
+
+  wrap.querySelectorAll(".hero-slide").forEach(node => node.remove());
+  dotsWrap.innerHTML = "";
+
+  const slideEls = slides.map((slide, index) => {
+    const card = document.createElement("article");
+    card.className = `hero-slide${index === 0 ? " is-active" : ""}`;
+    card.innerHTML = `
+      <img src="${escapeHtml(slide.imageUrl)}" alt="${escapeHtml(slide.altText)}" loading="${index === 0 ? "eager" : "lazy"}" data-fallback="cherish-logo.jpg" />
+      <div class="hero-slide-copy">
+        <h3>${escapeHtml(slide.title)}</h3>
+        ${slide.subtitle ? `<p>${escapeHtml(slide.subtitle)}</p>` : ""}
+        <div class="hero-actions">
+          ${slide.ctaHref && slide.ctaLabel ? `<a class="btn btn-primary" href="${escapeHtml(slide.ctaHref)}">${escapeHtml(slide.ctaLabel)}</a>` : `<a class="btn btn-primary" href="plans.html">View Plans</a>`}
+          <a class="btn btn-soft" href="#menu">Browse Menu</a>
+        </div>
+      </div>
+    `;
+    wrap.insertBefore(card, wrap.querySelector(".hero-controls"));
+    const imageEl = card.querySelector("img");
+    if (imageEl) {
+      imageEl.addEventListener("error", () => {
+        const fallback = imageEl.getAttribute("data-fallback") || "cherish-logo.jpg";
+        if (imageEl.getAttribute("src") !== fallback) {
+          imageEl.setAttribute("src", fallback);
+        }
+      });
+    }
+    return card;
+  });
+
+  let active = 0;
+  let timer = null;
+
+  function setActive(nextIndex) {
+    active = (nextIndex + slideEls.length) % slideEls.length;
+    slideEls.forEach((el, idx) => el.classList.toggle("is-active", idx === active));
+    dotsWrap.querySelectorAll(".hero-dot").forEach((dot, idx) => {
+      dot.classList.toggle("is-active", idx === active);
+      dot.setAttribute("aria-current", idx === active ? "true" : "false");
+    });
+  }
+
+  slides.forEach((slide, idx) => {
+    const dot = document.createElement("button");
+    dot.className = `hero-dot${idx === 0 ? " is-active" : ""}`;
+    dot.type = "button";
+    dot.setAttribute("aria-label", `Go to slide ${idx + 1}: ${slide.title}`);
+    dot.addEventListener("click", () => setActive(idx));
+    dotsWrap.appendChild(dot);
+  });
+
+  prevBtn.addEventListener("click", () => setActive(active - 1));
+  nextBtn.addEventListener("click", () => setActive(active + 1));
+
+  function start() {
+    stop();
+    timer = window.setInterval(() => setActive(active + 1), 5000);
+  }
+  function stop() {
+    if (timer) {
+      window.clearInterval(timer);
+      timer = null;
+    }
+  }
+
+  wrap.addEventListener("mouseenter", stop);
+  wrap.addEventListener("mouseleave", start);
+  wrap.addEventListener("focusin", stop);
+  wrap.addEventListener("focusout", start);
+  start();
+}
+
 function attachDietChartForm() {
   const form = document.getElementById("diet-form");
   const feedback = document.getElementById("diet-form-feedback");
@@ -132,10 +231,11 @@ function attachDietChartForm() {
 
 (async function init() {
   try {
-    const [menuRows, priceRows, planRows] = await Promise.all([
+    const [menuRows, priceRows, planRows, heroRows] = await Promise.all([
       fetchCSV("menu.csv"),
       fetchCSV("prices.csv").catch(() => []),
-      fetchCSV("plans.csv").catch(() => [])
+      fetchCSV("plans.csv").catch(() => []),
+      fetchCSV("hero_slides.csv").catch(() => [])
     ]);
 
     const priceMap = new Map(priceRows.map(row => [row.Dish_ID || row.dish_id, row]));
@@ -150,6 +250,7 @@ function attachDietChartForm() {
 
     renderMenu(groupMenu(mergedMenu));
     renderPlans(planRows);
+    renderHeroSlideshow(heroRows);
   } catch (error) {
     renderMenu([]);
   }

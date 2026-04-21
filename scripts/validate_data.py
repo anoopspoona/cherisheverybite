@@ -131,6 +131,24 @@ def validate() -> ValidationResult:
     if bad_price_status:
         result.add_warning(f"prices.csv: unexpected Status values found: {', '.join(bad_price_status)}")
 
+    hero_path = ROOT / "hero_slides.csv"
+    if hero_path.exists():
+        hero_headers, hero_rows = read_csv(hero_path)
+        hero_required = {"slide_id", "title", "image_url", "status", "sort_order"}
+        require_columns(result, "hero_slides.csv", hero_headers, hero_required)
+        if not result.errors:
+            live_hero_rows = [
+                row
+                for row in hero_rows
+                if normalize(row.get("status")).lower() == "live" and normalize(row.get("image_url"))
+            ]
+            for row in live_hero_rows:
+                image_path = ROOT / normalize(row.get("image_url"))
+                if not image_path.exists():
+                    result.add_warning(
+                        f"hero_slides.csv: missing image file for slide_id={normalize(row.get('slide_id'))}: {normalize(row.get('image_url'))}"
+                    )
+
     return result
 
 

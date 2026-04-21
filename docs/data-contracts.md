@@ -16,6 +16,8 @@ The script checks:
 - `menu.csv.Dish_ID` values exist in `prices.csv`,
 - `plan_meals.csv (Plan_Key, Variant_Key)` pairs map to live pairs in `plans.csv`.
 
+The homepage hero slideshow also supports `hero_slides.csv` (optional), with graceful fallback when missing.
+
 ## Required runtime files and columns
 
 ### `menu.csv`
