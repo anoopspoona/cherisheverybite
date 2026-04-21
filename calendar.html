@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Subscription Calendar | Cherish Every Bite</title>
+  <link rel="stylesheet" href="assets/css/calendar.css" />
+</head>
+<body>
+  <header>
+    <div class="container nav">
+      <a class="btn btn-soft" id="back-plan" href="plans.html">← Back to Plan</a>
+      <a class="btn btn-soft" href="plans.html">All Plans</a>
+    </div>
+  </header>
+
+  <main class="container">
+    <h1 id="title">Subscription Calendar</h1>
+    <p class="legend">Select start date and period. Calendar highlights 6 active days (weekly) or 24 active days (monthly), skipping Sundays.</p>
+
+    <section class="controls">
+      <div>
+        <label for="start-date">Start Date</label>
+        <input type="date" id="start-date" />
+      </div>
+      <div>
+        <label for="period-select">Period</label>
+        <select id="period-select">
+          <option value="weekly">Weekly (6 active days)</option>
+          <option value="monthly">Monthly (24 active days)</option>
+        </select>
+      </div>
+      <div>
+        <label for="meal-select">Meal Slot</label>
+        <select id="meal-select">
+          <option value="lunch">Lunch</option>
+          <option value="dinner">Dinner</option>
+        </select>
+      </div>
+      <div>
+        <label for="plan-select">Plan</label>
+        <select id="plan-select">
+          <option value="elite">Elite</option>
+          <option value="basic">Basic</option>
+          <option value="weightloss">Weight Loss</option>
+          <option value="diabetic">Diabetic</option>
+          <option value="smoothie">Smoothie</option>
+        </select>
+      </div>
+      <div>
+        <label for="customer-name">Name</label>
+        <input type="text" id="customer-name" placeholder="Your full name" />
+      </div>
+      <div>
+        <label for="customer-phone">Mobile Number</label>
+        <input type="tel" id="customer-phone" placeholder="WhatsApp number" />
+      </div>
+      <div>
+        <label for="customer-location">Map Location</label>
+        <input type="text" id="customer-location" placeholder="Google Maps link or address pin" />
+      </div>
+      <div>
+        <label for="customer-notes">Notes</label>
+        <input type="text" id="customer-notes" placeholder="Any preferences / comments" />
+      </div>
+    </section>
+
+    <p>
+      <a id="confirm-subscription" class="btn btn-green" href="#" target="_blank" rel="noopener">Confirm Subscription</a>
+    </p>
+    <p id="confirm-feedback" class="legend"></p>
+
+    <section id="calendar-grid" class="calendar-grid"></section>
+  </main>
+
+  <script src="assets/js/common.js"></script>
+  <script src="assets/js/calendar.js"></script>
+</body>
+</html>
