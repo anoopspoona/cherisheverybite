@@ -39,6 +39,7 @@ python3 scripts/validate_data.py
 - `orders.csv`
 - `renewals.csv`
 - `prices.csv`
+- `hero_slides.csv`
 
 ## Data source behavior
 
@@ -53,3 +54,4 @@ To configure Google Sheets source, see `google_sheet_setup.md`.
 - `docs/content-ops.md`
 - `docs/codebase-audit.md`
 - `docs/website-from-scratch-plan.md`
+- `docs/hero-slideshow-input.md`
