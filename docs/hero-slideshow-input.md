@@ -35,9 +35,9 @@ Use a CSV at repo root named `hero_slides.csv`.
 
 ```csv
 slide_id,title,subtitle,image_url,cta_label,cta_href,alt_text,status,sort_order
-H001,Ragi Collagen Chicken Soup,Protein-rich warm starter,assets/images/hero/ragi-soup.jpg,Explore Menu,#menu,Ragi collagen chicken soup in a bowl,live,1
-H002,Mesclun Quinoa Salad,Fresh and filling lunch option,assets/images/hero/quinoa-salad.jpg,View Plans,plans.html,Mesclun quinoa salad with greens and seeds,live,2
-H003,ABC Smoothie,Clean fruit-and-veg blend,assets/images/hero/abc-smoothie.jpg,Order Now,https://order.cherisheverybite.com/outlet/56752198194843,ABC smoothie in a glass bottle,live,3
+H001,Ragi Collagen Chicken Soup,Protein-rich warm starter,assets/hero/ragi-soup.jpg,Explore Menu,#menu,Ragi collagen chicken soup in a bowl,live,1
+H002,Mesclun Quinoa Salad,Fresh and filling lunch option,assets/hero/quinoa-salad.jpg,View Plans,plans.html,Mesclun quinoa salad with greens and seeds,live,2
+H003,ABC Smoothie,Clean fruit-and-veg blend,assets/hero/abc-smoothie.jpg,Order Now,https://order.cherisheverybite.com/outlet/56752198194843,ABC smoothie in a glass bottle,live,3
 ```
 
 ## Image specifications
@@ -51,14 +51,14 @@ For best quality/performance:
 ## Where files should go
 
 - CSV: `hero_slides.csv`
-- Local images: `assets/images/hero/`
+- Local images: `assets/hero/`
 
 ## How to provide images to me
 
 You can share images in either of these ways:
 
 1. **Upload image files directly in this workspace**  
-   Put them in `assets/images/hero/` with clear names (example: `ragi-soup.jpg`).
+   Put them in `assets/hero/` with clear names (example: `ragi-soup.jpg`).
 
 2. **Share public image URLs**  
    I can place those URLs in `hero_slides.csv` under `image_url`.
@@ -72,7 +72,7 @@ To proceed quickly, send:
 Then I can do the full setup (CSV entries + slideshow rendering wiring in the homepage).
 
 Current sample in repo expects hero files named:
-`assets/images/hero/dish-01.jpg` through `assets/images/hero/dish-11.jpg`.
+`assets/hero/Picture1.png` through `assets/hero/Picture11.png`.
 
 ## Rendering behavior recommendation
 

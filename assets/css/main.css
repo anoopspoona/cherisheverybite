@@ -9,3 +9,5 @@
 .hero-dots { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .hero-dot { width: 10px; height: 10px; border-radius: 50%; border: 0; background: rgba(255,255,255,.45); cursor: pointer; }
 .hero-dot.is-active { background: #fff; transform: scale(1.15); }
+.section.hero { padding-top: calc(var(--space-6) / 2); padding-bottom: calc(var(--space-6) / 2); }
+.hero-slide img { max-height: 170px; }
