@@ -97,8 +97,15 @@ async function loadDishes(plan, meal) {
   const feedback = document.getElementById("confirm-feedback");
   const nameInput = document.getElementById("customer-name");
   const phoneInput = document.getElementById("customer-phone");
+  const locationMode = document.getElementById("location-mode");
   const locationInput = document.getElementById("customer-location");
+  const savedLocationInput = document.getElementById("saved-location");
+  const pinnedLocationInput = document.getElementById("pinned-location");
+  const resolvedLocationInput = document.getElementById("resolved-location");
   const notesInput = document.getElementById("customer-notes");
+  const useCurrentLocationBtn = document.getElementById("use-current-location");
+  const mapPickerLink = document.getElementById("open-map-picker");
+  let currentGeoLocation = "";
 
   if (planSelect) planSelect.value = plan;
   if (mealSelect) mealSelect.value = meal;
@@ -108,6 +115,20 @@ async function loadDishes(plan, meal) {
   const today = new Date();
   if (startInput) startInput.value = formatIso(today);
   let currentSelection = null;
+
+  function resolveLocationValue() {
+    const mode = locationMode?.value || "current";
+    if (mode === "current") return currentGeoLocation;
+    if (mode === "saved") return savedLocationInput?.value.trim() || "";
+    if (mode === "pinned") return pinnedLocationInput?.value.trim() || "";
+    return locationInput?.value.trim() || "";
+  }
+
+  function refreshResolvedLocation() {
+    const value = resolveLocationValue();
+    if (resolvedLocationInput) resolvedLocationInput.value = value;
+    if (mapPickerLink && value.startsWith("http")) mapPickerLink.href = value;
+  }
 
   async function refresh() {
     const selectedPlan = planSelect?.value || plan;
@@ -144,7 +165,8 @@ async function loadDishes(plan, meal) {
     if (!confirmBtn || !currentSelection) return;
     const name = nameInput?.value.trim() || "";
     const phone = phoneInput?.value.trim() || "";
-    const location = locationInput?.value.trim() || "";
+    refreshResolvedLocation();
+    const location = resolveLocationValue();
     const notes = notesInput?.value.trim() || "";
     const phoneOk = /^\+?[0-9\-\s]{8,15}$/.test(phone);
 
@@ -159,6 +181,7 @@ async function loadDishes(plan, meal) {
       `Name: ${name}`,
       `Mobile: ${phone}`,
       `Map Location: ${location}`,
+      `Location Source: ${locationMode?.value || "current"}`,
       `Plan: ${PLAN_LABELS[currentSelection.plan] || currentSelection.plan}`,
       `Meal Slot: ${currentSelection.meal}`,
       `Period: ${currentSelection.period}`,
@@ -180,6 +203,28 @@ async function loadDishes(plan, meal) {
     });
   }
 
+  if (useCurrentLocationBtn) {
+    useCurrentLocationBtn.addEventListener("click", () => {
+      if (!navigator.geolocation) {
+        if (feedback) feedback.textContent = "Geolocation is not supported on this browser/device.";
+        return;
+      }
+      navigator.geolocation.getCurrentPosition(
+        position => {
+          const { latitude, longitude } = position.coords;
+          currentGeoLocation = `https://maps.google.com/?q=${latitude},${longitude}`;
+          refreshResolvedLocation();
+          updateConfirmLink();
+          if (feedback) feedback.textContent = "Current location captured successfully.";
+        },
+        () => {
+          if (feedback) feedback.textContent = "Unable to fetch current location. You can use Saved, Pinned, or Manual mode.";
+        },
+        { enableHighAccuracy: true, timeout: 10000 }
+      );
+    });
+  }
+
   [startInput, periodSelect, mealSelect, planSelect].forEach(el => {
     if (el) el.addEventListener("change", async () => {
       await refresh();
@@ -187,10 +232,12 @@ async function loadDishes(plan, meal) {
     });
   });
 
-  [nameInput, phoneInput, locationInput, notesInput].forEach(el => {
+  [nameInput, phoneInput, locationInput, savedLocationInput, pinnedLocationInput, notesInput, locationMode].forEach(el => {
     if (el) el.addEventListener("input", updateConfirmLink);
+    if (el) el.addEventListener("change", updateConfirmLink);
   });
 
   await refresh();
+  refreshResolvedLocation();
   updateConfirmLink();
 })();

@@ -56,8 +56,37 @@
         <input type="tel" id="customer-phone" placeholder="WhatsApp number" />
       </div>
       <div>
-        <label for="customer-location">Map Location</label>
+        <label for="location-mode">Location Source</label>
+        <select id="location-mode">
+          <option value="current">Current Location</option>
+          <option value="saved">Saved Location</option>
+          <option value="pinned">Pinned Map Link</option>
+          <option value="manual">Manual Address</option>
+        </select>
+      </div>
+      <div>
+        <label for="customer-location">Manual Address / Map Location</label>
         <input type="text" id="customer-location" placeholder="Google Maps link or address pin" />
+      </div>
+      <div>
+        <label for="saved-location">Saved Location</label>
+        <input type="text" id="saved-location" placeholder="Home / Office saved location" />
+      </div>
+      <div>
+        <label for="pinned-location">Pinned Map Link</label>
+        <input type="url" id="pinned-location" placeholder="https://maps.google.com/..." />
+      </div>
+      <div>
+        <label>Map App Tools</label>
+        <button id="use-current-location" class="btn btn-soft" type="button">Use Current Location</button>
+      </div>
+      <div>
+        <label>&nbsp;</label>
+        <a id="open-map-picker" class="btn btn-soft" href="https://maps.google.com" target="_blank" rel="noopener">Open Map to Pin Location</a>
+      </div>
+      <div>
+        <label for="resolved-location">Selected Location</label>
+        <input type="text" id="resolved-location" placeholder="Resolved location will appear here" readonly />
       </div>
       <div>
         <label for="customer-notes">Notes</label>
