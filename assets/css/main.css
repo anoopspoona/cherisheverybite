@@ -85,7 +85,7 @@ body {
   width: 100%;
   overflow: hidden;
   background: #081f16;
-  padding: 10px 0 14px;
+  padding: 0;
 }
 
 .hero-strip {
@@ -96,7 +96,7 @@ body {
 
 .hero-strip-track {
   display: flex;
-  gap: 12px;
+  gap: 0;
   width: max-content;
   animation: hero-scroll 40s linear infinite;
   will-change: transform;
@@ -104,8 +104,8 @@ body {
 
 .hero-strip-item {
   flex: 0 0 auto;
-  width: clamp(180px, 22vw, 340px);
-  height: clamp(130px, 16vw, 220px);
+  width: clamp(220px, 24vw, 420px);
+  height: clamp(180px, 20vw, 320px);
   object-fit: cover;
   display: block;
 }
@@ -170,8 +170,7 @@ body {
 }
 
 @media (max-width: 720px) {
-  .hero-strip-track { gap: 8px; }
-  .hero-strip-item { width: 46vw; height: 34vw; }
+  .hero-strip-item { width: 50vw; height: 36vw; }
 }
 
 @media (prefers-reduced-motion: reduce) {

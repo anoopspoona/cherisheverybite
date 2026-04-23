@@ -7,7 +7,7 @@ const PLAN_LABELS = {
 };
 const WHATSAPP_NUMBER = "916282023762";
 const HUB_COORDS = { lat: 8.575357388981113, lon: 76.91238872393365 };
-const DELIVERY_LIMIT_KM = 5;
+const DELIVERY_LIMIT_KM = 7;
 
 function csvFor(plan, meal) {
   return `calendar_${plan}_${meal}.csv`;
