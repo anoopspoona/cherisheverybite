@@ -91,6 +91,12 @@ async function loadDishes(plan, meal) {
   const pickedLat = params.get("picked_lat");
   const pickedLon = params.get("picked_lon");
   const pickedLabel = params.get("picked_label") || "Pinned Location";
+  const customerNameParam = params.get("customer_name") || "";
+  const customerPhoneParam = params.get("customer_phone") || "";
+  const customerNotesParam = params.get("customer_notes") || "";
+  const mapLinkParam = params.get("map_app_link") || "";
+  const deliveryLocationParam = params.get("delivery_location") || "";
+  const startDateParam = params.get("start_date") || "";
 
   const startInput = document.getElementById("start-date");
   const periodSelect = document.getElementById("period-select");
@@ -112,22 +118,36 @@ async function loadDishes(plan, meal) {
   if (mealSelect) mealSelect.value = meal;
   if (title) title.textContent = `${PLAN_LABELS[plan] || "Plan"} • ${meal[0].toUpperCase() + meal.slice(1)} Calendar`;
   if (back) back.href = `${plan}-plan.html`;
-  if (pickLocationBtn) {
+  function updatePickerLink() {
+    if (!pickLocationBtn) return;
     const pickerParams = new URLSearchParams({
-      plan,
-      meal,
+      plan: planSelect?.value || plan,
+      meal: mealSelect?.value || meal,
       period: periodSelect?.value || "weekly",
-      return_to: "calendar.html"
+      return_to: "calendar.html",
+      customer_name: nameInput?.value.trim() || "",
+      customer_phone: phoneInput?.value.trim() || "",
+      customer_notes: notesInput?.value.trim() || "",
+      map_app_link: mapLinkInput?.value.trim() || "",
+      delivery_location: locationSelect?.value || "",
+      start_date: startInput?.value || ""
     });
     pickLocationBtn.href = `map-picker.html?${pickerParams.toString()}`;
   }
+  updatePickerLink();
 
   if (pickedLat && pickedLon && mapLinkInput) {
     mapLinkInput.value = `https://maps.google.com/?q=${pickedLat},${pickedLon}`;
   }
+  if (!pickedLat && !pickedLon && mapLinkParam && mapLinkInput) {
+    mapLinkInput.value = mapLinkParam;
+  }
+  if (nameInput && customerNameParam) nameInput.value = customerNameParam;
+  if (phoneInput && customerPhoneParam) phoneInput.value = customerPhoneParam;
+  if (notesInput && customerNotesParam) notesInput.value = customerNotesParam;
 
   const today = new Date();
-  if (startInput) startInput.value = formatIso(today);
+  if (startInput) startInput.value = startDateParam || formatIso(today);
   let currentSelection = null;
 
   async function loadLocations() {
@@ -153,6 +173,10 @@ async function loadDishes(plan, meal) {
     locationSelect.innerHTML = normalized
       .map(row => `<option value="${escapeHtml(row.id)}">${escapeHtml(row.name)}</option>`)
       .join("");
+
+    if (deliveryLocationParam && locationMap.has(deliveryLocationParam)) {
+      locationSelect.value = deliveryLocationParam;
+    }
   }
 
   async function refresh() {
@@ -163,15 +187,7 @@ async function loadDishes(plan, meal) {
 
     if (title) title.textContent = `${PLAN_LABELS[selectedPlan] || "Plan"} • ${selectedMeal[0].toUpperCase() + selectedMeal.slice(1)} Calendar`;
     if (back) back.href = `${selectedPlan}-plan.html`;
-    if (pickLocationBtn) {
-      const pickerParams = new URLSearchParams({
-        plan: selectedPlan,
-        meal: selectedMeal,
-        period: selectedPeriod,
-        return_to: "calendar.html"
-      });
-      pickLocationBtn.href = `map-picker.html?${pickerParams.toString()}`;
-    }
+    updatePickerLink();
 
     const dishRows = await loadDishes(selectedPlan, selectedMeal).catch(() => []);
     const dishes = dishRows.length ? dishRows : ["Menu to be updated"];
@@ -284,6 +300,7 @@ async function loadDishes(plan, meal) {
     if (el) el.addEventListener("change", async () => {
       await refresh();
       updateConfirmLink();
+      updatePickerLink();
     });
   });
 
@@ -292,12 +309,19 @@ async function loadDishes(plan, meal) {
       const selected = locationMap.get(locationSelect.value || "");
       if (selected?.mapLink) mapLinkInput.value = selected.mapLink;
       updateConfirmLink();
+      updatePickerLink();
     });
   }
 
   [nameInput, phoneInput, notesInput, locationSelect, mapLinkInput].forEach(el => {
-    if (el) el.addEventListener("input", updateConfirmLink);
-    if (el) el.addEventListener("change", updateConfirmLink);
+    if (el) el.addEventListener("input", () => {
+      updateConfirmLink();
+      updatePickerLink();
+    });
+    if (el) el.addEventListener("change", () => {
+      updateConfirmLink();
+      updatePickerLink();
+    });
   });
 
   await loadLocations();

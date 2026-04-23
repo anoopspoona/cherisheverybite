@@ -15,7 +15,16 @@ const HUB = { lat: 8.575357388981113, lon: 76.91238872393365 };
   const coords = document.getElementById("coords");
   const pinLabel = document.getElementById("pin-label");
 
-  const baseQuery = `plan=${encodeURIComponent(plan)}&meal=${encodeURIComponent(meal)}&period=${encodeURIComponent(period)}`;
+  const carryParams = new URLSearchParams(params);
+  carryParams.set("plan", plan);
+  carryParams.set("meal", meal);
+  carryParams.set("period", period);
+  carryParams.delete("return_to");
+  carryParams.delete("picked_lat");
+  carryParams.delete("picked_lon");
+  carryParams.delete("picked_label");
+
+  const baseQuery = carryParams.toString();
   if (back) back.href = `${returnTo}?${baseQuery}`;
 
   const map = L.map("map").setView([HUB.lat, HUB.lon], 13);

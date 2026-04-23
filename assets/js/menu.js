@@ -34,7 +34,8 @@ function groupMenu(rows) {
       name: row.Dish_Name || row.Name || row.name || "",
       mealType: row.Meal_Type || row.meal_type || "",
       price: normalizePrice(row.Price || row.price || ""),
-      tag: row.Tag || row.tag || ""
+      tag: row.Tag || row.tag || "",
+      imageUrl: row.Image_URL || row.image_url || row.Image || row.image || "cherish-logo.jpg"
     });
   }
 
@@ -60,6 +61,7 @@ function renderMenu(groups) {
     const rows = group.items.map((item, index) => `
       <li>
         <span>${index + 1}</span>
+        <img class="dish-thumb" src="${escapeHtml(item.imageUrl)}" alt="${escapeHtml(item.name)}" loading="lazy" onerror="this.src='cherish-logo.jpg'" />
         <div>
           <strong>${escapeHtml(item.name)}</strong>
           ${item.mealType ? `<div class="muted">${escapeHtml(item.mealType)}</div>` : ""}

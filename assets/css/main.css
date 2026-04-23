@@ -82,6 +82,7 @@ body {
 
 
 .hero-strip-section {
+  margin-top: 14px;
   width: 100%;
   overflow: hidden;
   background: #081f16;
@@ -119,6 +120,13 @@ body {
   to { transform: translateX(-50%); }
 }
 
+.brand-story-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-4);
+}
+.story-card p { margin: 0; }
+
 .section-top h2,
 .card h2 { margin: 0 0 var(--space-2); color: var(--green); }
 .section-top p,
@@ -146,7 +154,8 @@ body {
 .menu-title-row { display: flex; justify-content: space-between; gap: var(--space-2); align-items: center; }
 .menu-title { margin: 0; color: var(--green); }
 .item-list { list-style: none; padding: 0; margin: var(--space-3) 0 0; display: grid; gap: var(--space-2); }
-.item-list li { display: grid; grid-template-columns: 28px 1fr auto; gap: var(--space-2); align-items: start; }
+.item-list li { display: grid; grid-template-columns: 28px 56px 1fr auto; gap: var(--space-2); align-items: center; }
+.dish-thumb { width: 56px; height: 56px; border-radius: 10px; object-fit: cover; border: 1px solid rgba(0,0,0,.08); }
 .count,
 .price { font-size: 0.82rem; border-radius: 999px; padding: 6px 10px; }
 .count { background: #eef8f2; color: #165b3a; }
@@ -166,7 +175,8 @@ body {
 @media (max-width: 980px) {
   .menu-grid,
   .plan-grid,
-  .footer-grid { grid-template-columns: 1fr; }
+  .footer-grid,
+  .brand-story-grid { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 720px) {
