@@ -215,6 +215,13 @@ async function loadDishes(plan, meal) {
     renderCalendarMonths(start, activeMap);
   }
 
+  function setFeedback(type, message) {
+    if (!feedback) return;
+    feedback.textContent = message;
+    feedback.classList.remove("error", "success");
+    if (type) feedback.classList.add(type);
+  }
+
   function updateConfirmLink() {
     if (!confirmBtn || !currentSelection) return;
     const name = nameInput?.value.trim() || "";
@@ -243,19 +250,19 @@ async function loadDishes(plan, meal) {
 
     if (!name || !phoneOk || !resolvedLocationName || !mapAppLink) {
       confirmBtn.href = "#";
-      if (feedback) feedback.textContent = "Add name, valid mobile number, delivery location, and map link.";
+      setFeedback("error", "Add name, valid mobile number, delivery location, and map link.");
       return;
     }
 
     if (!coords) {
       confirmBtn.href = "#";
-      if (feedback) feedback.textContent = "Map link should include coordinates (latitude, longitude).";
+      setFeedback("error", "Map link should include coordinates (latitude, longitude).");
       return;
     }
 
     if (!withinRange) {
       confirmBtn.href = "#";
-      if (feedback) feedback.textContent = `Delivery unavailable: selected location is ${distanceKm.toFixed(2)} km away (limit: ${DELIVERY_LIMIT_KM} km).`;
+      setFeedback("error", `Delivery unavailable: selected location is ${distanceKm.toFixed(2)} km away (limit: ${DELIVERY_LIMIT_KM} km).`);
       return;
     }
 
@@ -284,7 +291,7 @@ async function loadDishes(plan, meal) {
     ].filter(Boolean).join("\n");
 
     confirmBtn.href = buildWhatsappLink(WHATSAPP_NUMBER, message);
-    if (feedback) feedback.textContent = "Ready. Tap confirm to continue on WhatsApp.";
+    setFeedback("success", "Ready. Tap confirm to continue on WhatsApp.");
   }
 
 

@@ -125,7 +125,29 @@ body {
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--space-4);
 }
-.story-card p { margin: 0; }
+.story-card {
+  position: relative;
+  overflow: hidden;
+  min-height: 180px;
+  color: #fff;
+  display: grid;
+  align-content: end;
+}
+.story-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,.15), rgba(0,0,0,.72));
+}
+.story-card > * { position: relative; z-index: 1; }
+.story-card h2 { color: #fff; }
+.story-card p { margin: 0; color: rgba(255,255,255,.96); }
+.story-card:nth-child(1) {
+  background: url("assets/hero/Picture24.png") center/cover no-repeat;
+}
+.story-card:nth-child(2) {
+  background: url("assets/hero/Picture22.png") center/cover no-repeat;
+}
 
 .section-top h2,
 .card h2 { margin: 0 0 var(--space-2); color: var(--green); }

@@ -8,8 +8,6 @@ const HUB = { lat: 8.575357388981113, lon: 76.91238872393365 };
   const period = params.get("period") || "weekly";
 
   const back = document.getElementById("back-calendar");
-  const openNative = document.getElementById("open-native");
-  const openBrowser = document.getElementById("open-browser");
   const useLocation = document.getElementById("use-location");
   const useCurrentLocation = document.getElementById("use-current-location");
   const coords = document.getElementById("coords");
@@ -52,11 +50,7 @@ const HUB = { lat: 8.575357388981113, lon: 76.91238872393365 };
     const lat = selected.lat.toFixed(6);
     const lon = selected.lng.toFixed(6);
     const label = encodeURIComponent((pinLabel?.value || "Pinned Location").trim());
-    const mapUrl = `https://maps.google.com/?q=${lat},${lon}`;
-
     if (coords) coords.textContent = `Selected: ${lat}, ${lon}`;
-    if (openNative) openNative.href = `geo:${lat},${lon}?q=${lat},${lon}`;
-    if (openBrowser) openBrowser.href = mapUrl;
     if (useLocation) useLocation.href = `${returnTo}?${baseQuery}&picked_lat=${lat}&picked_lon=${lon}&picked_label=${label}`;
   }
 
