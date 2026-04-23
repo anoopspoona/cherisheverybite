@@ -204,24 +204,36 @@ async function loadDishes(plan, meal) {
     const name = nameInput?.value.trim() || "";
     const phone = phoneInput?.value.trim() || "";
     const selected = locationMap.get(locationSelect?.value || "") || null;
-    const locationName = selected?.name || "";
+    const locationNameFromList = selected?.name || "";
     const locationMapLink = selected?.mapLink || "";
-    const mapAppLink = mapLinkInput?.value.trim() || "";
+
+    if (!mapLinkInput) return;
+    if (!mapLinkInput.value.trim()) {
+      if (locationMapLink) {
+        mapLinkInput.value = locationMapLink;
+      } else if (pickedLat && pickedLon) {
+        mapLinkInput.value = `https://maps.google.com/?q=${pickedLat},${pickedLon}`;
+      }
+    }
+
+    const mapAppLink = mapLinkInput.value.trim();
     const notes = notesInput?.value.trim() || "";
     const phoneOk = /^\+?[0-9\-\s]{8,15}$/.test(phone);
     const coords = extractLatLng(mapAppLink);
     const distanceKm = coords ? haversineKm(HUB_COORDS, coords) : null;
     const withinRange = distanceKm !== null && distanceKm <= DELIVERY_LIMIT_KM;
+    const fallbackPinnedName = pickedLat && pickedLon ? (pickedLabel || "Pinned Location") : "";
+    const resolvedLocationName = locationNameFromList || fallbackPinnedName;
 
-    if (!name || !phoneOk || !locationName || !mapAppLink) {
+    if (!name || !phoneOk || !resolvedLocationName || !mapAppLink) {
       confirmBtn.href = "#";
-      if (feedback) feedback.textContent = "Enter name, valid mobile number, select delivery location, and provide map app link.";
+      if (feedback) feedback.textContent = "Add name, valid mobile number, delivery location, and map link.";
       return;
     }
 
     if (!coords) {
       confirmBtn.href = "#";
-      if (feedback) feedback.textContent = "Map link must contain valid coordinates (latitude, longitude).";
+      if (feedback) feedback.textContent = "Map link should include coordinates (latitude, longitude).";
       return;
     }
 
@@ -239,9 +251,9 @@ async function loadDishes(plan, meal) {
       "Hi Cherish Every Bite, please confirm my subscription.",
       `Name: ${name}`,
       `Mobile: ${phone}`,
-      `Delivery Location: ${locationName}`,
-      pickedLat && pickedLon ? `Pinned Label: ${pickedLabel}` : "",
-      locationMapLink ? `Map Link: ${locationMapLink}` : "",
+      `Delivery Location: ${resolvedLocationName}`,
+      fallbackPinnedName ? `Pinned Label: ${fallbackPinnedName}` : "",
+      locationMapLink ? `Saved Location Link: ${locationMapLink}` : "",
       `Pinned Map App Link: ${mapAppLink}`,
       `Distance from Hub: ${distanceKm.toFixed(2)} km (max ${DELIVERY_LIMIT_KM} km)`,
       `Plan: ${PLAN_LABELS[currentSelection.plan] || currentSelection.plan}`,
@@ -256,8 +268,9 @@ async function loadDishes(plan, meal) {
     ].filter(Boolean).join("\n");
 
     confirmBtn.href = buildWhatsappLink(WHATSAPP_NUMBER, message);
-    if (feedback) feedback.textContent = "Tap confirm to open WhatsApp with your subscription details.";
+    if (feedback) feedback.textContent = "Ready. Tap confirm to continue on WhatsApp.";
   }
+
 
   if (confirmBtn) {
     confirmBtn.addEventListener("click", event => {
@@ -273,6 +286,14 @@ async function loadDishes(plan, meal) {
       updateConfirmLink();
     });
   });
+
+  if (locationSelect && mapLinkInput) {
+    locationSelect.addEventListener("change", () => {
+      const selected = locationMap.get(locationSelect.value || "");
+      if (selected?.mapLink) mapLinkInput.value = selected.mapLink;
+      updateConfirmLink();
+    });
+  }
 
   [nameInput, phoneInput, notesInput, locationSelect, mapLinkInput].forEach(el => {
     if (el) el.addEventListener("input", updateConfirmLink);
