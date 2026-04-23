@@ -132,17 +132,18 @@ function renderHeroSlideshow(rows) {
   wrap.querySelectorAll(".hero-slide").forEach(node => node.remove());
   dotsWrap.innerHTML = "";
 
+  const controls = wrap.querySelector(".hero-controls");
   const slideEls = slides.map((slide, index) => {
     const card = document.createElement("article");
     card.className = `hero-slide${index === 0 ? " is-active" : ""}`;
+    card.setAttribute("tabindex", "0");
     card.innerHTML = `
       <img src="${escapeHtml(slide.imageUrl)}" alt="${escapeHtml(slide.altText)}" loading="${index === 0 ? "eager" : "lazy"}" data-fallback="cherish-logo.jpg" />
       <div class="hero-slide-copy">
         <h3>${escapeHtml(slide.title)}</h3>
-        ${slide.subtitle ? `<p>${escapeHtml(slide.subtitle)}</p>` : ""}
       </div>
     `;
-    wrap.insertBefore(card, wrap.querySelector(".hero-controls"));
+    wrap.insertBefore(card, controls);
     const imageEl = card.querySelector("img");
     if (imageEl) {
       imageEl.addEventListener("error", () => {
@@ -157,10 +158,15 @@ function renderHeroSlideshow(rows) {
 
   let active = 0;
   let timer = null;
+  let touchStartX = null;
 
   function setActive(nextIndex) {
     active = (nextIndex + slideEls.length) % slideEls.length;
-    slideEls.forEach((el, idx) => el.classList.toggle("is-active", idx === active));
+    slideEls.forEach((el, idx) => {
+      const isCurrent = idx === active;
+      el.classList.toggle("is-active", isCurrent);
+      el.setAttribute("aria-hidden", isCurrent ? "false" : "true");
+    });
     dotsWrap.querySelectorAll(".hero-dot").forEach((dot, idx) => {
       dot.classList.toggle("is-active", idx === active);
       dot.setAttribute("aria-current", idx === active ? "true" : "false");
@@ -179,6 +185,23 @@ function renderHeroSlideshow(rows) {
   prevBtn.addEventListener("click", () => setActive(active - 1));
   nextBtn.addEventListener("click", () => setActive(active + 1));
 
+  wrap.addEventListener("keydown", event => {
+    if (event.key === "ArrowLeft") setActive(active - 1);
+    if (event.key === "ArrowRight") setActive(active + 1);
+  });
+
+  wrap.addEventListener("touchstart", event => {
+    touchStartX = event.changedTouches?.[0]?.clientX ?? null;
+  }, { passive: true });
+
+  wrap.addEventListener("touchend", event => {
+    const touchEndX = event.changedTouches?.[0]?.clientX ?? null;
+    if (touchStartX === null || touchEndX === null) return;
+    const delta = touchEndX - touchStartX;
+    if (Math.abs(delta) < 36) return;
+    setActive(delta > 0 ? active - 1 : active + 1);
+  }, { passive: true });
+
   function start() {
     stop();
     timer = window.setInterval(() => setActive(active + 1), 5000);
@@ -194,6 +217,7 @@ function renderHeroSlideshow(rows) {
   wrap.addEventListener("mouseleave", start);
   wrap.addEventListener("focusin", stop);
   wrap.addEventListener("focusout", start);
+  setActive(0);
   start();
 }
 
