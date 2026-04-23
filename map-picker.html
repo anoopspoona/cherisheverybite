@@ -17,20 +17,21 @@
 
   <main class="container">
     <h1>Select Delivery Location</h1>
-    <p class="muted">Tap on the map to place your delivery pin. Then choose your preferred map app or continue back to calendar.</p>
+    <p class="muted">Tap the map, or use your current location, then confirm.</p>
 
     <div class="info">
       <label for="pin-label">Pin label</label>
       <input id="pin-label" type="text" placeholder="Home / Office / Custom location" value="Pinned Location" />
       <p id="coords" class="muted">No location selected yet.</p>
       <div class="controls">
+        <button id="use-current-location" class="btn" type="button">Use Current Location</button>
         <a id="open-native" class="btn" href="#">Open in Native Maps App</a>
         <a id="open-browser" class="btn" href="#" target="_blank" rel="noopener">Open in Browser Maps</a>
-        <a id="use-location" class="btn" href="#">Use this location</a>
+        <a id="use-location" class="btn btn-primary" href="#">Use this location</a>
       </div>
     </div>
 
-    <div id="map"></div>
+    <div id="map" aria-label="Delivery location map"></div>
   </main>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>

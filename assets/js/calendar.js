@@ -7,7 +7,7 @@ const PLAN_LABELS = {
 };
 const WHATSAPP_NUMBER = "916282023762";
 const HUB_COORDS = { lat: 8.575357388981113, lon: 76.91238872393365 };
-const DELIVERY_LIMIT_KM = 5;
+const DELIVERY_LIMIT_KM = 7;
 
 function csvFor(plan, meal) {
   return `calendar_${plan}_${meal}.csv`;
@@ -91,6 +91,12 @@ async function loadDishes(plan, meal) {
   const pickedLat = params.get("picked_lat");
   const pickedLon = params.get("picked_lon");
   const pickedLabel = params.get("picked_label") || "Pinned Location";
+  const customerNameParam = params.get("customer_name") || "";
+  const customerPhoneParam = params.get("customer_phone") || "";
+  const customerNotesParam = params.get("customer_notes") || "";
+  const mapLinkParam = params.get("map_app_link") || "";
+  const deliveryLocationParam = params.get("delivery_location") || "";
+  const startDateParam = params.get("start_date") || "";
 
   const startInput = document.getElementById("start-date");
   const periodSelect = document.getElementById("period-select");
@@ -112,22 +118,36 @@ async function loadDishes(plan, meal) {
   if (mealSelect) mealSelect.value = meal;
   if (title) title.textContent = `${PLAN_LABELS[plan] || "Plan"} • ${meal[0].toUpperCase() + meal.slice(1)} Calendar`;
   if (back) back.href = `${plan}-plan.html`;
-  if (pickLocationBtn) {
+  function updatePickerLink() {
+    if (!pickLocationBtn) return;
     const pickerParams = new URLSearchParams({
-      plan,
-      meal,
+      plan: planSelect?.value || plan,
+      meal: mealSelect?.value || meal,
       period: periodSelect?.value || "weekly",
-      return_to: "calendar.html"
+      return_to: "calendar.html",
+      customer_name: nameInput?.value.trim() || "",
+      customer_phone: phoneInput?.value.trim() || "",
+      customer_notes: notesInput?.value.trim() || "",
+      map_app_link: mapLinkInput?.value.trim() || "",
+      delivery_location: locationSelect?.value || "",
+      start_date: startInput?.value || ""
     });
     pickLocationBtn.href = `map-picker.html?${pickerParams.toString()}`;
   }
+  updatePickerLink();
 
   if (pickedLat && pickedLon && mapLinkInput) {
     mapLinkInput.value = `https://maps.google.com/?q=${pickedLat},${pickedLon}`;
   }
+  if (!pickedLat && !pickedLon && mapLinkParam && mapLinkInput) {
+    mapLinkInput.value = mapLinkParam;
+  }
+  if (nameInput && customerNameParam) nameInput.value = customerNameParam;
+  if (phoneInput && customerPhoneParam) phoneInput.value = customerPhoneParam;
+  if (notesInput && customerNotesParam) notesInput.value = customerNotesParam;
 
   const today = new Date();
-  if (startInput) startInput.value = formatIso(today);
+  if (startInput) startInput.value = startDateParam || formatIso(today);
   let currentSelection = null;
 
   async function loadLocations() {
@@ -153,6 +173,10 @@ async function loadDishes(plan, meal) {
     locationSelect.innerHTML = normalized
       .map(row => `<option value="${escapeHtml(row.id)}">${escapeHtml(row.name)}</option>`)
       .join("");
+
+    if (deliveryLocationParam && locationMap.has(deliveryLocationParam)) {
+      locationSelect.value = deliveryLocationParam;
+    }
   }
 
   async function refresh() {
@@ -163,15 +187,7 @@ async function loadDishes(plan, meal) {
 
     if (title) title.textContent = `${PLAN_LABELS[selectedPlan] || "Plan"} • ${selectedMeal[0].toUpperCase() + selectedMeal.slice(1)} Calendar`;
     if (back) back.href = `${selectedPlan}-plan.html`;
-    if (pickLocationBtn) {
-      const pickerParams = new URLSearchParams({
-        plan: selectedPlan,
-        meal: selectedMeal,
-        period: selectedPeriod,
-        return_to: "calendar.html"
-      });
-      pickLocationBtn.href = `map-picker.html?${pickerParams.toString()}`;
-    }
+    updatePickerLink();
 
     const dishRows = await loadDishes(selectedPlan, selectedMeal).catch(() => []);
     const dishes = dishRows.length ? dishRows : ["Menu to be updated"];
@@ -204,24 +220,36 @@ async function loadDishes(plan, meal) {
     const name = nameInput?.value.trim() || "";
     const phone = phoneInput?.value.trim() || "";
     const selected = locationMap.get(locationSelect?.value || "") || null;
-    const locationName = selected?.name || "";
+    const locationNameFromList = selected?.name || "";
     const locationMapLink = selected?.mapLink || "";
-    const mapAppLink = mapLinkInput?.value.trim() || "";
+
+    if (!mapLinkInput) return;
+    if (!mapLinkInput.value.trim()) {
+      if (locationMapLink) {
+        mapLinkInput.value = locationMapLink;
+      } else if (pickedLat && pickedLon) {
+        mapLinkInput.value = `https://maps.google.com/?q=${pickedLat},${pickedLon}`;
+      }
+    }
+
+    const mapAppLink = mapLinkInput.value.trim();
     const notes = notesInput?.value.trim() || "";
     const phoneOk = /^\+?[0-9\-\s]{8,15}$/.test(phone);
     const coords = extractLatLng(mapAppLink);
     const distanceKm = coords ? haversineKm(HUB_COORDS, coords) : null;
     const withinRange = distanceKm !== null && distanceKm <= DELIVERY_LIMIT_KM;
+    const fallbackPinnedName = pickedLat && pickedLon ? (pickedLabel || "Pinned Location") : "";
+    const resolvedLocationName = locationNameFromList || fallbackPinnedName;
 
-    if (!name || !phoneOk || !locationName || !mapAppLink) {
+    if (!name || !phoneOk || !resolvedLocationName || !mapAppLink) {
       confirmBtn.href = "#";
-      if (feedback) feedback.textContent = "Enter name, valid mobile number, select delivery location, and provide map app link.";
+      if (feedback) feedback.textContent = "Add name, valid mobile number, delivery location, and map link.";
       return;
     }
 
     if (!coords) {
       confirmBtn.href = "#";
-      if (feedback) feedback.textContent = "Map link must contain valid coordinates (latitude, longitude).";
+      if (feedback) feedback.textContent = "Map link should include coordinates (latitude, longitude).";
       return;
     }
 
@@ -239,9 +267,9 @@ async function loadDishes(plan, meal) {
       "Hi Cherish Every Bite, please confirm my subscription.",
       `Name: ${name}`,
       `Mobile: ${phone}`,
-      `Delivery Location: ${locationName}`,
-      pickedLat && pickedLon ? `Pinned Label: ${pickedLabel}` : "",
-      locationMapLink ? `Map Link: ${locationMapLink}` : "",
+      `Delivery Location: ${resolvedLocationName}`,
+      fallbackPinnedName ? `Pinned Label: ${fallbackPinnedName}` : "",
+      locationMapLink ? `Saved Location Link: ${locationMapLink}` : "",
       `Pinned Map App Link: ${mapAppLink}`,
       `Distance from Hub: ${distanceKm.toFixed(2)} km (max ${DELIVERY_LIMIT_KM} km)`,
       `Plan: ${PLAN_LABELS[currentSelection.plan] || currentSelection.plan}`,
@@ -256,8 +284,9 @@ async function loadDishes(plan, meal) {
     ].filter(Boolean).join("\n");
 
     confirmBtn.href = buildWhatsappLink(WHATSAPP_NUMBER, message);
-    if (feedback) feedback.textContent = "Tap confirm to open WhatsApp with your subscription details.";
+    if (feedback) feedback.textContent = "Ready. Tap confirm to continue on WhatsApp.";
   }
+
 
   if (confirmBtn) {
     confirmBtn.addEventListener("click", event => {
@@ -271,12 +300,28 @@ async function loadDishes(plan, meal) {
     if (el) el.addEventListener("change", async () => {
       await refresh();
       updateConfirmLink();
+      updatePickerLink();
     });
   });
 
+  if (locationSelect && mapLinkInput) {
+    locationSelect.addEventListener("change", () => {
+      const selected = locationMap.get(locationSelect.value || "");
+      if (selected?.mapLink) mapLinkInput.value = selected.mapLink;
+      updateConfirmLink();
+      updatePickerLink();
+    });
+  }
+
   [nameInput, phoneInput, notesInput, locationSelect, mapLinkInput].forEach(el => {
-    if (el) el.addEventListener("input", updateConfirmLink);
-    if (el) el.addEventListener("change", updateConfirmLink);
+    if (el) el.addEventListener("input", () => {
+      updateConfirmLink();
+      updatePickerLink();
+    });
+    if (el) el.addEventListener("change", () => {
+      updateConfirmLink();
+      updatePickerLink();
+    });
   });
 
   await loadLocations();
