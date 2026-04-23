@@ -121,80 +121,36 @@ function normalizeSlides(rows) {
 
 function renderHeroSlideshow(rows) {
   const wrap = document.getElementById("hero-slideshow");
-  const dotsWrap = document.getElementById("hero-dots");
-  const prevBtn = document.getElementById("hero-prev");
-  const nextBtn = document.getElementById("hero-next");
-  if (!wrap || !dotsWrap || !prevBtn || !nextBtn) return;
+  if (!wrap) return;
 
   const slides = normalizeSlides(rows);
-  if (!slides.length) return;
+  const imageSlides = slides.length ? slides : [{
+    imageUrl: "cherish-logo.jpg",
+    altText: "Cherish Every Bite featured dish"
+  }];
 
-  wrap.querySelectorAll(".hero-slide").forEach(node => node.remove());
-  dotsWrap.innerHTML = "";
+  wrap.innerHTML = "";
+  const track = document.createElement("div");
+  track.className = "hero-strip-track";
 
-  const slideEls = slides.map((slide, index) => {
-    const card = document.createElement("article");
-    card.className = `hero-slide${index === 0 ? " is-active" : ""}`;
-    card.innerHTML = `
-      <img src="${escapeHtml(slide.imageUrl)}" alt="${escapeHtml(slide.altText)}" loading="${index === 0 ? "eager" : "lazy"}" data-fallback="cherish-logo.jpg" />
-      <div class="hero-slide-copy">
-        <h3>${escapeHtml(slide.title)}</h3>
-        ${slide.subtitle ? `<p>${escapeHtml(slide.subtitle)}</p>` : ""}
-      </div>
-    `;
-    wrap.insertBefore(card, wrap.querySelector(".hero-controls"));
-    const imageEl = card.querySelector("img");
-    if (imageEl) {
-      imageEl.addEventListener("error", () => {
-        const fallback = imageEl.getAttribute("data-fallback") || "cherish-logo.jpg";
-        if (imageEl.getAttribute("src") !== fallback) {
-          imageEl.setAttribute("src", fallback);
-        }
-      });
-    }
-    return card;
-  });
-
-  let active = 0;
-  let timer = null;
-
-  function setActive(nextIndex) {
-    active = (nextIndex + slideEls.length) % slideEls.length;
-    slideEls.forEach((el, idx) => el.classList.toggle("is-active", idx === active));
-    dotsWrap.querySelectorAll(".hero-dot").forEach((dot, idx) => {
-      dot.classList.toggle("is-active", idx === active);
-      dot.setAttribute("aria-current", idx === active ? "true" : "false");
+  const loopItems = [...imageSlides, ...imageSlides];
+  loopItems.forEach((slide, index) => {
+    const image = document.createElement("img");
+    image.className = "hero-strip-item";
+    image.loading = index < 6 ? "eager" : "lazy";
+    image.src = slide.imageUrl;
+    image.alt = slide.altText || "Featured dish";
+    image.setAttribute("data-fallback", "cherish-logo.jpg");
+    image.addEventListener("error", () => {
+      const fallback = image.getAttribute("data-fallback") || "cherish-logo.jpg";
+      if (image.getAttribute("src") !== fallback) {
+        image.setAttribute("src", fallback);
+      }
     });
-  }
-
-  slides.forEach((slide, idx) => {
-    const dot = document.createElement("button");
-    dot.className = `hero-dot${idx === 0 ? " is-active" : ""}`;
-    dot.type = "button";
-    dot.setAttribute("aria-label", `Go to slide ${idx + 1}: ${slide.title}`);
-    dot.addEventListener("click", () => setActive(idx));
-    dotsWrap.appendChild(dot);
+    track.appendChild(image);
   });
 
-  prevBtn.addEventListener("click", () => setActive(active - 1));
-  nextBtn.addEventListener("click", () => setActive(active + 1));
-
-  function start() {
-    stop();
-    timer = window.setInterval(() => setActive(active + 1), 5000);
-  }
-  function stop() {
-    if (timer) {
-      window.clearInterval(timer);
-      timer = null;
-    }
-  }
-
-  wrap.addEventListener("mouseenter", stop);
-  wrap.addEventListener("mouseleave", start);
-  wrap.addEventListener("focusin", stop);
-  wrap.addEventListener("focusout", start);
-  start();
+  wrap.appendChild(track);
 }
 
 function attachDietChartForm() {
