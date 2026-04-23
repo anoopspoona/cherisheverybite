@@ -11,10 +11,21 @@ Open:
 - `http://localhost:8000/index.html`
 - `http://localhost:8000/plan.html?plan=elite`
 
+Validate runtime CSV contracts:
+
+```bash
+python3 scripts/validate_data.py
+```
+
 ## Project structure
 
 - `index.html` — landing page and dynamic menu render.
+- `menu.html` — dedicated à la carte menu page.
+- `plans.html` — subscription plans hub with links to individual plan pages.
 - `plan.html` — plan detail page with 7-day meal preview.
+- `elite-plan.html`, `salad-plan.html`, `weightloss-plan.html`, `basic-plan.html`, `customised-plan.html`, `smoothie-plan.html`, `diabetic-plan.html` — individual plan pages.
+- `calendar.html` — plan calendar planner for lunch/dinner weekly or monthly slots.
+- `map-picker.html` — interactive map pin selector for delivery location capture.
 - `assets/css/main.css` — landing page styles.
 - `assets/css/plan.css` — plan page styles.
 - `assets/js/common.js` — shared helpers.
@@ -31,14 +42,22 @@ Open:
 - `orders.csv`
 - `renewals.csv`
 - `prices.csv`
+- `hero_slides.csv`
+- `calendar_<plan>_<meal>.csv` (example: `calendar_elite_lunch.csv`)
+- `delivery_locations.csv`
 
 ## Data source behavior
 
 Homepage menu attempts Google Sheets CSV first (if configured), then falls back to local `prices.csv`.
+Homepage featured dish slideshow reads from `hero_slides.csv` (if present and `status=live` rows exist).
 
 To configure Google Sheets source, see `google_sheet_setup.md`.
 
 ## Docs
 
 - `docs/data-schema.md`
+- `docs/data-contracts.md`
 - `docs/content-ops.md`
+- `docs/codebase-audit.md`
+- `docs/website-from-scratch-plan.md`
+- `docs/hero-slideshow-input.md`
