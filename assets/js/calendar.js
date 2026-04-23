@@ -6,6 +6,8 @@ const PLAN_LABELS = {
   smoothie: "Smoothie"
 };
 const WHATSAPP_NUMBER = "916282023762";
+const HUB_COORDS = { lat: 8.575357388981113, lon: 76.91238872393365 };
+const DELIVERY_LIMIT_KM = 5;
 
 function csvFor(plan, meal) {
   return `calendar_${plan}_${meal}.csv`;
@@ -98,6 +100,7 @@ async function loadDishes(plan, meal) {
   const nameInput = document.getElementById("customer-name");
   const phoneInput = document.getElementById("customer-phone");
   const locationSelect = document.getElementById("delivery-location");
+  const mapLinkInput = document.getElementById("map-app-link");
   const notesInput = document.getElementById("customer-notes");
   const locationMap = new Map();
 
@@ -160,7 +163,11 @@ async function loadDishes(plan, meal) {
       period: selectedPeriod,
       start: formatIso(start),
       end: dates[dates.length - 1] || formatIso(start),
-      activeDays: activeCount
+      activeDays: activeCount,
+      schedule: dates.map((iso, idx) => ({
+        date: iso,
+        dish: dishes[idx % dishes.length]
+      }))
     };
 
     renderCalendarMonths(start, activeMap);
@@ -173,14 +180,34 @@ async function loadDishes(plan, meal) {
     const selected = locationMap.get(locationSelect?.value || "") || null;
     const locationName = selected?.name || "";
     const locationMapLink = selected?.mapLink || "";
+    const mapAppLink = mapLinkInput?.value.trim() || "";
     const notes = notesInput?.value.trim() || "";
     const phoneOk = /^\+?[0-9\-\s]{8,15}$/.test(phone);
+    const coords = extractLatLng(mapAppLink);
+    const distanceKm = coords ? haversineKm(HUB_COORDS, coords) : null;
+    const withinRange = distanceKm !== null && distanceKm <= DELIVERY_LIMIT_KM;
 
-    if (!name || !phoneOk || !locationName) {
+    if (!name || !phoneOk || !locationName || !mapAppLink) {
       confirmBtn.href = "#";
-      if (feedback) feedback.textContent = "Enter name, valid mobile number and select delivery location to confirm subscription.";
+      if (feedback) feedback.textContent = "Enter name, valid mobile number, select delivery location, and provide map app link.";
       return;
     }
+
+    if (!coords) {
+      confirmBtn.href = "#";
+      if (feedback) feedback.textContent = "Map link must contain valid coordinates (latitude, longitude).";
+      return;
+    }
+
+    if (!withinRange) {
+      confirmBtn.href = "#";
+      if (feedback) feedback.textContent = `Delivery unavailable: selected location is ${distanceKm.toFixed(2)} km away (limit: ${DELIVERY_LIMIT_KM} km).`;
+      return;
+    }
+
+    const scheduleLines = (currentSelection.schedule || [])
+      .map(entry => `${entry.date}: ${entry.dish}`)
+      .join("\n");
 
     const message = [
       "Hi Cherish Every Bite, please confirm my subscription.",
@@ -188,12 +215,16 @@ async function loadDishes(plan, meal) {
       `Mobile: ${phone}`,
       `Delivery Location: ${locationName}`,
       locationMapLink ? `Map Link: ${locationMapLink}` : "",
+      `Pinned Map App Link: ${mapAppLink}`,
+      `Distance from Hub: ${distanceKm.toFixed(2)} km (max ${DELIVERY_LIMIT_KM} km)`,
       `Plan: ${PLAN_LABELS[currentSelection.plan] || currentSelection.plan}`,
       `Meal Slot: ${currentSelection.meal}`,
       `Period: ${currentSelection.period}`,
       `Active Days: ${currentSelection.activeDays}`,
       `Start Date: ${currentSelection.start}`,
       `End Date: ${currentSelection.end}`,
+      "Day-wise Menu:",
+      scheduleLines,
       notes ? `Notes: ${notes}` : ""
     ].filter(Boolean).join("\n");
 
@@ -216,7 +247,7 @@ async function loadDishes(plan, meal) {
     });
   });
 
-  [nameInput, phoneInput, notesInput, locationSelect].forEach(el => {
+  [nameInput, phoneInput, notesInput, locationSelect, mapLinkInput].forEach(el => {
     if (el) el.addEventListener("input", updateConfirmLink);
     if (el) el.addEventListener("change", updateConfirmLink);
   });
@@ -225,3 +256,28 @@ async function loadDishes(plan, meal) {
   await refresh();
   updateConfirmLink();
 })();
+
+function extractLatLng(link) {
+  const text = String(link || "");
+  const patterns = [
+    /@(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)/,
+    /[?&]q=(-?\d+(?:\.\d+)?),(-?\d+(?:\.\d+)?)/,
+    /(-?\d+(?:\.\d+)?),\s*(-?\d+(?:\.\d+)?)/
+  ];
+  for (const p of patterns) {
+    const m = text.match(p);
+    if (m) return { lat: Number(m[1]), lon: Number(m[2]) };
+  }
+  return null;
+}
+
+function haversineKm(a, b) {
+  const toRad = deg => (deg * Math.PI) / 180;
+  const R = 6371;
+  const dLat = toRad(b.lat - a.lat);
+  const dLon = toRad(b.lon - a.lon);
+  const x =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(toRad(a.lat)) * Math.cos(toRad(b.lat)) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  return R * (2 * Math.atan2(Math.sqrt(x), Math.sqrt(1 - x)));
+}
