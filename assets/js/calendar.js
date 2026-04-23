@@ -88,6 +88,9 @@ async function loadDishes(plan, meal) {
   const params = new URLSearchParams(window.location.search);
   const plan = params.get("plan") || "elite";
   const meal = params.get("meal") || "lunch";
+  const pickedLat = params.get("picked_lat");
+  const pickedLon = params.get("picked_lon");
+  const pickedLabel = params.get("picked_label") || "Pinned Location";
 
   const startInput = document.getElementById("start-date");
   const periodSelect = document.getElementById("period-select");
@@ -101,6 +104,7 @@ async function loadDishes(plan, meal) {
   const phoneInput = document.getElementById("customer-phone");
   const locationSelect = document.getElementById("delivery-location");
   const mapLinkInput = document.getElementById("map-app-link");
+  const pickLocationBtn = document.getElementById("pick-location-btn");
   const notesInput = document.getElementById("customer-notes");
   const locationMap = new Map();
 
@@ -108,6 +112,19 @@ async function loadDishes(plan, meal) {
   if (mealSelect) mealSelect.value = meal;
   if (title) title.textContent = `${PLAN_LABELS[plan] || "Plan"} • ${meal[0].toUpperCase() + meal.slice(1)} Calendar`;
   if (back) back.href = `${plan}-plan.html`;
+  if (pickLocationBtn) {
+    const pickerParams = new URLSearchParams({
+      plan,
+      meal,
+      period: periodSelect?.value || "weekly",
+      return_to: "calendar.html"
+    });
+    pickLocationBtn.href = `map-picker.html?${pickerParams.toString()}`;
+  }
+
+  if (pickedLat && pickedLon && mapLinkInput) {
+    mapLinkInput.value = `https://maps.google.com/?q=${pickedLat},${pickedLon}`;
+  }
 
   const today = new Date();
   if (startInput) startInput.value = formatIso(today);
@@ -146,6 +163,15 @@ async function loadDishes(plan, meal) {
 
     if (title) title.textContent = `${PLAN_LABELS[selectedPlan] || "Plan"} • ${selectedMeal[0].toUpperCase() + selectedMeal.slice(1)} Calendar`;
     if (back) back.href = `${selectedPlan}-plan.html`;
+    if (pickLocationBtn) {
+      const pickerParams = new URLSearchParams({
+        plan: selectedPlan,
+        meal: selectedMeal,
+        period: selectedPeriod,
+        return_to: "calendar.html"
+      });
+      pickLocationBtn.href = `map-picker.html?${pickerParams.toString()}`;
+    }
 
     const dishRows = await loadDishes(selectedPlan, selectedMeal).catch(() => []);
     const dishes = dishRows.length ? dishRows : ["Menu to be updated"];
@@ -214,6 +240,7 @@ async function loadDishes(plan, meal) {
       `Name: ${name}`,
       `Mobile: ${phone}`,
       `Delivery Location: ${locationName}`,
+      pickedLat && pickedLon ? `Pinned Label: ${pickedLabel}` : "",
       locationMapLink ? `Map Link: ${locationMapLink}` : "",
       `Pinned Map App Link: ${mapAppLink}`,
       `Distance from Hub: ${distanceKm.toFixed(2)} km (max ${DELIVERY_LIMIT_KM} km)`,

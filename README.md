@@ -25,6 +25,7 @@ python3 scripts/validate_data.py
 - `plan.html` — plan detail page with 7-day meal preview.
 - `elite-plan.html`, `salad-plan.html`, `weightloss-plan.html`, `basic-plan.html`, `customised-plan.html`, `smoothie-plan.html`, `diabetic-plan.html` — individual plan pages.
 - `calendar.html` — plan calendar planner for lunch/dinner weekly or monthly slots.
+- `map-picker.html` — interactive map pin selector for delivery location capture.
 - `assets/css/main.css` — landing page styles.
 - `assets/css/plan.css` — plan page styles.
 - `assets/js/common.js` — shared helpers.
