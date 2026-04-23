@@ -207,6 +207,10 @@ async function loadDishes(plan, meal) {
     const locationName = selected?.name || "";
     const locationMapLink = selected?.mapLink || "";
     const mapAppLink = mapLinkInput?.value.trim() || "";
+
+    if (!mapAppLink && locationMapLink && mapLinkInput) {
+      mapLinkInput.value = locationMapLink;
+    }
     const notes = notesInput?.value.trim() || "";
     const phoneOk = /^\+?[0-9\-\s]{8,15}$/.test(phone);
     const coords = extractLatLng(mapAppLink);
@@ -215,13 +219,13 @@ async function loadDishes(plan, meal) {
 
     if (!name || !phoneOk || !locationName || !mapAppLink) {
       confirmBtn.href = "#";
-      if (feedback) feedback.textContent = "Enter name, valid mobile number, select delivery location, and provide map app link.";
+      if (feedback) feedback.textContent = "Add name, valid mobile number, delivery location, and map link.";
       return;
     }
 
     if (!coords) {
       confirmBtn.href = "#";
-      if (feedback) feedback.textContent = "Map link must contain valid coordinates (latitude, longitude).";
+      if (feedback) feedback.textContent = "Map link should include coordinates (latitude, longitude).";
       return;
     }
 
@@ -256,7 +260,7 @@ async function loadDishes(plan, meal) {
     ].filter(Boolean).join("\n");
 
     confirmBtn.href = buildWhatsappLink(WHATSAPP_NUMBER, message);
-    if (feedback) feedback.textContent = "Tap confirm to open WhatsApp with your subscription details.";
+    if (feedback) feedback.textContent = "Ready. Tap confirm to continue on WhatsApp.";
   }
 
   if (confirmBtn) {
@@ -273,6 +277,14 @@ async function loadDishes(plan, meal) {
       updateConfirmLink();
     });
   });
+
+  if (locationSelect && mapLinkInput) {
+    locationSelect.addEventListener("change", () => {
+      const selected = locationMap.get(locationSelect.value || "");
+      if (selected?.mapLink) mapLinkInput.value = selected.mapLink;
+      updateConfirmLink();
+    });
+  }
 
   [nameInput, phoneInput, notesInput, locationSelect, mapLinkInput].forEach(el => {
     if (el) el.addEventListener("input", updateConfirmLink);
