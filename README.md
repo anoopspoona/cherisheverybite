@@ -37,6 +37,7 @@ python3 scripts/validate_data.py
 ## Data files (root)
 
 - `meals.csv`
+- `dishes.csv` (consolidated menu + pricing table; preferred)
 - `plans.csv`
 - `addons.csv`
 - `plan_addons.csv`
@@ -152,7 +153,7 @@ This is a Phase 3 baseline. Production-grade Phase 3 should additionally persist
 
 `admin.html` provides browser-based operations for non-developer content management:
 
-- Add/edit/delete dishes in Menu Manager and save as CSV overrides (`menu.csv`, `prices.csv`).
+- Add/edit/delete dishes in Menu Manager and save as CSV overrides (`dishes.csv`, with backward-compatible `menu.csv` and `prices.csv` overrides).
 - Load and edit subscription dish rotations per plan/meal (`calendar_<plan>_<meal>.csv`).
 - Reset individual overrides to fall back to repository CSV files.
 

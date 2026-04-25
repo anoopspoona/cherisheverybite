@@ -61,15 +61,27 @@
           <button id="cal-reset" class="btn btn-soft" type="button">Reset Calendar Override</button>
         </div>
       </section>
+
+      <section class="card">
+        <h2>Admin Access</h2>
+        <p class="muted">Admin access requires Google sign-in and an approved email.</p>
+        <form id="admin-user-form" class="action-row">
+          <input id="admin-user-email" type="email" placeholder="Add admin email" />
+          <button id="admin-user-add" class="btn btn-soft" type="submit">Add Admin</button>
+        </form>
+        <div id="admin-users-list" class="table-wrap"></div>
+      </section>
     </div>
     <div class="container">
       <p id="admin-feedback" class="muted"></p>
     </div>
   </main>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="assets/js/common.js"></script>
   <script src="assets/js/runtime.js"></script>
   <script src="assets/js/backend.js"></script>
+  <script src="assets/js/auth.js"></script>
   <script src="assets/js/admin.js"></script>
 </body>
 </html>

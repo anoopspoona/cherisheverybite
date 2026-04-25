@@ -50,7 +50,7 @@ function renderMenu(groups) {
   if (!menuGrid) return;
 
   if (!groups.length) {
-    menuGrid.innerHTML = `<article class="menu-section"><h3 class="menu-title">Menu updating soon</h3><p class="muted">Upload menu.csv and prices.csv to show the latest dishes.</p></article>`;
+    menuGrid.innerHTML = `<article class="menu-section"><h3 class="menu-title">Menu updating soon</h3><p class="muted">Upload dishes.csv (or menu.csv + prices.csv) to show the latest dishes.</p></article>`;
     return;
   }
 
@@ -187,22 +187,25 @@ function attachDietChartForm() {
 
 (async function init() {
   try {
-    const [menuRows, priceRows, planRows, heroRows] = await Promise.all([
-      fetchCSV("menu.csv"),
+    const [combinedMenuRows, menuRows, priceRows, planRows, heroRows] = await Promise.all([
+      fetchCSV("dishes.csv").catch(() => []),
+      fetchCSV("menu.csv").catch(() => []),
       fetchCSV("prices.csv").catch(() => []),
       fetchCSV("plans.csv").catch(() => []),
       fetchCSV("hero_slides.csv").catch(() => [])
     ]);
 
-    const priceMap = new Map(priceRows.map(row => [row.Dish_ID || row.dish_id, row]));
-    const mergedMenu = menuRows.map(row => {
-      const priceRow = priceMap.get(row.Dish_ID) || {};
-      return {
-        ...row,
-        Price: priceRow.Price || priceRow.price || "TBD",
-        Status: priceRow.Status || priceRow.status || "live"
-      };
-    });
+    const priceMap = new Map(priceRows.map(priceRow => [priceRow.Dish_ID || priceRow.dish_id, priceRow]));
+    const mergedMenu = combinedMenuRows.length
+      ? combinedMenuRows
+      : menuRows.map(row => {
+        const priceRow = priceMap.get(row.Dish_ID) || {};
+        return {
+          ...row,
+          Price: priceRow.Price || priceRow.price || "TBD",
+          Status: priceRow.Status || priceRow.status || "live"
+        };
+      });
 
     renderMenu(groupMenu(mergedMenu));
     renderPlans(planRows);
