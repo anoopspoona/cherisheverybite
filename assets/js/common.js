@@ -36,6 +36,24 @@ function parseCSV(text) {
   });
 }
 
+function serializeCSV(rows) {
+  const data = Array.isArray(rows) ? rows : [];
+  if (!data.length) return "";
+  const headers = Object.keys(data[0]);
+  const escapeValue = value => {
+    const text = String(value ?? "");
+    if (/[",\n]/.test(text)) {
+      return `"${text.replace(/"/g, "\"\"")}"`;
+    }
+    return text;
+  };
+  const lines = [headers.map(escapeValue).join(",")];
+  data.forEach(row => {
+    lines.push(headers.map(header => escapeValue(row[header])).join(","));
+  });
+  return lines.join("\n");
+}
+
 function escapeHtml(value) {
   return String(value ?? "")
     .replace(/&/g, "&amp;")
@@ -50,7 +68,42 @@ function buildWhatsappLink(number, message) {
 }
 
 async function fetchCSV(path) {
+  const overrides = (() => {
+    try {
+      const parsed = JSON.parse(localStorage.getItem("ceb_csv_overrides_v1") || "{}");
+      return parsed && typeof parsed === "object" ? parsed : {};
+    } catch {
+      return {};
+    }
+  })();
+  const overrideText = overrides[path];
+  if (typeof overrideText === "string" && overrideText.trim()) {
+    return parseCSV(overrideText);
+  }
   const response = await fetch(path, { cache: "no-store" });
   if (!response.ok) throw new Error(`${path} not found`);
   return parseCSV(await response.text());
 }
+
+window.cebCsvTools = {
+  parseCSV,
+  serializeCSV,
+  readOverrides() {
+    try {
+      const parsed = JSON.parse(localStorage.getItem("ceb_csv_overrides_v1") || "{}");
+      return parsed && typeof parsed === "object" ? parsed : {};
+    } catch {
+      return {};
+    }
+  },
+  writeOverride(path, text) {
+    const current = this.readOverrides();
+    current[path] = String(text || "");
+    localStorage.setItem("ceb_csv_overrides_v1", JSON.stringify(current));
+  },
+  clearOverride(path) {
+    const current = this.readOverrides();
+    delete current[path];
+    localStorage.setItem("ceb_csv_overrides_v1", JSON.stringify(current));
+  }
+};

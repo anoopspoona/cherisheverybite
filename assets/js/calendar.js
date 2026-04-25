@@ -12,6 +12,8 @@ const DRAFT_KEY = "ceb_calendar_draft_v1";
 const ORDER_KEY = "ceb_saved_orders_v1";
 const USERS_KEY = "ceb_users_v1";
 const CURRENT_USER_KEY = "ceb_current_user_v1";
+const ADDRESS_KEY = "ceb_saved_addresses_v1";
+const PROFILE_KEY = "ceb_customer_profiles_v1";
 
 function csvFor(plan, meal) {
   return `calendar_${plan}_${meal}.csv`;
@@ -130,6 +132,15 @@ async function loadDishes(plan, meal) {
     }
   })();
   const currentUser = knownUsers.find(user => user.email === currentUserEmail);
+  const savedProfiles = (() => {
+    try {
+      const parsed = JSON.parse(window.localStorage.getItem(PROFILE_KEY) || "{}");
+      return parsed && typeof parsed === "object" ? parsed : {};
+    } catch {
+      return {};
+    }
+  })();
+  const currentProfile = savedProfiles[currentUserEmail] || {};
 
   if (planSelect) planSelect.value = plan;
   if (mealSelect) mealSelect.value = meal;
@@ -163,6 +174,8 @@ async function loadDishes(plan, meal) {
   if (phoneInput && customerPhoneParam) phoneInput.value = customerPhoneParam;
   if (notesInput && customerNotesParam) notesInput.value = customerNotesParam;
   if (nameInput && !customerNameParam && currentUser?.name) nameInput.value = currentUser.name;
+  if (nameInput && !nameInput.value && currentProfile.name) nameInput.value = currentProfile.name;
+  if (phoneInput && !phoneInput.value && currentProfile.phone) phoneInput.value = currentProfile.phone;
 
   const today = new Date();
   if (startInput) startInput.value = startDateParam || formatIso(today);
@@ -222,6 +235,28 @@ async function loadDishes(plan, meal) {
       const next = Array.isArray(existing) ? existing : [];
       next.unshift(details);
       window.localStorage.setItem(ORDER_KEY, JSON.stringify(next.slice(0, 100)));
+    } catch {
+      // ignore storage failures
+    }
+  }
+
+  function saveAddressForCurrentUser(orderPayload) {
+    if (!currentUserEmail) return;
+    const label = orderPayload.locationId || "Pinned Location";
+    const mapLink = orderPayload.mapLink || "";
+    if (!mapLink) return;
+    try {
+      const byUser = JSON.parse(window.localStorage.getItem(ADDRESS_KEY) || "{}");
+      const rows = Array.isArray(byUser[currentUserEmail]) ? byUser[currentUserEmail] : [];
+      const duplicate = rows.some(item => item.mapLink === mapLink);
+      if (duplicate) return;
+      rows.push({
+        label,
+        mapLink,
+        isDefault: rows.length === 0
+      });
+      byUser[currentUserEmail] = rows;
+      window.localStorage.setItem(ADDRESS_KEY, JSON.stringify(byUser));
     } catch {
       // ignore storage failures
     }
@@ -458,6 +493,7 @@ async function loadDishes(plan, meal) {
         }
 
         saveOrder(orderPayload);
+        saveAddressForCurrentUser(orderPayload);
         saveDraft();
         window.open(confirmBtn.href, "_blank", "noopener");
       }
