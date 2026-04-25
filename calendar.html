@@ -12,12 +12,13 @@
       <a class="btn btn-soft" id="back-plan" href="plans.html">← Back to Plan</a>
       <a class="btn btn-soft" href="plans.html">All Plans</a>
       <a class="btn btn-soft" href="index.html">Back to Home</a>
+      <a class="btn btn-soft" href="account.html">My Account</a>
     </div>
   </header>
 
   <main class="container">
     <h1 id="title">Subscription Calendar</h1>
-    <p class="legend">Select start date and period. Calendar highlights 6 active days (weekly) or 24 active days (monthly), skipping Sundays.</p>
+    <p class="legend">Choose start date and meal, then select a saved location or pin one on the map. Active days skip Sundays automatically.</p>
 
     <section class="controls">
       <div>
@@ -61,21 +62,26 @@
         <select id="delivery-location"></select>
       </div>
       <div>
-        <label for="map-app-link">Map App Location Link</label>
-        <input type="url" id="map-app-link" placeholder="Paste Google/Apple map share link" />
+        <label for="map-app-link">Pinned Map Link</label>
+        <input type="url" id="map-app-link" placeholder="Paste Google/Apple map link with coordinates" />
       </div>
       <div>
-        <label>Location Picker</label>
+        <label>Pin on Map</label>
         <a id="pick-location-btn" class="btn btn-soft" href="map-picker.html">Select Delivery Location</a>
-      </div>
-      <div>
-        <label>&nbsp;</label>
-        <a class="btn btn-soft" href="https://maps.google.com" target="_blank" rel="noopener">Open in Browser Maps</a>
       </div>
       <div>
         <label for="customer-notes">Notes</label>
         <input type="text" id="customer-notes" placeholder="Any preferences / comments" />
       </div>
+    </section>
+
+
+    <section class="addons-panel">
+      <div class="addons-head">
+        <h2>Add-ons</h2>
+        <p class="legend">Tap + to add extra protein, snacks, accompaniments, drinks, and more.</p>
+      </div>
+      <div id="addons-grid" class="addons-grid"></div>
     </section>
 
     <p>
@@ -87,6 +93,7 @@
   </main>
 
   <script src="assets/js/common.js"></script>
+  <script src="assets/js/backend.js"></script>
   <script src="assets/js/calendar.js"></script>
 </body>
 </html>
