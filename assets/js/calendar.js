@@ -10,6 +10,8 @@ const HUB_COORDS = { lat: 8.575357388981113, lon: 76.91238872393365 };
 const DELIVERY_LIMIT_KM = 7;
 const DRAFT_KEY = "ceb_calendar_draft_v1";
 const ORDER_KEY = "ceb_saved_orders_v1";
+const USERS_KEY = "ceb_users_v1";
+const CURRENT_USER_KEY = "ceb_current_user_v1";
 
 function csvFor(plan, meal) {
   return `calendar_${plan}_${meal}.csv`;
@@ -118,6 +120,16 @@ async function loadDishes(plan, meal) {
   const locationMap = new Map();
   const selectedAddons = new Map();
   let addonCatalog = [];
+  const currentUserEmail = window.localStorage.getItem(CURRENT_USER_KEY) || "";
+  const knownUsers = (() => {
+    try {
+      const parsed = JSON.parse(window.localStorage.getItem(USERS_KEY) || "[]");
+      return Array.isArray(parsed) ? parsed : [];
+    } catch {
+      return [];
+    }
+  })();
+  const currentUser = knownUsers.find(user => user.email === currentUserEmail);
 
   if (planSelect) planSelect.value = plan;
   if (mealSelect) mealSelect.value = meal;
@@ -150,6 +162,7 @@ async function loadDishes(plan, meal) {
   if (nameInput && customerNameParam) nameInput.value = customerNameParam;
   if (phoneInput && customerPhoneParam) phoneInput.value = customerPhoneParam;
   if (notesInput && customerNotesParam) notesInput.value = customerNotesParam;
+  if (nameInput && !customerNameParam && currentUser?.name) nameInput.value = currentUser.name;
 
   const today = new Date();
   if (startInput) startInput.value = startDateParam || formatIso(today);
@@ -174,7 +187,8 @@ async function loadDishes(plan, meal) {
       plan: planSelect?.value || "",
       meal: mealSelect?.value || "",
       period: periodSelect?.value || "",
-      addons: Array.from(selectedAddons.entries()).map(([id, qty]) => ({ id, qty }))
+      addons: Array.from(selectedAddons.entries()).map(([id, qty]) => ({ id, qty })),
+      userEmail: currentUserEmail
     };
     try {
       window.localStorage.setItem(DRAFT_KEY, JSON.stringify(payload));
@@ -211,6 +225,35 @@ async function loadDishes(plan, meal) {
     } catch {
       // ignore storage failures
     }
+  }
+
+  function buildOrderPayload() {
+    return {
+      savedAt: new Date().toISOString(),
+      name: nameInput?.value.trim() || "",
+      phone: phoneInput?.value.trim() || "",
+      locationId: locationSelect?.value || "",
+      mapLink: mapLinkInput?.value.trim() || "",
+      notes: notesInput?.value.trim() || "",
+      userEmail: currentUserEmail,
+      plan: currentSelection?.plan || "",
+      meal: currentSelection?.meal || "",
+      period: currentSelection?.period || "",
+      start: currentSelection?.start || "",
+      end: currentSelection?.end || "",
+      addons: addonCatalog
+        .map(item => ({ ...item, qty: selectedAddons.get(item.id) || 0 }))
+        .filter(item => item.qty > 0)
+        .map(item => ({ id: item.id, name: item.name, qty: item.qty, price: item.price }))
+    };
+  }
+
+  async function submitOrderToBackend(orderPayload) {
+    const backend = window.cebBackend;
+    if (!backend || typeof backend.submitOrder !== "function") {
+      return { ok: false, skipped: true, reason: "backend_not_configured" };
+    }
+    return backend.submitOrder(orderPayload);
   }
 
   async function loadLocations() {
@@ -400,29 +443,23 @@ async function loadDishes(plan, meal) {
 
 
   if (confirmBtn) {
-    confirmBtn.addEventListener("click", event => {
+    confirmBtn.addEventListener("click", async event => {
       if (!confirmBtn.href || confirmBtn.getAttribute("href") === "#") {
         event.preventDefault();
         saveDraft();
       } else {
-        saveOrder({
-          savedAt: new Date().toISOString(),
-          name: nameInput?.value.trim() || "",
-          phone: phoneInput?.value.trim() || "",
-          locationId: locationSelect?.value || "",
-          mapLink: mapLinkInput?.value.trim() || "",
-          notes: notesInput?.value.trim() || "",
-          plan: currentSelection?.plan || "",
-          meal: currentSelection?.meal || "",
-          period: currentSelection?.period || "",
-          start: currentSelection?.start || "",
-          end: currentSelection?.end || "",
-          addons: addonCatalog
-            .map(item => ({ ...item, qty: selectedAddons.get(item.id) || 0 }))
-            .filter(item => item.qty > 0)
-            .map(item => ({ id: item.id, name: item.name, qty: item.qty, price: item.price }))
-        });
+        event.preventDefault();
+        const orderPayload = buildOrderPayload();
+        const backendResult = await submitOrderToBackend(orderPayload);
+        if (backendResult.ok) {
+          setFeedback("success", "Order saved to server and opening WhatsApp.");
+        } else if (!backendResult.skipped) {
+          setFeedback("error", "Could not save order to server. Saved locally and opening WhatsApp.");
+        }
+
+        saveOrder(orderPayload);
         saveDraft();
+        window.open(confirmBtn.href, "_blank", "noopener");
       }
     });
   }

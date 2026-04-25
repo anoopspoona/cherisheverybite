@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Account | Cherish Every Bite</title>
+  <link rel="stylesheet" href="assets/css/main.css" />
+  <link rel="stylesheet" href="assets/css/account.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container nav">
+      <div class="brand">
+        <img src="cherish-logo.jpg" alt="Cherish Every Bite logo" style="height:52px;border-radius:12px;" onerror="this.style.display='none'">
+        <div>
+          <h1>Cherish Every Bite</h1>
+          <p>Account & subscriptions</p>
+        </div>
+      </div>
+      <div class="nav-actions">
+        <a class="btn btn-soft" href="index.html">Home</a>
+        <a class="btn btn-soft" href="calendar.html">Subscription Calendar</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="section">
+    <div class="container account-grid">
+      <section class="card account-card" id="auth-card">
+        <h2>Sign Up</h2>
+        <form id="signup-form" class="account-form">
+          <input id="signup-name" type="text" placeholder="Full name" required />
+          <input id="signup-email" type="email" placeholder="Email" required />
+          <input id="signup-password" type="password" placeholder="Password" minlength="6" required />
+          <button class="btn btn-primary" type="submit">Create Account</button>
+        </form>
+        <hr />
+        <h3>Login</h3>
+        <form id="login-form" class="account-form">
+          <input id="login-email" type="email" placeholder="Email" required />
+          <input id="login-password" type="password" placeholder="Password" required />
+          <button class="btn btn-soft" type="submit">Login</button>
+        </form>
+        <p id="auth-feedback" class="muted"></p>
+      </section>
+
+      <section class="card account-card" id="profile-card">
+        <div class="profile-head">
+          <h2>My Account</h2>
+          <button id="logout-btn" class="btn btn-soft" type="button">Logout</button>
+        </div>
+        <p id="user-summary" class="muted"></p>
+        <h3>Saved Orders</h3>
+        <div id="orders-list" class="orders-list"></div>
+      </section>
+    </div>
+  </main>
+
+  <script src="assets/js/common.js"></script>
+  <script src="assets/js/account.js"></script>
+</body>
+</html>

@@ -53,6 +53,28 @@ Homepage featured dish slideshow reads from `hero_slides.csv` (if present and `s
 
 To configure Google Sheets source, see `google_sheet_setup.md`.
 
+
+## Phase 1 backend order capture
+
+The calendar now supports optional server-side order capture before opening WhatsApp.
+
+Configure in `calendar.html` before scripts load:
+
+```html
+<script>
+  window.CEB_BACKEND_CONFIG = {
+    apiBase: "https://your-api.example.com",
+    apiToken: "<optional-bearer-token>",
+    timeoutMs: 8000
+  };
+</script>
+```
+
+Expected endpoint:
+- `POST /orders` with JSON payload from the calendar order object.
+
+If backend is unavailable, the app falls back to local order storage and still opens WhatsApp.
+
 ## Docs
 
 - `docs/data-schema.md`
