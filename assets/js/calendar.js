@@ -8,6 +8,8 @@ const PLAN_LABELS = {
 const WHATSAPP_NUMBER = "916282023762";
 const HUB_COORDS = { lat: 8.575357388981113, lon: 76.91238872393365 };
 const DELIVERY_LIMIT_KM = 7;
+const DRAFT_KEY = "ceb_calendar_draft_v1";
+const ORDER_KEY = "ceb_saved_orders_v1";
 
 function csvFor(plan, meal) {
   return `calendar_${plan}_${meal}.csv`;
@@ -112,7 +114,10 @@ async function loadDishes(plan, meal) {
   const mapLinkInput = document.getElementById("map-app-link");
   const pickLocationBtn = document.getElementById("pick-location-btn");
   const notesInput = document.getElementById("customer-notes");
+  const addonsGrid = document.getElementById("addons-grid");
   const locationMap = new Map();
+  const selectedAddons = new Map();
+  let addonCatalog = [];
 
   if (planSelect) planSelect.value = plan;
   if (mealSelect) mealSelect.value = meal;
@@ -150,6 +155,64 @@ async function loadDishes(plan, meal) {
   if (startInput) startInput.value = startDateParam || formatIso(today);
   let currentSelection = null;
 
+  function getDraft() {
+    try {
+      return JSON.parse(window.localStorage.getItem(DRAFT_KEY) || "null");
+    } catch {
+      return null;
+    }
+  }
+
+  function saveDraft() {
+    const payload = {
+      name: nameInput?.value.trim() || "",
+      phone: phoneInput?.value.trim() || "",
+      notes: notesInput?.value.trim() || "",
+      mapLink: mapLinkInput?.value.trim() || "",
+      locationId: locationSelect?.value || "",
+      startDate: startInput?.value || "",
+      plan: planSelect?.value || "",
+      meal: mealSelect?.value || "",
+      period: periodSelect?.value || "",
+      addons: Array.from(selectedAddons.entries()).map(([id, qty]) => ({ id, qty }))
+    };
+    try {
+      window.localStorage.setItem(DRAFT_KEY, JSON.stringify(payload));
+    } catch {
+      // ignore storage failures
+    }
+  }
+
+  function applyDraft() {
+    const draft = getDraft();
+    if (!draft) return;
+    if (!customerNameParam && nameInput && draft.name) nameInput.value = draft.name;
+    if (!customerPhoneParam && phoneInput && draft.phone) phoneInput.value = draft.phone;
+    if (!customerNotesParam && notesInput && draft.notes) notesInput.value = draft.notes;
+    if (!mapLinkParam && !pickedLat && !pickedLon && mapLinkInput && draft.mapLink) mapLinkInput.value = draft.mapLink;
+    if (!startDateParam && startInput && draft.startDate) startInput.value = draft.startDate;
+    if (!params.get("plan") && planSelect && draft.plan) planSelect.value = draft.plan;
+    if (!params.get("meal") && mealSelect && draft.meal) mealSelect.value = draft.meal;
+    if (!params.get("period") && periodSelect && draft.period) periodSelect.value = draft.period;
+    if (!deliveryLocationParam && locationSelect && draft.locationId) locationSelect.value = draft.locationId;
+    if (Array.isArray(draft.addons)) {
+      draft.addons.forEach(item => {
+        if (item?.id && Number(item.qty) > 0) selectedAddons.set(String(item.id), Number(item.qty));
+      });
+    }
+  }
+
+  function saveOrder(details) {
+    try {
+      const existing = JSON.parse(window.localStorage.getItem(ORDER_KEY) || "[]");
+      const next = Array.isArray(existing) ? existing : [];
+      next.unshift(details);
+      window.localStorage.setItem(ORDER_KEY, JSON.stringify(next.slice(0, 100)));
+    } catch {
+      // ignore storage failures
+    }
+  }
+
   async function loadLocations() {
     if (!locationSelect) return;
     const rows = await fetchCSV("delivery_locations.csv").catch(() => []);
@@ -177,6 +240,39 @@ async function loadDishes(plan, meal) {
     if (deliveryLocationParam && locationMap.has(deliveryLocationParam)) {
       locationSelect.value = deliveryLocationParam;
     }
+  }
+
+  async function loadAddons() {
+    const rows = await fetchCSV("addons.csv").catch(() => []);
+    addonCatalog = rows
+      .map(row => ({
+        id: row.Addon_ID || row.addon_id || row.id || "",
+        name: row.Addon_Name || row.addon_name || row.Name || row.name || "",
+        category: row.Category || row.category || "Add-on",
+        price: row.Price || row.price || ""
+      }))
+      .filter(item => item.id && item.name);
+  }
+
+  function renderAddons() {
+    if (!addonsGrid) return;
+    if (!addonCatalog.length) {
+      addonsGrid.innerHTML = `<p class="legend">Add-ons will appear here when addons.csv is available.</p>`;
+      return;
+    }
+    addonsGrid.innerHTML = addonCatalog.map(item => {
+      const qty = selectedAddons.get(item.id) || 0;
+      return `
+        <article class="addon-item">
+          <div class="addon-title">${escapeHtml(item.name)}</div>
+          <div class="addon-meta">${escapeHtml(item.category)}${item.price ? ` • ${escapeHtml(item.price)}` : ""}</div>
+          <div class="addon-actions">
+            <button class="addon-plus" type="button" data-addon-id="${escapeHtml(item.id)}" aria-label="Add ${escapeHtml(item.name)}">+</button>
+            <span class="addon-qty">Qty: ${qty}</span>
+          </div>
+        </article>
+      `;
+    }).join("");
   }
 
   async function refresh() {
@@ -269,6 +365,11 @@ async function loadDishes(plan, meal) {
     const scheduleLines = (currentSelection.schedule || [])
       .map(entry => `${entry.date}: ${entry.dish}`)
       .join("\n");
+    const addonLines = addonCatalog
+      .map(item => ({ ...item, qty: selectedAddons.get(item.id) || 0 }))
+      .filter(item => item.qty > 0)
+      .map(item => `${item.name} x${item.qty}${item.price ? ` (${item.price})` : ""}`)
+      .join("\n");
 
     const message = [
       "Hi Cherish Every Bite, please confirm my subscription.",
@@ -285,6 +386,8 @@ async function loadDishes(plan, meal) {
       `Active Days: ${currentSelection.activeDays}`,
       `Start Date: ${currentSelection.start}`,
       `End Date: ${currentSelection.end}`,
+      addonLines ? "Add-ons:" : "",
+      addonLines || "",
       "Day-wise Menu:",
       scheduleLines,
       notes ? `Notes: ${notes}` : ""
@@ -292,6 +395,7 @@ async function loadDishes(plan, meal) {
 
     confirmBtn.href = buildWhatsappLink(WHATSAPP_NUMBER, message);
     setFeedback("success", "Ready. Tap confirm to continue on WhatsApp.");
+    saveDraft();
   }
 
 
@@ -299,6 +403,26 @@ async function loadDishes(plan, meal) {
     confirmBtn.addEventListener("click", event => {
       if (!confirmBtn.href || confirmBtn.getAttribute("href") === "#") {
         event.preventDefault();
+        saveDraft();
+      } else {
+        saveOrder({
+          savedAt: new Date().toISOString(),
+          name: nameInput?.value.trim() || "",
+          phone: phoneInput?.value.trim() || "",
+          locationId: locationSelect?.value || "",
+          mapLink: mapLinkInput?.value.trim() || "",
+          notes: notesInput?.value.trim() || "",
+          plan: currentSelection?.plan || "",
+          meal: currentSelection?.meal || "",
+          period: currentSelection?.period || "",
+          start: currentSelection?.start || "",
+          end: currentSelection?.end || "",
+          addons: addonCatalog
+            .map(item => ({ ...item, qty: selectedAddons.get(item.id) || 0 }))
+            .filter(item => item.qty > 0)
+            .map(item => ({ id: item.id, name: item.name, qty: item.qty, price: item.price }))
+        });
+        saveDraft();
       }
     });
   }
@@ -308,6 +432,7 @@ async function loadDishes(plan, meal) {
       await refresh();
       updateConfirmLink();
       updatePickerLink();
+      saveDraft();
     });
   });
 
@@ -317,6 +442,7 @@ async function loadDishes(plan, meal) {
       if (selected?.mapLink) mapLinkInput.value = selected.mapLink;
       updateConfirmLink();
       updatePickerLink();
+      saveDraft();
     });
   }
 
@@ -324,16 +450,36 @@ async function loadDishes(plan, meal) {
     if (el) el.addEventListener("input", () => {
       updateConfirmLink();
       updatePickerLink();
+      saveDraft();
     });
     if (el) el.addEventListener("change", () => {
       updateConfirmLink();
       updatePickerLink();
+      saveDraft();
     });
   });
 
+  if (addonsGrid) {
+    addonsGrid.addEventListener("click", event => {
+      const target = event.target;
+      if (!(target instanceof HTMLElement)) return;
+      const addonId = target.getAttribute("data-addon-id");
+      if (!addonId) return;
+      const currentQty = selectedAddons.get(addonId) || 0;
+      selectedAddons.set(addonId, currentQty + 1);
+      renderAddons();
+      updateConfirmLink();
+      saveDraft();
+    });
+  }
+
   await loadLocations();
+  applyDraft();
+  await loadAddons();
+  renderAddons();
   await refresh();
   updateConfirmLink();
+  saveDraft();
 })();
 
 function extractLatLng(link) {
