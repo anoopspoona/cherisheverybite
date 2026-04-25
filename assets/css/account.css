@@ -1,0 +1,14 @@
+.account-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.account-card h2,.account-card h3{margin-top:0;color:var(--green)}
+.account-form{display:grid;gap:10px;margin-bottom:10px}
+.account-form input{border:1px solid rgba(0,0,0,.16);border-radius:10px;padding:10px;font:inherit}
+.account-card hr{border:0;border-top:1px solid rgba(0,0,0,.08);margin:14px 0}
+.profile-head{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.orders-list{display:grid;gap:10px}
+.order-item{border:1px solid rgba(0,0,0,.1);border-radius:10px;padding:10px;background:#fff}
+.order-item strong{display:block;margin-bottom:6px}
+.meal-slot-select{display:block;margin-top:6px;border:1px solid rgba(0,0,0,.16);border-radius:8px;padding:8px;font:inherit}
+.action-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.action-row .btn{padding:8px 12px;min-height:auto;font-size:.88rem}
+#google-login-btn{margin-bottom:6px}
+@media(max-width:920px){.account-grid{grid-template-columns:1fr}}

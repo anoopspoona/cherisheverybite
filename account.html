@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Account | Cherish Every Bite</title>
+  <link rel="stylesheet" href="assets/css/main.css" />
+  <link rel="stylesheet" href="assets/css/account.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container nav">
+      <div class="brand">
+        <img src="cherish-logo.jpg" alt="Cherish Every Bite logo" style="height:52px;border-radius:12px;" onerror="this.style.display='none'">
+        <div>
+          <h1>Cherish Every Bite</h1>
+          <p>Account & subscriptions</p>
+        </div>
+      </div>
+      <div class="nav-actions">
+        <a class="btn btn-soft" href="index.html">Home</a>
+        <a class="btn btn-soft" href="calendar.html">Subscription Calendar</a>
+        <a class="btn btn-soft" href="admin.html">Admin</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="section">
+    <div class="container account-grid">
+      <section class="card account-card" id="auth-card">
+        <h2>Sign Up</h2>
+        <form id="signup-form" class="account-form">
+          <input id="signup-name" type="text" placeholder="Full name" required />
+          <input id="signup-email" type="email" placeholder="Email" required />
+          <input id="signup-password" type="password" placeholder="Password" minlength="6" required />
+          <button class="btn btn-primary" type="submit">Create Account</button>
+        </form>
+        <hr />
+        <h3>Login</h3>
+        <form id="login-form" class="account-form">
+          <input id="login-email" type="email" placeholder="Email" required />
+          <input id="login-password" type="password" placeholder="Password" required />
+          <button class="btn btn-soft" type="submit">Login</button>
+        </form>
+        <button id="google-login-btn" class="btn btn-soft" type="button">Continue with Google</button>
+        <hr />
+        <h3>Phone Login (OTP)</h3>
+        <form id="phone-request-form" class="account-form">
+          <input id="phone-number" type="tel" placeholder="+15551234567" />
+          <button class="btn btn-soft" type="submit">Send OTP</button>
+        </form>
+        <form id="phone-verify-form" class="account-form">
+          <input id="phone-otp" type="text" placeholder="Enter OTP" />
+          <button class="btn btn-soft" type="submit">Verify OTP</button>
+        </form>
+        <p id="auth-feedback" class="muted"></p>
+      </section>
+
+      <section class="card account-card" id="profile-card">
+        <div class="profile-head">
+          <h2>My Account</h2>
+          <button id="logout-btn" class="btn btn-soft" type="button">Logout</button>
+        </div>
+        <p id="user-summary" class="muted"></p>
+        <h3>Profile</h3>
+        <form id="profile-form" class="account-form">
+          <input id="profile-name" type="text" placeholder="Your name" />
+          <input id="profile-phone" type="tel" placeholder="Mobile number" />
+          <button class="btn btn-soft" type="submit">Save Profile</button>
+        </form>
+        <h3>Subscription Controls</h3>
+        <p class="muted">Pause, resume, or skip upcoming service from your active plans.</p>
+        <div id="subscriptions-list" class="orders-list"></div>
+        <h3>Upcoming Service</h3>
+        <div id="upcoming-list" class="orders-list"></div>
+        <h3>Saved Addresses</h3>
+        <form id="address-form" class="account-form">
+          <input id="address-label" type="text" placeholder="Address nickname (Home / Office)" />
+          <input id="address-link" type="url" placeholder="Map link with coordinates" />
+          <button class="btn btn-soft" type="submit">Save Address</button>
+        </form>
+        <div id="addresses-list" class="orders-list"></div>
+        <h3>Saved Orders</h3>
+        <div id="orders-list" class="orders-list"></div>
+      </section>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <!-- Optional:
+  <script>
+    window.CEB_RUNTIME_CONFIG = {
+      enforceSecureAuth: true,
+      requireBackendSync: true,
+      adminEmails: ["owner@example.com"]
+    };
+    window.CEB_SUPABASE_CONFIG = {
+      url: "https://YOUR_PROJECT.supabase.co",
+      anonKey: "YOUR_SUPABASE_ANON_KEY"
+    };
+  </script>
+  -->
+  <script src="assets/js/common.js"></script>
+  <script src="assets/js/runtime.js"></script>
+  <script src="assets/js/backend.js"></script>
+  <script src="assets/js/auth.js"></script>
+  <script src="assets/js/account.js"></script>
+</body>
+</html>
