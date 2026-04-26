@@ -49,6 +49,15 @@ function planPriceLabel(row = {}) {
   return /^[₹$]/.test(text) ? text : `₹${text}`;
 }
 
+function cleanPlanTitle(name = "") {
+  const text = String(name || "").trim();
+  if (!text) return "";
+  return text
+    .replace(/\s*[-–]\s*lunch\s*$/i, "")
+    .replace(/\s+lunch\s*$/i, "")
+    .trim();
+}
+
 function groupMenu(rows) {
   const liveRows = rows.filter(row => {
     const status = String(row.Status || row.status || "live").toLowerCase();
@@ -126,11 +135,11 @@ function renderPlans(rows) {
 
   wrap.innerHTML = deduped.map(row => `
     <article class="plan-card">
-      <h3>${escapeHtml(row.Plan_Name)}</h3>
+      <h3>${escapeHtml(cleanPlanTitle(row.Plan_Name) || row.Plan_Name)}</h3>
       <p class="muted">${escapeHtml(row.Description || "")}</p>
       <p class="muted">Duration: ${escapeHtml(row.Duration_Days)} days • Meals/day: ${escapeHtml(row.Meals_Per_Day)}</p>
       <p class="legend" style="font-weight:700;color:#14532d">Starting at ${escapeHtml(planPriceLabel(row))}</p>
-      <a class="btn btn-soft" href="${escapeHtml(planUrl(row.Plan_Key))}">View ${escapeHtml(row.Plan_Name)}</a>
+      <a class="btn btn-soft" href="${escapeHtml(planUrl(row.Plan_Key))}">View ${escapeHtml(cleanPlanTitle(row.Plan_Name) || row.Plan_Name)}</a>
     </article>
   `).join("");
 }
