@@ -91,10 +91,14 @@ async function syncUserStateFromBackend(userEmail) {
 async function getCurrentUserProfile() {
   const auth = window.cebAuth;
   if (auth?.enabled) {
-    const user = await auth.getCurrentUser();
-    const identifier = user?.email || user?.phone || "";
-    if (!identifier) return null;
-    return { email: identifier, name: user.user_metadata?.name || identifier };
+    try {
+      const user = await auth.getCurrentUser();
+      const identifier = user?.email || user?.phone || "";
+      if (!identifier) return null;
+      return { email: identifier, name: user.user_metadata?.name || identifier };
+    } catch {
+      // fall through to local mode lookup
+    }
   }
 
   const email = localCurrentUserEmail();
@@ -270,24 +274,8 @@ async function render() {
   const authCard = document.getElementById("auth-card");
   const profileCard = document.getElementById("profile-card");
   const summary = document.getElementById("user-summary");
-  const authTitle = authCard?.querySelector("h2");
-  const authEnabled = Boolean(window.cebAuth?.enabled);
-  const phoneOtpSupported = Boolean(window.cebAuth?.enabled && window.cebAuth?.supportsPhoneOtp);
   const googleSupported = Boolean(window.cebAuth?.enabled && window.cebAuth?.supportsGoogleOAuth);
-  const phoneForms = [
-    document.getElementById("phone-request-form"),
-    document.getElementById("phone-verify-form")
-  ];
   const googleLoginBtn = document.getElementById("google-login-btn");
-
-  if (authTitle) {
-    authTitle.textContent = authEnabled ? "Sign Up (Secure)" : "Sign Up (Local Demo)";
-  }
-  phoneForms.forEach(form => {
-    if (!form) return;
-    form.style.display = "flex";
-    form.style.opacity = phoneOtpSupported ? "1" : "0.85";
-  });
   if (googleLoginBtn) {
     googleLoginBtn.style.display = googleSupported ? "inline-flex" : "none";
   }
@@ -312,96 +300,53 @@ async function render() {
 }
 
 (async function init() {
-  const signupForm = document.getElementById("signup-form");
-  const loginForm = document.getElementById("login-form");
+  const params = new URLSearchParams(window.location.search);
+  const pickedLat = params.get("picked_lat");
+  const pickedLon = params.get("picked_lon");
+  const pickedLabel = params.get("picked_label") || "";
   const feedback = document.getElementById("auth-feedback");
   const logoutBtn = document.getElementById("logout-btn");
-  const phoneRequestForm = document.getElementById("phone-request-form");
-  const phoneVerifyForm = document.getElementById("phone-verify-form");
   const googleLoginBtn = document.getElementById("google-login-btn");
   const subscriptionsList = document.getElementById("subscriptions-list");
   const addressForm = document.getElementById("address-form");
   const addressesList = document.getElementById("addresses-list");
   const profileForm = document.getElementById("profile-form");
+  const addressLabelInput = document.getElementById("address-label");
+  const addressLinkInput = document.getElementById("address-link");
+  const pickAddressBtn = document.getElementById("pick-address-btn");
 
-  if (signupForm) {
-    signupForm.addEventListener("submit", async event => {
-      event.preventDefault();
-      const name = document.getElementById("signup-name")?.value.trim() || "";
-      const email = (document.getElementById("signup-email")?.value || "").trim().toLowerCase();
-      const password = document.getElementById("signup-password")?.value || "";
-
-      if (window.cebAuth?.enabled) {
-        const result = await window.cebAuth.signUp(email, password, { name });
-        if (!result.ok) {
-          if (feedback) feedback.textContent = result.message || "Could not create account.";
-          return;
-        }
-        if (feedback) feedback.textContent = "Account created. Check email if confirmation is required.";
-      } else {
-        if (runtime.enforceSecureAuth) {
-          if (feedback) feedback.textContent = "Secure auth is required. Configure Supabase before creating accounts.";
-          return;
-        }
-        const users = readUsers();
-        if (users.some(user => user.email === email)) {
-          if (feedback) feedback.textContent = "Account already exists. Please login.";
-          return;
-        }
-        const passwordHash = await hashPassword(password);
-        users.push({ name, email, passwordHash });
-        writeUsers(users);
-        localStorage.setItem(CURRENT_USER_KEY, email);
-        if (feedback) feedback.textContent = "Local account created successfully.";
-      }
-
-      await render();
-    });
+  function setAuthFeedback(message) {
+    if (feedback) feedback.textContent = message;
   }
 
-  if (loginForm) {
-    loginForm.addEventListener("submit", async event => {
-      event.preventDefault();
-      const email = (document.getElementById("login-email")?.value || "").trim().toLowerCase();
-      const password = document.getElementById("login-password")?.value || "";
-
-      if (window.cebAuth?.enabled) {
-        const result = await window.cebAuth.signIn(email, password);
-        if (!result.ok) {
-          if (feedback) feedback.textContent = result.message || "Invalid login.";
-          return;
-        }
-        if (feedback) feedback.textContent = "Logged in.";
-      } else {
-        if (runtime.enforceSecureAuth) {
-          if (feedback) feedback.textContent = "Secure auth is required. Configure Supabase before login.";
-          return;
-        }
-        const passwordHash = await hashPassword(password);
-        const user = readUsers().find(entry =>
-          entry.email === email && (entry.passwordHash === passwordHash || entry.password === password)
-        );
-        if (!user) {
-          if (feedback) feedback.textContent = "Invalid email or password.";
-          return;
-        }
-        localStorage.setItem(CURRENT_USER_KEY, email);
-        if (feedback) feedback.textContent = "Logged in (local mode).";
-      }
-
-      await render();
+  function updatePickAddressLink() {
+    if (!pickAddressBtn) return;
+    const qp = new URLSearchParams({
+      return_to: "account.html",
+      picked_label: addressLabelInput?.value.trim() || "Pinned Location"
     });
+    pickAddressBtn.href = `map-picker.html?${qp.toString()}`;
+  }
+
+  if (pickedLat && pickedLon) {
+    if (addressLinkInput) addressLinkInput.value = `https://maps.google.com/?q=${pickedLat},${pickedLon}`;
+    if (addressLabelInput && pickedLabel) addressLabelInput.value = pickedLabel;
+    setAuthFeedback("Pinned location selected. Click 'Save Address' to keep it for future orders.");
+  }
+  updatePickAddressLink();
+  if (addressLabelInput) {
+    addressLabelInput.addEventListener("input", updatePickAddressLink);
   }
 
   if (googleLoginBtn) {
     googleLoginBtn.addEventListener("click", async () => {
       if (!window.cebAuth?.enabled || !window.cebAuth?.supportsGoogleOAuth) {
-        if (feedback) feedback.textContent = "Google login is available only when Supabase Auth is configured.";
+        setAuthFeedback("Google login is unavailable. Configure Supabase Auth in account.html runtime settings.");
         return;
       }
       const result = await window.cebAuth.signInWithGoogle();
       if (!result.ok) {
-        if (feedback) feedback.textContent = result.message || "Could not start Google login.";
+        setAuthFeedback(result.message || "Could not start Google login.");
       }
     });
   }
@@ -413,42 +358,6 @@ async function render() {
       } else {
         localStorage.removeItem(CURRENT_USER_KEY);
       }
-      await render();
-    });
-  }
-
-  if (phoneRequestForm) {
-    phoneRequestForm.addEventListener("submit", async event => {
-      event.preventDefault();
-      const phone = (document.getElementById("phone-number")?.value || "").trim();
-      if (!window.cebAuth?.enabled || !window.cebAuth?.supportsPhoneOtp) {
-        if (feedback) feedback.textContent = "Phone OTP is available only when Supabase Auth is configured.";
-        return;
-      }
-      const result = await window.cebAuth.requestPhoneOtp(phone);
-      if (!result.ok) {
-        if (feedback) feedback.textContent = result.message || "Could not send OTP.";
-        return;
-      }
-      if (feedback) feedback.textContent = "OTP sent. Enter the code to verify.";
-    });
-  }
-
-  if (phoneVerifyForm) {
-    phoneVerifyForm.addEventListener("submit", async event => {
-      event.preventDefault();
-      const phone = (document.getElementById("phone-number")?.value || "").trim();
-      const otp = (document.getElementById("phone-otp")?.value || "").trim();
-      if (!window.cebAuth?.enabled || !window.cebAuth?.supportsPhoneOtp) {
-        if (feedback) feedback.textContent = "Phone OTP is available only when Supabase Auth is configured.";
-        return;
-      }
-      const result = await window.cebAuth.verifyPhoneOtp(phone, otp);
-      if (!result.ok) {
-        if (feedback) feedback.textContent = result.message || "Invalid OTP.";
-        return;
-      }
-      if (feedback) feedback.textContent = "Phone login successful.";
       await render();
     });
   }
@@ -482,7 +391,7 @@ async function render() {
       if (backend?.saveSubscriptionsByEmail) {
         await backend.saveSubscriptionsByEmail(profile.email, next);
       }
-      if (feedback) feedback.textContent = action === "save_meal" ? "Meal slot updated." : `Subscription updated: ${action}.`;
+      setAuthFeedback(action === "save_meal" ? "Meal slot updated." : `Subscription updated: ${action}.`);
       await render();
     });
   }
@@ -495,13 +404,13 @@ async function render() {
       const label = (document.getElementById("address-label")?.value || "").trim();
       const mapLink = (document.getElementById("address-link")?.value || "").trim();
       if (!label || !mapLink) {
-        if (feedback) feedback.textContent = "Please provide both address label and map link.";
+        setAuthFeedback("Please provide both address label and map link.");
         return;
       }
       const existing = readScopedList(ADDRESS_KEY, profile.email);
       const already = existing.find(item => item.mapLink === mapLink);
       if (already) {
-        if (feedback) feedback.textContent = "This map link is already saved.";
+        setAuthFeedback("This map link is already saved.");
         return;
       }
       const next = [
@@ -514,7 +423,7 @@ async function render() {
         await backend.saveAddressesByEmail(profile.email, next);
       }
       addressForm.reset();
-      if (feedback) feedback.textContent = "Address saved.";
+      setAuthFeedback("Address saved.");
       renderAddresses(profile);
     });
   }
@@ -538,7 +447,7 @@ async function render() {
         if (backend?.saveAddressesByEmail) {
           await backend.saveAddressesByEmail(profile.email, existing);
         }
-        if (feedback) feedback.textContent = "Address removed.";
+        setAuthFeedback("Address removed.");
       } else if (action === "default") {
         const next = existing.map((item, idx) => ({ ...item, isDefault: idx === index }));
         writeScopedList(ADDRESS_KEY, profile.email, next);
@@ -546,7 +455,7 @@ async function render() {
         if (backend?.saveAddressesByEmail) {
           await backend.saveAddressesByEmail(profile.email, next);
         }
-        if (feedback) feedback.textContent = "Default address updated.";
+        setAuthFeedback("Default address updated.");
       }
       renderAddresses(profile);
     });
@@ -566,10 +475,12 @@ async function render() {
       if (backend?.upsertProfileByEmail) {
         await backend.upsertProfileByEmail(profile.email, { name, phone });
       }
-      if (feedback) feedback.textContent = "Profile saved.";
+      setAuthFeedback("Profile saved.");
       await render();
     });
   }
 
-  await render();
+  await render().catch(() => {
+    setAuthFeedback("Could not initialize account view. Please refresh the page.");
+  });
 })();

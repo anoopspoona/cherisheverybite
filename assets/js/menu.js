@@ -19,6 +19,25 @@ function normalizePrice(price) {
   return value || "TBD";
 }
 
+function planPriceLabel(row = {}) {
+  const candidates = [
+    row.Price,
+    row.price,
+    row.Plan_Price,
+    row.plan_price,
+    row.Base_Price,
+    row.base_price,
+    row.Monthly_Price,
+    row.monthly_price,
+    row.Variant_Price,
+    row.variant_price
+  ];
+  const first = candidates.find(value => String(value || "").trim());
+  if (!first) return "Price on request";
+  const text = String(first).trim();
+  return /^[₹$]/.test(text) ? text : `₹${text}`;
+}
+
 function groupMenu(rows) {
   const liveRows = rows.filter(row => {
     const status = String(row.Status || row.status || "live").toLowerCase();
@@ -99,6 +118,7 @@ function renderPlans(rows) {
       <h3>${escapeHtml(row.Plan_Name)}</h3>
       <p class="muted">${escapeHtml(row.Description || "")}</p>
       <p class="muted">Duration: ${escapeHtml(row.Duration_Days)} days • Meals/day: ${escapeHtml(row.Meals_Per_Day)}</p>
+      <p class="legend" style="font-weight:700;color:#14532d">Starting at ${escapeHtml(planPriceLabel(row))}</p>
       <a class="btn btn-soft" href="${escapeHtml(planUrl(row.Plan_Key))}">View ${escapeHtml(row.Plan_Name)}</a>
     </article>
   `).join("");
@@ -197,14 +217,18 @@ function attachDietChartForm() {
     ]);
 
     const catalogDishes = catalogRows
-      .filter(row => String(row.record_type || row.Record_Type || "").toLowerCase() === "dish")
+      .filter(row => {
+        const type = String(row.record_type || row.Record_Type || "").toLowerCase();
+        if (!type) return true;
+        return type === "dish" || type === "addon";
+      })
       .map(row => ({
-        Dish_ID: row.id || row.ID || "",
-        Dish_Name: row.name || row.Name || "",
-        Category: row.category || row.Category || "",
-        Meal_Type: row.meal_type || row.Meal_Type || "",
-        Image_URL: row.image_url || row.Image_URL || "",
-        Price: row.price || row.Price || "",
+        Dish_ID: row.id || row.ID || row.addon_id || row.Addon_ID || "",
+        Dish_Name: row.name || row.Name || row.addon_name || row.Addon_Name || "",
+        Category: row.category || row.Category || row.addon_type || row.Addon_Type || "",
+        Meal_Type: row.meal_type || row.Meal_Type || row.addon_type || row.Addon_Type || "",
+        Image_URL: row.image_url || row.Image_URL || row.addon_image_url || row.Addon_Image_URL || row.source || row.Source || "",
+        Price: row.price || row.Price || row.unit_price || row.Unit_Price || "",
         Status: row.status || row.Status || "live"
       }))
       .filter(row => row.Dish_ID && row.Dish_Name);
