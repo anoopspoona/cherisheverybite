@@ -87,19 +87,25 @@
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <!-- Optional:
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
     window.CEB_RUNTIME_CONFIG = {
       enforceSecureAuth: true,
       requireBackendSync: true,
-      adminEmails: ["owner@example.com"]
+      adminEmails: ["owner@yourdomain.com", "ops@yourdomain.com"]
     };
+  
     window.CEB_SUPABASE_CONFIG = {
       url: "https://YOUR_PROJECT.supabase.co",
       anonKey: "YOUR_SUPABASE_ANON_KEY"
     };
+  
+    window.CEB_BACKEND_CONFIG = {
+      apiBase: "https://api.yourdomain.com",
+      apiToken: "YOUR_BACKEND_BEARER_TOKEN",
+      timeoutMs: 8000
+    };
   </script>
-  -->
   <script src="assets/js/common.js"></script>
   <script src="assets/js/runtime.js"></script>
   <script src="assets/js/backend.js"></script>
