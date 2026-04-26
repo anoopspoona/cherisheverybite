@@ -469,7 +469,8 @@ async function loadAddonCatalog() {
       activeDays: activeCount,
       schedule: dates.map((iso, idx) => ({
         date: iso,
-        dish: dishes[idx % dishes.length]
+        dish: dishes[idx % dishes.length],
+        addonQty: Number(dailyAddons.get(iso) || 0)
       }))
     };
 
@@ -535,6 +536,7 @@ async function loadAddonCatalog() {
     const addonLines = (orderPayload.dailyAddons || [])
       .map(entry => `${entry.date}: ${entry.items.map(item => `${item.name} x${item.qty}`).join(", ")}`)
       .join("\n");
+    const totalAddons = (currentSelection.schedule || []).reduce((sum, entry) => sum + Number(entry.addonQty || 0), 0);
 
     const message = [
       "Hi Cherish Every Bite, please confirm my subscription.",
