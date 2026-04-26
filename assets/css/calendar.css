@@ -28,6 +28,13 @@ header{position:sticky;top:0;background:rgba(255,255,255,.95);border-bottom:1px 
 .legend{font-size:.88rem;color:var(--muted)}
 @media(max-width:980px){.controls{grid-template-columns:repeat(2,minmax(0,1fr))}.calendar-grid{grid-template-columns:1fr}}
 
+.cost-summary{margin:10px 0 18px;padding:14px 16px;border:1px solid #dbe9df;border-radius:12px;background:#fff}
+.cost-summary h3{margin:0 0 8px;color:#14532d}
+.cost-line{display:flex;justify-content:space-between;gap:12px;padding:6px 0;border-bottom:1px dashed #e5ece8}
+.cost-line:last-child{border-bottom:0}
+.cost-line strong{color:#14532d}
+.cost-subheading{margin:12px 0 6px;font-size:.9rem;color:#4b5563;font-weight:700}
+
 .legend{padding:0}
 .legend.error{margin-top:10px;padding:10px 12px;border-radius:10px;background:#fff1f2;border:1px solid #fecdd3;color:#9f1239;font-weight:700}
 .legend.success{margin-top:10px;padding:10px 12px;border-radius:10px;background:#ecfdf3;border:1px solid #bbf7d0;color:#166534;font-weight:700}

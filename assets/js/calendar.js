@@ -68,11 +68,43 @@ function haversineKm(a, b) {
 }
 
 let planMealsCache = null;
+let plansCache = null;
 
 async function loadPlanMeals() {
   if (planMealsCache) return planMealsCache;
   planMealsCache = await fetchCSV("plan_meals.csv").catch(() => []);
   return planMealsCache;
+}
+
+async function loadPlans() {
+  if (plansCache) return plansCache;
+  plansCache = await fetchCSV("plans.csv").catch(() => []);
+  return plansCache;
+}
+
+function parseMoney(value) {
+  const text = String(value || "").trim();
+  if (!text) return null;
+  const normalized = text.replace(/,/g, "").replace(/[^\d.\-]/g, "");
+  if (!normalized) return null;
+  const parsed = Number(normalized);
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
+function formatCurrency(value) {
+  return `₹${Number(value || 0).toLocaleString("en-IN", { maximumFractionDigits: 2 })}`;
+}
+
+function getPlanPeriodPrice(row, period) {
+  if (!row || typeof row !== "object") return { value: null, label: "Price on request" };
+  const monthlyRaw = row["Price for monthly subscription"] || row.price_for_monthly_subscription || row.Monthly_Price || row.monthly_price || row.Price || row.price || "";
+  const weeklyRaw = row["Price for weekly subscription"] || row.price_for_weekly_subscription || row.Weekly_Price || row.weekly_price || row.Price || row.price || "";
+  const source = period === "monthly" ? monthlyRaw : weeklyRaw;
+  const numeric = parseMoney(source);
+  if (numeric !== null) return { value: numeric, label: formatCurrency(numeric) };
+  const text = String(source || "").trim();
+  if (!text) return { value: null, label: "Price on request" };
+  return { value: null, label: /^[₹$]/.test(text) ? text : `₹${text}` };
 }
 
 async function loadDishes(plan, meal, variantKey = "") {
@@ -152,6 +184,7 @@ async function loadAddonCatalog() {
     const back = document.getElementById("back-plan");
     const confirmBtn = document.getElementById("confirm-subscription");
     const feedback = document.getElementById("confirm-feedback");
+    const costSummary = document.getElementById("cost-summary");
     const nameInput = document.getElementById("customer-name");
     const phoneInput = document.getElementById("customer-phone");
     const locationSelect = document.getElementById("delivery-location");
@@ -208,6 +241,71 @@ async function loadAddonCatalog() {
       const items = dayAddonItems.get(date);
       if (!items) return 0;
       return Array.from(items.values()).reduce((sum, qty) => sum + Number(qty || 0), 0);
+    }
+
+    function computeAddonBreakdown() {
+      const breakdown = [];
+      let addonTotal = 0;
+      for (const entry of currentSelection?.schedule || []) {
+        const byDate = dayAddonItems.get(entry.date) || new Map();
+        const items = [];
+        for (const [id, qtyRaw] of byDate.entries()) {
+          const qty = Number(qtyRaw || 0);
+          if (!qty) continue;
+          const addon = addonCatalog.find(candidate => candidate.id === id);
+          if (!addon) continue;
+          const unitPrice = parseMoney(addon.price);
+          const lineTotal = unitPrice !== null ? unitPrice * qty : null;
+          if (lineTotal !== null) addonTotal += lineTotal;
+          items.push({
+            name: addon.name,
+            qty,
+            unitPrice,
+            unitPriceLabel: addon.price || "",
+            lineTotal
+          });
+        }
+        if (items.length) breakdown.push({ date: entry.date, items });
+      }
+      return { addonTotal, breakdown };
+    }
+
+    function renderCostSummary() {
+      if (!costSummary || !currentSelection) return;
+      const addon = computeAddonBreakdown();
+      const baseValue = currentSelection.basePlanPriceValue;
+      const hasNumericBase = baseValue !== null && Number.isFinite(baseValue);
+      const grandTotal = hasNumericBase ? baseValue + addon.addonTotal : addon.addonTotal;
+
+      let html = `<h3>Subscription Cost Summary</h3>
+        <div class="cost-line">
+          <span>Base plan (${escapeHtml(currentSelection.period)})</span>
+          <strong>${escapeHtml(currentSelection.basePlanPriceLabel || "Price on request")}</strong>
+        </div>`;
+
+      if (addon.breakdown.length) {
+        html += `<div class="cost-subheading">Day-wise add-ons</div>`;
+        addon.breakdown.forEach(day => {
+          day.items.forEach(item => {
+            const itemPrice = item.unitPrice !== null ? formatCurrency(item.unitPrice) : (item.unitPriceLabel || "NA");
+            const linePrice = item.lineTotal !== null ? formatCurrency(item.lineTotal) : "NA";
+            html += `<div class="cost-line">
+              <span>${escapeHtml(day.date)} • ${escapeHtml(item.name)} × ${item.qty} (${escapeHtml(itemPrice)} each)</span>
+              <strong>${escapeHtml(linePrice)}</strong>
+            </div>`;
+          });
+        });
+      }
+
+      html += `<div class="cost-line">
+        <span>Add-ons total</span>
+        <strong>${formatCurrency(addon.addonTotal)}</strong>
+      </div>
+      <div class="cost-line">
+        <span><strong>Grand total</strong></span>
+        <strong>${hasNumericBase ? formatCurrency(grandTotal) : `${formatCurrency(addon.addonTotal)} + base plan`}</strong>
+      </div>`;
+      costSummary.innerHTML = html;
     }
 
     function updatePickerLink() {
@@ -389,6 +487,7 @@ async function loadAddonCatalog() {
     }
 
     function buildOrderPayload() {
+      const addon = computeAddonBreakdown();
       const dailyAddons = currentSelection?.schedule.map(entry => {
         const byDate = dayAddonItems.get(entry.date) || new Map();
         const items = Array.from(byDate.entries())
@@ -415,6 +514,11 @@ async function loadAddonCatalog() {
         plan: currentSelection?.plan || "",
         meal: currentSelection?.meal || "",
         period: currentSelection?.period || "",
+        basePlanPrice: currentSelection?.basePlanPriceLabel || "",
+        addOnsTotal: addon.addonTotal,
+        grandTotal: currentSelection?.basePlanPriceValue !== null
+          ? Number(currentSelection.basePlanPriceValue || 0) + Number(addon.addonTotal || 0)
+          : null,
         start: currentSelection?.start || "",
         end: currentSelection?.end || "",
         activeDays: currentSelection?.activeDays || 0,
@@ -453,13 +557,21 @@ async function loadAddonCatalog() {
       if (deliveryLocationParam && locationMap.has(deliveryLocationParam)) {
         locationSelect.value = deliveryLocationParam;
       }
-    }
 
     async function refresh() {
       const selectedPlan = planSelect?.value || plan;
       const selectedMeal = mealSelect?.value || meal;
       const selectedPeriod = periodSelect?.value || "weekly";
       const start = startInput?.value ? new Date(startInput.value) : new Date();
+      const allPlans = await loadPlans();
+      const normalizedPlan = String(selectedPlan || "").trim().toLowerCase();
+      const normalizedVariant = String(variant || "").trim().toLowerCase();
+      const livePlanRows = allPlans
+        .filter(row => String(row.Plan_Key || row.plan_key || "").trim().toLowerCase() === normalizedPlan)
+        .filter(row => String(row.Status || row.status || "live").trim().toLowerCase() === "live");
+      const matchingVariantRow = livePlanRows.find(row => String(row.Variant_Key || row.variant_key || "").trim().toLowerCase() === normalizedVariant);
+      const planRow = matchingVariantRow || livePlanRows[0] || null;
+      const basePrice = getPlanPeriodPrice(planRow, selectedPeriod);
 
       if (title) title.textContent = `${PLAN_LABELS[selectedPlan] || "Plan"} • ${selectedMeal[0].toUpperCase() + selectedMeal.slice(1)} Calendar`;
       if (back) back.href = `${selectedPlan}-plan.html`;
@@ -483,6 +595,8 @@ async function loadAddonCatalog() {
         plan: selectedPlan,
         meal: selectedMeal,
         period: selectedPeriod,
+        basePlanPriceValue: basePrice.value,
+        basePlanPriceLabel: basePrice.label,
         start: formatIso(start),
         end: dates[dates.length - 1] || formatIso(start),
         activeDays: activeCount,
@@ -495,6 +609,7 @@ async function loadAddonCatalog() {
 
       renderCalendarMonths(start, activeMap);
       renderDayAddonPanel();
+      renderCostSummary();
     }
 
     function updateConfirmLink() {
@@ -541,6 +656,7 @@ async function loadAddonCatalog() {
       }
 
       const orderPayload = buildOrderPayload();
+      const addon = computeAddonBreakdown();
       const scheduleLines = (orderPayload.schedule || [])
         .map(entry => `${entry.date}: ${entry.dish}${entry.addonQty ? ` (Add-ons: ${entry.addonQty})` : ""}`)
         .join("\n");
@@ -561,6 +677,9 @@ async function loadAddonCatalog() {
         `Plan: ${PLAN_LABELS[currentSelection.plan] || currentSelection.plan}`,
         `Meal Slot: ${currentSelection.meal}`,
         `Period: ${currentSelection.period}`,
+        `Base Plan Price: ${currentSelection.basePlanPriceLabel || "Price on request"}`,
+        `Add-ons Total: ${formatCurrency(addon.addonTotal)}`,
+        `Grand Total: ${currentSelection.basePlanPriceValue !== null ? formatCurrency(currentSelection.basePlanPriceValue + addon.addonTotal) : `${formatCurrency(addon.addonTotal)} + base plan`}`,
         `Active Days: ${currentSelection.activeDays}`,
         `Start Date: ${currentSelection.start}`,
         `End Date: ${currentSelection.end}`,
@@ -573,6 +692,7 @@ async function loadAddonCatalog() {
 
       confirmBtn.href = buildWhatsappLink(WHATSAPP_NUMBER, message);
       setFeedback("success", "Ready. Tap confirm to continue on WhatsApp.");
+      renderCostSummary();
       saveDraft();
     }
 

@@ -27,6 +27,20 @@ function planPriceLabel(row = {}) {
   return /^[₹$]/.test(text) ? text : `₹${text}`;
 }
 
+function planPeriodPrices(row = {}) {
+  const monthlyRaw = row["Price for monthly subscription"] || row.price_for_monthly_subscription || row.Monthly_Price || row.monthly_price || "";
+  const weeklyRaw = row["Price for weekly subscription"] || row.price_for_weekly_subscription || row.Weekly_Price || row.weekly_price || "";
+  const normalize = value => {
+    const text = String(value || "").trim();
+    if (!text) return "";
+    return /^[₹$]/.test(text) ? text : `₹${text}`;
+  };
+  return {
+    monthly: normalize(monthlyRaw),
+    weekly: normalize(weeklyRaw)
+  };
+}
+
 function renderPlans(rows) {
   const grid = document.getElementById("plans-grid");
   if (!grid) return;
@@ -47,11 +61,15 @@ function renderPlans(rows) {
 
   const cards = Array.from(grouped.entries()).map(([planKey, row]) => {
     const variants = row.variants.filter(Boolean);
+    const prices = planPeriodPrices(row);
+    const priceLine = [prices.monthly ? `Monthly: ${prices.monthly}` : "", prices.weekly ? `Weekly: ${prices.weekly}` : ""]
+      .filter(Boolean)
+      .join(" • ");
     return `
       <article class="day-card" style="padding:18px; background:linear-gradient(180deg,#ffffff,#f7fbf8); border-color:rgba(31,109,71,.14)">
         <h3>${escapeHtml(row.Plan_Name || row.plan_name || "Subscription Plan")}</h3>
         <p class="muted">${escapeHtml(row.Description || row.description || "Curated meal plan with healthy rotations.")}</p>
-        <p class="legend" style="font-weight:700;color:#14532d;margin:8px 0 4px;">Starting at ${escapeHtml(planPriceLabel(row))}</p>
+        <p class="legend" style="font-weight:700;color:#14532d;margin:8px 0 4px;">${escapeHtml(priceLine || `Starting at ${planPriceLabel(row)}`)}</p>
         <p class="muted" style="margin:0 0 10px;">${escapeHtml(row.Duration_Days || row.duration_days || "-")} days • ${escapeHtml(row.Meals_Per_Day || row.meals_per_day || "-")} meals/day</p>
         ${variants.length ? `<p class="muted" style="font-size:.85rem;">Variants: ${variants.map(v => escapeHtml(v)).join(" • ")}</p>` : ""}
         <p style="margin:12px 0 0;"><a class="btn btn-soft" href="${escapeHtml(PLAN_PAGE_BY_KEY[planKey] || `plan.html?plan=${encodeURIComponent(planKey)}`)}">View Plan</a></p>
