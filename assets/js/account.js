@@ -91,10 +91,14 @@ async function syncUserStateFromBackend(userEmail) {
 async function getCurrentUserProfile() {
   const auth = window.cebAuth;
   if (auth?.enabled) {
-    const user = await auth.getCurrentUser();
-    const identifier = user?.email || user?.phone || "";
-    if (!identifier) return null;
-    return { email: identifier, name: user.user_metadata?.name || identifier };
+    try {
+      const user = await auth.getCurrentUser();
+      const identifier = user?.email || user?.phone || "";
+      if (!identifier) return null;
+      return { email: identifier, name: user.user_metadata?.name || identifier };
+    } catch {
+      // fall through to local mode lookup
+    }
   }
 
   const email = localCurrentUserEmail();
@@ -319,6 +323,10 @@ async function render() {
   const addressLinkInput = document.getElementById("address-link");
   const pickAddressBtn = document.getElementById("pick-address-btn");
 
+  function setAuthFeedback(message) {
+    if (feedback) feedback.textContent = message;
+  }
+
   function updatePickAddressLink() {
     if (!pickAddressBtn) return;
     const qp = new URLSearchParams({
@@ -331,7 +339,7 @@ async function render() {
   if (pickedLat && pickedLon) {
     if (addressLinkInput) addressLinkInput.value = `https://maps.google.com/?q=${pickedLat},${pickedLon}`;
     if (addressLabelInput && pickedLabel) addressLabelInput.value = pickedLabel;
-    if (feedback) feedback.textContent = "Pinned location selected. Click 'Save Address' to keep it for future orders.";
+    setAuthFeedback("Pinned location selected. Click 'Save Address' to keep it for future orders.");
   }
   updatePickAddressLink();
   if (addressLabelInput) {
@@ -345,7 +353,7 @@ async function render() {
       const email = (document.getElementById("signup-email")?.value || "").trim().toLowerCase();
       const password = document.getElementById("signup-password")?.value || "";
       if (!name || !email || !password) {
-        if (feedback) feedback.textContent = "Please fill name, email, and password.";
+        setAuthFeedback("Please fill name, email, and password.");
         return;
       }
 
@@ -353,32 +361,34 @@ async function render() {
         if (window.cebAuth?.enabled) {
           const result = await window.cebAuth.signUp(email, password, { name });
           if (!result.ok) {
-            if (feedback) feedback.textContent = result.message || "Could not create account.";
+            setAuthFeedback(result.message || "Could not create account.");
             return;
           }
-          if (feedback) feedback.textContent = "Account created. Check email if confirmation is required.";
+          setAuthFeedback("Account created. Check email if confirmation is required.");
         } else {
           if (runtime.enforceSecureAuth) {
-            if (feedback) feedback.textContent = "Secure auth is required. Configure Supabase before creating accounts.";
+            setAuthFeedback("Secure auth is required. Configure Supabase before creating accounts.");
             return;
           }
           const users = readUsers();
           if (users.some(user => user.email === email)) {
-            if (feedback) feedback.textContent = "Account already exists. Please login.";
+            setAuthFeedback("Account already exists. Please login.");
             return;
           }
           const passwordHash = await hashPassword(password);
           users.push({ name, email, passwordHash });
           writeUsers(users);
           localStorage.setItem(CURRENT_USER_KEY, email);
-          if (feedback) feedback.textContent = "Local account created successfully.";
+          setAuthFeedback("Local account created successfully.");
         }
       } catch (error) {
-        if (feedback) feedback.textContent = error instanceof Error ? error.message : "Could not create account.";
+        setAuthFeedback(error instanceof Error ? error.message : "Could not create account.");
         return;
       }
 
-      await render();
+      await render().catch(() => {
+        setAuthFeedback("Account created, but profile view failed to load. Please refresh.");
+      });
     });
   }
 
@@ -388,47 +398,54 @@ async function render() {
       const email = (document.getElementById("login-email")?.value || "").trim().toLowerCase();
       const password = document.getElementById("login-password")?.value || "";
       if (!email || !password) {
-        if (feedback) feedback.textContent = "Please enter email and password.";
+        setAuthFeedback("Please enter email and password.");
         return;
       }
 
-      if (window.cebAuth?.enabled) {
-        const result = await window.cebAuth.signIn(email, password);
-        if (!result.ok) {
-          if (feedback) feedback.textContent = result.message || "Invalid login.";
-          return;
+      try {
+        if (window.cebAuth?.enabled) {
+          const result = await window.cebAuth.signIn(email, password);
+          if (!result.ok) {
+            setAuthFeedback(result.message || "Invalid login.");
+            return;
+          }
+          setAuthFeedback("Logged in.");
+        } else {
+          if (runtime.enforceSecureAuth) {
+            setAuthFeedback("Secure auth is required. Configure Supabase before login.");
+            return;
+          }
+          const passwordHash = await hashPassword(password);
+          const user = readUsers().find(entry =>
+            entry.email === email && (entry.passwordHash === passwordHash || entry.password === password)
+          );
+          if (!user) {
+            setAuthFeedback("Invalid email or password.");
+            return;
+          }
+          localStorage.setItem(CURRENT_USER_KEY, email);
+          setAuthFeedback("Logged in (local mode).");
         }
-        if (feedback) feedback.textContent = "Logged in.";
-      } else {
-        if (runtime.enforceSecureAuth) {
-          if (feedback) feedback.textContent = "Secure auth is required. Configure Supabase before login.";
-          return;
-        }
-        const passwordHash = await hashPassword(password);
-        const user = readUsers().find(entry =>
-          entry.email === email && (entry.passwordHash === passwordHash || entry.password === password)
-        );
-        if (!user) {
-          if (feedback) feedback.textContent = "Invalid email or password.";
-          return;
-        }
-        localStorage.setItem(CURRENT_USER_KEY, email);
-        if (feedback) feedback.textContent = "Logged in (local mode).";
+      } catch (error) {
+        setAuthFeedback(error instanceof Error ? error.message : "Login failed.");
+        return;
       }
 
-      await render();
+      await render().catch(() => {
+        setAuthFeedback("Login succeeded, but profile view failed to load. Please refresh.");
+      });
     });
   }
 
   if (googleLoginBtn) {
     googleLoginBtn.addEventListener("click", async () => {
       if (!window.cebAuth?.enabled || !window.cebAuth?.supportsGoogleOAuth) {
-        if (feedback) feedback.textContent = "Google login is available only when Supabase Auth is configured.";
+        setAuthFeedback("Google login is available only when Supabase Auth is configured.");
         return;
       }
       const result = await window.cebAuth.signInWithGoogle();
       if (!result.ok) {
-        if (feedback) feedback.textContent = result.message || "Could not start Google login.";
+        setAuthFeedback(result.message || "Could not start Google login.");
       }
     });
   }
@@ -473,7 +490,7 @@ async function render() {
       if (backend?.saveSubscriptionsByEmail) {
         await backend.saveSubscriptionsByEmail(profile.email, next);
       }
-      if (feedback) feedback.textContent = action === "save_meal" ? "Meal slot updated." : `Subscription updated: ${action}.`;
+      setAuthFeedback(action === "save_meal" ? "Meal slot updated." : `Subscription updated: ${action}.`);
       await render();
     });
   }
@@ -486,13 +503,13 @@ async function render() {
       const label = (document.getElementById("address-label")?.value || "").trim();
       const mapLink = (document.getElementById("address-link")?.value || "").trim();
       if (!label || !mapLink) {
-        if (feedback) feedback.textContent = "Please provide both address label and map link.";
+        setAuthFeedback("Please provide both address label and map link.");
         return;
       }
       const existing = readScopedList(ADDRESS_KEY, profile.email);
       const already = existing.find(item => item.mapLink === mapLink);
       if (already) {
-        if (feedback) feedback.textContent = "This map link is already saved.";
+        setAuthFeedback("This map link is already saved.");
         return;
       }
       const next = [
@@ -505,7 +522,7 @@ async function render() {
         await backend.saveAddressesByEmail(profile.email, next);
       }
       addressForm.reset();
-      if (feedback) feedback.textContent = "Address saved.";
+      setAuthFeedback("Address saved.");
       renderAddresses(profile);
     });
   }
@@ -529,7 +546,7 @@ async function render() {
         if (backend?.saveAddressesByEmail) {
           await backend.saveAddressesByEmail(profile.email, existing);
         }
-        if (feedback) feedback.textContent = "Address removed.";
+        setAuthFeedback("Address removed.");
       } else if (action === "default") {
         const next = existing.map((item, idx) => ({ ...item, isDefault: idx === index }));
         writeScopedList(ADDRESS_KEY, profile.email, next);
@@ -537,7 +554,7 @@ async function render() {
         if (backend?.saveAddressesByEmail) {
           await backend.saveAddressesByEmail(profile.email, next);
         }
-        if (feedback) feedback.textContent = "Default address updated.";
+        setAuthFeedback("Default address updated.");
       }
       renderAddresses(profile);
     });
@@ -557,10 +574,12 @@ async function render() {
       if (backend?.upsertProfileByEmail) {
         await backend.upsertProfileByEmail(profile.email, { name, phone });
       }
-      if (feedback) feedback.textContent = "Profile saved.";
+      setAuthFeedback("Profile saved.");
       await render();
     });
   }
 
-  await render();
+  await render().catch(() => {
+    setAuthFeedback("Could not initialize account view. Please refresh the page.");
+  });
 })();

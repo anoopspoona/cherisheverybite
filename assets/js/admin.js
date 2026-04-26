@@ -1,6 +1,9 @@
 const MENU_PATH = "menu.csv";
 const PRICE_PATH = "prices.csv";
+const CATALOG_PATH = "catalog.csv";
 const runtime = window.cebRuntime || {};
+let preservedCatalogNonDishRows = [];
+let hasCatalogSchema = false;
 
 function setFeedback(message) {
   const el = document.getElementById("admin-feedback");
@@ -74,9 +77,31 @@ async function saveMenuOverrides(rows) {
   const priceRows = rows.map(({ Dish_ID, Price, Status }) => ({
     Dish_ID, Price, Status
   }));
+  const catalogDishRows = rows.map(({ Dish_ID, Dish_Name, Category, Meal_Type, Image_URL, Price, Status }) => ({
+    ...(hasCatalogSchema ? {} : {
+      id: Dish_ID,
+      name: Dish_Name,
+      category: Category,
+      meal_type: Meal_Type,
+      image_url: Image_URL,
+      price: Price,
+      status: Status || "live",
+      record_type: "dish"
+    }),
+    ID: Dish_ID,
+    Name: Dish_Name,
+    Category,
+    Meal_Type,
+    Image_URL,
+    Price,
+    Status: Status || "live",
+    Record_Type: "dish"
+  }));
+  const catalogRows = [...catalogDishRows, ...preservedCatalogNonDishRows];
   if (runtime.requireBackendSync && !window.cebBackend?.apiBase) {
     return { ok: false, message: "Backend sync is required. Configure CEB_BACKEND_CONFIG first." };
   }
+  window.cebCsvTools.writeOverride(CATALOG_PATH, window.cebCsvTools.serializeCSV(catalogRows));
   window.cebCsvTools.writeOverride(MENU_PATH, window.cebCsvTools.serializeCSV(menuRows));
   window.cebCsvTools.writeOverride(PRICE_PATH, window.cebCsvTools.serializeCSV(priceRows));
   if (window.cebBackend?.saveAdminMenu) {
@@ -188,18 +213,40 @@ async function enforceAdminAccess() {
 }
 
 (async function initAdmin() {
-  const [menuRows, priceRows] = await Promise.all([
+  const [catalogRows, menuRows, priceRows] = await Promise.all([
+    fetchCSV(CATALOG_PATH).catch(() => []),
     fetchCSV(MENU_PATH).catch(() => []),
     fetchCSV(PRICE_PATH).catch(() => [])
   ]);
+  const normalizedCatalogRows = catalogRows.map(row => {
+    const normalized = {};
+    Object.keys(row || {}).forEach(key => {
+      normalized[key] = row[key];
+    });
+    return normalized;
+  });
+  hasCatalogSchema = normalizedCatalogRows.some(row => "Record_Type" in row || "record_type" in row);
+  preservedCatalogNonDishRows = normalizedCatalogRows.filter(row => String(row.Record_Type || row.record_type || "").toLowerCase() !== "dish");
+  const catalogDishRows = normalizedCatalogRows
+    .filter(row => String(row.Record_Type || row.record_type || "").toLowerCase() === "dish")
+    .map(row => ({
+      Dish_ID: row.ID || row.id || row.Dish_ID || row.dish_id || "",
+      Dish_Name: row.Name || row.name || row.Dish_Name || row.dish_name || "",
+      Category: row.Category || row.category || "",
+      Meal_Type: row.Meal_Type || row.meal_type || "",
+      Image_URL: row.Image_URL || row.image_url || "",
+      Price: row.Price || row.price || "",
+      Status: row.Status || row.status || "live"
+    }))
+    .filter(row => row.Dish_ID && row.Dish_Name);
   const priceMap = new Map(priceRows.map(row => [row.Dish_ID || row.dish_id || "", row]));
-  let stateRows = menuRows.map(row => {
+  let stateRows = (catalogDishRows.length ? catalogDishRows : menuRows).map(row => {
     const id = row.Dish_ID || row.dish_id || "";
     const price = priceMap.get(id) || {};
     return normalizeMenuRow({
       ...row,
-      Price: price.Price || price.price || "",
-      Status: price.Status || price.status || "live"
+      Price: row.Price || row.price || price.Price || price.price || "",
+      Status: row.Status || row.status || price.Status || price.status || "live"
     });
   });
   renderMenuTable(stateRows);
@@ -253,9 +300,10 @@ async function enforceAdminAccess() {
   });
 
   document.getElementById("menu-reset")?.addEventListener("click", () => {
+    window.cebCsvTools.clearOverride(CATALOG_PATH);
     window.cebCsvTools.clearOverride(MENU_PATH);
     window.cebCsvTools.clearOverride(PRICE_PATH);
-    setFeedback("Menu overrides cleared.");
+    setFeedback("Menu overrides cleared for catalog/menu/price.");
   });
 
   document.getElementById("cal-load")?.addEventListener("click", loadCalendarEditor);
