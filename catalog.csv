@@ -1,0 +1,63 @@
+record_type,id,name,category,meal_type,image_url,price,status,billing_mode,source
+dish,DISH-CUT-FRUITS,Cut fruits,Accompaniments 1,Lunch,,TBD,live,,dishes.csv
+dish,DISH-SHIRAZI-SALAD,Shirazi salad,Accompaniments 1,Dinner,,TBD,live,,dishes.csv
+dish,DISH-ROASTED-SWEET-POTATO,Roasted sweet potato,Accompaniments 2,Lunch,,TBD,live,,dishes.csv
+dish,DISH-CRUNCHY-NUT-MIX,Crunchy Nut mix,Accompaniments 3,Lunch,,TBD,live,,dishes.csv
+dish,DISH-MAPLE-TOGARASHI-SPICED-NUTS,Maple Togarashi Spiced Nuts,Accompaniments 3,Dinner,,TBD,live,,dishes.csv
+dish,DISH-PROTEIN-CHICKEN-COLLAGEN-MILLET-KANJI,Protein Chicken Collagen Millet Kanji,Combos,Lunch,,TBD,live,,dishes.csv
+dish,DISH-PROTEIN-MILLET-KANJI-VEG-ADAPTED,Protein Millet Kanji (Veg Adapted),Combos,Lunch,,TBD,live,,dishes.csv
+dish,DISH-RAGI-JOWAR-CHAPPATHI-COMBO,Ragi Jowar Chappathi combo,Combos,Dinner,,TBD,live,,dishes.csv
+dish,DISH-ABC-SMOOTHIE,ABC Smoothie,Detox smoothies,Drink,,TBD,live,,dishes.csv
+dish,DISH-MINT-PINEAPPLE-SPINACH-SMOOTHIE,Mint Pineapple Spinach Smoothie,Detox smoothies,Drink,,TBD,live,,dishes.csv
+dish,DISH-MINT-SMOOTHIE,Mint Smoothie,Detox smoothies,Drink,,TBD,live,,dishes.csv
+dish,DISH-MONKFRUIT-LEMONADE,Monkfruit lemonade,Detox smoothies,Drink,,TBD,live,,dishes.csv
+dish,DISH-AMLA-TURMERIC-KANJI,Amla Turmeric Kanji,Gut boosters,,,TBD,live,,dishes.csv
+dish,DISH-BEETROOT-CARROT-KANJI,Beetroot Carrot Kanji,Gut boosters,,,TBD,live,,dishes.csv
+dish,DISH-BEETROOT-KANJI,Beetroot Kanji,Gut boosters,Drink,,TBD,live,,dishes.csv
+dish,DISH-MASALA-CHAAS,Masala Chaas,Gut boosters,Drink,,TBD,live,,dishes.csv
+dish,DISH-PINEAPPLE-GUT-BOOSTER-TEPACHE,Pineapple Gut Booster Tepache,Gut boosters,Drink,,TBD,live,,dishes.csv
+dish,DISH-AMLA-KANJI,Amla Kanji,Menu,Drink,,TBD,live,,dishes.csv
+dish,DISH-CHIA-PB-SMOOTHIE-MR,Chia PB Smoothie (MR),Menu,Drink,,TBD,live,,dishes.csv
+dish,DISH-CHIA-PROTEIN-SMOOTHIE-MR,Chia Protein Smoothie (MR),Menu,Drink,,TBD,live,,dishes.csv
+dish,DISH-CHICKEN,Chicken,Menu,Lunch,,TBD,live,,dishes.csv
+dish,DISH-CHICKEN-SANDWICH,Chicken Sandwich,Menu,Lunch,,TBD,live,,dishes.csv
+dish,DISH-FURIKAKE-AVOCADO-TOAST,Furikake Avocado Toast,Menu,Lunch,,TBD,live,,dishes.csv
+dish,DISH-FURIKAKE-TOAST,Furikake Toast,Menu,Lunch,,TBD,live,,dishes.csv
+dish,DISH-MESCLUN,Mesclun,Menu,Lunch,,TBD,live,,dishes.csv
+dish,DISH-MESCLUN-SALAD,Mesclun Salad,Menu,Lunch,,TBD,live,,dishes.csv
+dish,DISH-PANEER,Paneer,Menu,Lunch,,TBD,live,,dishes.csv
+dish,DISH-PROTEIN-CHICKEN-KANJI,Protein Chicken Kanji,Menu,Lunch,,TBD,live,,dishes.csv
+dish,DISH-PROTEIN-MILLET-KANJI,Protein Millet Kanji,Menu,Lunch,,TBD,live,,dishes.csv
+dish,DISH-PROTEIN-MILLET-KANJI-VEG,Protein Millet Kanji (Veg),Menu,Lunch,,TBD,live,,dishes.csv
+dish,DISH-RAGI-COMBO,Ragi combo,Menu,Lunch,,TBD,live,,dishes.csv
+dish,DISH-TEPACHE,Tepache,Menu,Drink,,TBD,live,,dishes.csv
+dish,DISH-VEGAN-CHOCOLATE-CHIPS-ALMOND-OATS-COOKIES,Vegan Chocolate Chips Almond Oats Cookies,Menu,Snack,,TBD,live,,dishes.csv
+dish,DISH-YUZU,Yuzu,Menu,Dinner,,TBD,live,,dishes.csv
+dish,DISH-YUZU-SALAD,Yuzu Salad,Menu,Lunch,,TBD,live,,dishes.csv
+dish,DISH-HERBS-MARINATED-CHICKEN-BREAST,Herbs Marinated Chicken Breast,Protein,Lunch,,TBD,live,,dishes.csv
+dish,DISH-PANEER-GRILLED,Paneer grilled,Protein,Lunch,,TBD,live,,dishes.csv
+dish,DISH-SOYU-EGG,Soyu egg,Protein,Lunch,,TBD,live,,dishes.csv
+dish,DISH-STEAMED-EDAMAME,Steamed Edamame,Protein,Dinner,,TBD,live,,dishes.csv
+dish,DISH-CBP-PROTEIN-SMOOTHIE,CBP Protein Smoothie,Protein smoothies,,,TBD,live,,dishes.csv
+dish,DISH-CBP-PROTEIN-SMOOTHIE-MR,CBP Protein Smoothie (MR),Protein smoothies,Drink,,TBD,live,,dishes.csv
+dish,DISH-CHIA-PB-PROTEIN-SMOOTHIE-MR,Chia PB Protein Smoothie (MR),Protein smoothies,Drink,,TBD,live,,dishes.csv
+dish,DISH-CHIA-PEANUT-BUTTER-PROTEIN-SMOOTHIE,Chia Peanut Butter Protein Smoothie,Protein smoothies,,,TBD,live,,dishes.csv
+dish,DISH-CHIA-PROTEIN-SMOOTHIE-CHOCOLATE,Chia Protein Smoothie Chocolate,Protein smoothies,,,TBD,live,,dishes.csv
+dish,DISH-MESCLUN-QUINOA-SALAD,Mesclun Quinoa Salad,Salads,Lunch,,TBD,live,,dishes.csv
+dish,DISH-PULLED-CHICKEN-CAESAR-SALAD,Pulled Chicken Caesar Salad,Salads,Lunch,,TBD,live,,dishes.csv
+dish,DISH-YUZU-CORN-SALAD,Yuzu Corn Salad,Salads,Lunch,,TBD,live,,dishes.csv
+dish,DISH-FRENCH-ONION-GRILLED-CHEESE,French Onion Grilled Cheese,Sandwich,Lunch,,TBD,live,,dishes.csv
+dish,DISH-FURIKAKE-AVOCADO-TOAST-WITH-JAMMY-EGGS,Furikake Avocado Toast with Jammy Eggs,Sandwich,Lunch,,TBD,live,,dishes.csv
+dish,DISH-SOUR-DOUGH-GRILLED-CHICKEN-AND-AVOCADO-SANDWICH,Sour Dough Grilled Chicken and Avocado Sandwich,Sandwich,Lunch,,TBD,live,,dishes.csv
+dish,DISH-CHOCOLATE-CHIPS-OATS-COOKIES,Chocolate Chips Oats Cookies,Snacks,Snack,,TBD,live,,dishes.csv
+dish,DISH-GREEK-YOGURT-GRANOLA-BOWL,Greek Yogurt Granola Bowl,Snacks,Snack,,TBD,live,,dishes.csv
+dish,DISH-PEANUT-BUTTER-AND-BANANA-TOAST,Peanut butter and banana toast,Snacks,Snack,,TBD,live,,dishes.csv
+dish,DISH-PROTEIN-PEANUT-BUTTER-BROWNIE,Protein Peanut Butter Brownie,Snacks,Snack,,TBD,live,,dishes.csv
+dish,DISH-RAGI-COLLAGEN-CHICKEN-SOUP,Ragi collagen chicken soup,Soup,Dinner,,TBD,live,,dishes.csv
+dish,DISH-VEGETABLE-MILLET-BROTH,Vegetable millet broth,Soup,Dinner,,TBD,live,,dishes.csv
+addon,A001,Herbs marinated chicken breast,protein,,,160,live,per_day,addons.csv
+addon,A002,CBP Protein Smoothie,drink,,,220,live,per_day,addons.csv
+addon,A003,Chia-Protein Smoothie,drink,,,210,live,per_day,addons.csv
+addon,A004,Steamed edamame,bites,,,150,live,per_day,addons.csv
+addon,A005,Protein Peanut Butter Brownie,dessert,,,190,live,one_time,addons.csv
+addon,A006,Greek yogurt granola,bites,,,170,live,one_time,addons.csv

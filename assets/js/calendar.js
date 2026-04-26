@@ -40,7 +40,13 @@ function monthStart(d) {
   return new Date(d.getFullYear(), d.getMonth(), 1);
 }
 
-function renderCalendarMonths(startDate, activeMap) {
+function getDateAddonTotal(date, dayAddonItems) {
+  const rows = dayAddonItems.get(date);
+  if (!rows) return 0;
+  return Array.from(rows.values()).reduce((sum, qty) => sum + Number(qty || 0), 0);
+}
+
+function renderCalendarMonths(startDate, activeMap, dayAddonItems) {
   const wrap = document.getElementById("calendar-grid");
   if (!wrap) return;
   wrap.innerHTML = "";
@@ -71,8 +77,15 @@ function renderCalendarMonths(startDate, activeMap) {
       box.innerHTML = `<div class="num">${day}</div>`;
 
       if (activeMap.has(key)) {
+        const qty = getDateAddonTotal(key, dayAddonItems);
         box.classList.add("active");
-        box.innerHTML += `<div class="dish">${escapeHtml(activeMap.get(key))}</div>`;
+        box.setAttribute("data-action", "open-addon-panel");
+        box.setAttribute("data-date", key);
+        box.innerHTML += `
+          <button class="day-addon-open" type="button" data-action="open-addon-panel" data-date="${key}" aria-label="Open add-ons for ${key}">+</button>
+          <div class="dish">${escapeHtml(activeMap.get(key))}</div>
+          ${qty > 0 ? `<div class="legend">Add-ons selected: ${qty}</div>` : ""}
+        `;
       } else if (current.getDay() === 0) {
         box.innerHTML += `<div class="dish">Sunday</div>`;
       }
@@ -88,6 +101,33 @@ function renderCalendarMonths(startDate, activeMap) {
 async function loadDishes(plan, meal) {
   const rows = await fetchCSV(csvFor(plan, meal));
   return rows.map(row => row.Dish || row.dish || "").filter(Boolean);
+}
+
+async function loadAddonCatalog() {
+  const catalogRows = await fetchCSV("catalog.csv").catch(() => []);
+  const addonRows = catalogRows
+    .filter(row => String(row.record_type || row.Record_Type || "").toLowerCase() === "addon")
+    .map(row => ({
+      id: row.id || row.ID || row.addon_id || row.Addon_ID || "",
+      name: row.name || row.Name || row.addon_name || row.Addon_Name || "",
+      category: row.category || row.Category || row.addon_type || row.Addon_Type || "Add-on",
+      price: row.price || row.Price || row.unit_price || row.Unit_Price || "",
+      status: row.status || row.Status || "live"
+    }))
+    .filter(row => row.id && row.name && String(row.status).toLowerCase() === "live");
+
+  if (addonRows.length) return addonRows;
+
+  const rows = await fetchCSV("addons.csv").catch(() => []);
+  return rows
+    .map(row => ({
+      id: row.Addon_ID || row.addon_id || row.id || "",
+      name: row.Addon_Name || row.addon_name || row.Name || row.name || "",
+      category: row.Category || row.category || row.Addon_Type || row.addon_type || "Add-on",
+      price: row.Price || row.price || row.Unit_Price || row.unit_price || "",
+      status: row.Status || row.status || "live"
+    }))
+    .filter(row => row.id && row.name && String(row.status).toLowerCase() === "live");
 }
 
 (async function init() {
@@ -373,6 +413,11 @@ async function loadDishes(plan, meal) {
       activeMap.set(iso, dishes[idx % dishes.length]);
     });
 
+    Array.from(dayAddonItems.keys()).forEach(date => {
+      if (!activeMap.has(date)) dayAddonItems.delete(date);
+    });
+    if (selectedAddonDate && !activeMap.has(selectedAddonDate)) selectedAddonDate = "";
+
     currentSelection = {
       plan: selectedPlan,
       meal: selectedMeal,
@@ -382,11 +427,27 @@ async function loadDishes(plan, meal) {
       activeDays: activeCount,
       schedule: dates.map((iso, idx) => ({
         date: iso,
-        dish: dishes[idx % dishes.length]
+        dish: dishes[idx % dishes.length],
+        addonQty: Number(dailyAddons.get(iso) || 0)
       }))
     };
 
-    renderCalendarMonths(start, activeMap);
+    renderCalendarMonths(start, activeMap, dayAddonItems);
+    renderDayAddonPanel();
+  }
+
+  function setFeedback(type, message) {
+    if (!feedback) return;
+    feedback.textContent = message;
+    feedback.classList.remove("error", "success");
+    if (type) feedback.classList.add(type);
+  }
+
+  function setFeedback(type, message) {
+    if (!feedback) return;
+    feedback.textContent = message;
+    feedback.classList.remove("error", "success");
+    if (type) feedback.classList.add(type);
   }
 
   function setFeedback(type, message) {
@@ -440,8 +501,17 @@ async function loadDishes(plan, meal) {
       return;
     }
 
-    const scheduleLines = (currentSelection.schedule || [])
-      .map(entry => `${entry.date}: ${entry.dish}`)
+    const orderPayload = buildOrderPayload();
+    const scheduleLines = (orderPayload.schedule || [])
+      .map(entry => `${entry.date}: ${entry.dish}${entry.addonQty ? ` (Add-ons: ${entry.addonQty})` : ""}`)
+      .join("\n");
+    const addonLines = (orderPayload.dailyAddons || [])
+      .map(entry => `${entry.date}: ${entry.items.map(item => `${item.name} x${item.qty}`).join(", ")}`)
+      .join("\n");
+    const addonLines = addonCatalog
+      .map(item => ({ ...item, qty: selectedAddons.get(item.id) || 0 }))
+      .filter(item => item.qty > 0)
+      .map(item => `${item.name} x${item.qty}${item.price ? ` (${item.price})` : ""}`)
       .join("\n");
     const addonLines = addonCatalog
       .map(item => ({ ...item, qty: selectedAddons.get(item.id) || 0 }))

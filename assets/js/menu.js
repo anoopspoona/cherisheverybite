@@ -50,7 +50,7 @@ function renderMenu(groups) {
   if (!menuGrid) return;
 
   if (!groups.length) {
-    menuGrid.innerHTML = `<article class="menu-section"><h3 class="menu-title">Menu updating soon</h3><p class="muted">Upload menu.csv and prices.csv to show the latest dishes.</p></article>`;
+    menuGrid.innerHTML = `<article class="menu-section"><h3 class="menu-title">Menu updating soon</h3><p class="muted">Upload catalog.csv (or dishes.csv / menu.csv + prices.csv) to show the latest dishes.</p></article>`;
     return;
   }
 
@@ -187,22 +187,40 @@ function attachDietChartForm() {
 
 (async function init() {
   try {
-    const [menuRows, priceRows, planRows, heroRows] = await Promise.all([
-      fetchCSV("menu.csv"),
+    const [catalogRows, combinedMenuRows, menuRows, priceRows, planRows, heroRows] = await Promise.all([
+      fetchCSV("catalog.csv").catch(() => []),
+      fetchCSV("dishes.csv").catch(() => []),
+      fetchCSV("menu.csv").catch(() => []),
       fetchCSV("prices.csv").catch(() => []),
       fetchCSV("plans.csv").catch(() => []),
       fetchCSV("hero_slides.csv").catch(() => [])
     ]);
 
-    const priceMap = new Map(priceRows.map(row => [row.Dish_ID || row.dish_id, row]));
-    const mergedMenu = menuRows.map(row => {
-      const priceRow = priceMap.get(row.Dish_ID) || {};
-      return {
-        ...row,
-        Price: priceRow.Price || priceRow.price || "TBD",
-        Status: priceRow.Status || priceRow.status || "live"
-      };
-    });
+    const catalogDishes = catalogRows
+      .filter(row => String(row.record_type || row.Record_Type || "").toLowerCase() === "dish")
+      .map(row => ({
+        Dish_ID: row.id || row.ID || "",
+        Dish_Name: row.name || row.Name || "",
+        Category: row.category || row.Category || "",
+        Meal_Type: row.meal_type || row.Meal_Type || "",
+        Image_URL: row.image_url || row.Image_URL || "",
+        Price: row.price || row.Price || "",
+        Status: row.status || row.Status || "live"
+      }))
+      .filter(row => row.Dish_ID && row.Dish_Name);
+    const priceMap = new Map(priceRows.map(priceRow => [priceRow.Dish_ID || priceRow.dish_id, priceRow]));
+    const mergedMenu = catalogDishes.length
+      ? catalogDishes
+      : combinedMenuRows.length
+      ? combinedMenuRows
+      : menuRows.map(row => {
+        const priceRow = priceMap.get(row.Dish_ID) || {};
+        return {
+          ...row,
+          Price: priceRow.Price || priceRow.price || "TBD",
+          Status: priceRow.Status || priceRow.status || "live"
+        };
+      });
 
     renderMenu(groupMenu(mergedMenu));
     renderPlans(planRows);
