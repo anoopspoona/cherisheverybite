@@ -37,8 +37,10 @@ python3 scripts/validate_data.py
 ## Data files (root)
 
 - `meals.csv`
+- `catalog.csv` (single consolidated catalog for dishes + add-ons; preferred)
+- `dishes.csv` (dish-only extracted table, backward-compatible)
 - `plans.csv`
-- `addons.csv`
+- `addons.csv` (backward-compatible add-on source)
 - `plan_addons.csv`
 - `plan_rules.csv`
 - `orders.csv`

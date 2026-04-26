@@ -90,8 +90,22 @@
     <p id="confirm-feedback" class="legend"></p>
 
     <section id="calendar-grid" class="calendar-grid"></section>
-  </main>
 
+    <section id="day-addon-panel" class="day-addon-panel" hidden>
+      <div class="addons-head">
+        <h2 id="day-addon-title">Add-ons</h2>
+        <p class="legend">Select add-ons for the chosen day. Use + / - to adjust quantity.</p>
+      </div>
+      <div id="day-addon-grid" class="addons-grid"></div>
+    </section>
+  </main>
+  <script>
+    window.CEB_BACKEND_CONFIG = {
+      apiBase: "https://api.yourdomain.com",
+      apiToken: "YOUR_BACKEND_BEARER_TOKEN",
+      timeoutMs: 8000
+    };
+  </script>
   <script src="assets/js/common.js"></script>
   <script src="assets/js/backend.js"></script>
   <script src="assets/js/calendar.js"></script>
