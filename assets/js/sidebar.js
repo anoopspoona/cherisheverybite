@@ -38,6 +38,11 @@
   });
 
   backdrop.addEventListener("click", () => setOpen(false));
+  panel.addEventListener("click", event => {
+    const target = event.target instanceof HTMLElement ? event.target : null;
+    if (!target) return;
+    if (target.closest("a")) setOpen(false);
+  });
   document.addEventListener("keydown", event => {
     if (event.key === "Escape") setOpen(false);
   });

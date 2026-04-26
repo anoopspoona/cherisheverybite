@@ -82,3 +82,11 @@
   background:rgba(255,255,255,.12);
   transform:translateX(2px);
 }
+
+@media (max-width: 720px) {
+  .ceb-side-toggle{
+    left:auto;
+    right:12px;
+    top:14px;
+  }
+}

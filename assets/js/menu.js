@@ -9,6 +9,14 @@ const PLAN_PAGE_BY_KEY = {
   diabetic: "diabetic-plan.html"
 };
 
+function pick(row, keys, fallback = "") {
+  for (const key of keys) {
+    const value = row?.[key];
+    if (value !== undefined && value !== null && String(value).trim() !== "") return value;
+  }
+  return fallback;
+}
+
 function planUrl(planKey) {
   const key = String(planKey || "").trim().toLowerCase();
   return PLAN_PAGE_BY_KEY[key] || `plan.html?plan=${encodeURIComponent(planKey || "")}`;
@@ -17,6 +25,45 @@ function planUrl(planKey) {
 function normalizePrice(price) {
   const value = String(price || "").trim();
   return value || "TBD";
+}
+
+function resolveImageUrl(value) {
+  const raw = String(value || "").trim();
+  if (!raw) return "cherish-logo.jpg";
+  if (/^(https?:)?\/\//i.test(raw)) return raw;
+  if (raw.startsWith("assets/")) return raw;
+  if (/\.(png|jpe?g|webp|gif|avif|svg)$/i.test(raw) && !raw.includes("/")) {
+    return `assets/dishes/${raw}`;
+  }
+  return raw.replace(/^\.\//, "");
+}
+
+function planPriceLabel(row = {}) {
+  const candidates = [
+    row.Price,
+    row.price,
+    row.Plan_Price,
+    row.plan_price,
+    row.Base_Price,
+    row.base_price,
+    row.Monthly_Price,
+    row.monthly_price,
+    row.Variant_Price,
+    row.variant_price
+  ];
+  const first = candidates.find(value => String(value || "").trim());
+  if (!first) return "Price on request";
+  const text = String(first).trim();
+  return /^[₹$]/.test(text) ? text : `₹${text}`;
+}
+
+function cleanPlanTitle(name = "") {
+  const text = String(name || "").trim();
+  if (!text) return "";
+  return text
+    .replace(/\s*[-–]\s*lunch\s*$/i, "")
+    .replace(/\s+lunch\s*$/i, "")
+    .trim();
 }
 
 function groupMenu(rows) {
@@ -35,7 +82,7 @@ function groupMenu(rows) {
       mealType: row.Meal_Type || row.meal_type || "",
       price: normalizePrice(row.Price || row.price || ""),
       tag: row.Tag || row.tag || "",
-      imageUrl: row.Image_URL || row.image_url || row.Image || row.image || "cherish-logo.jpg"
+      imageUrl: resolveImageUrl(row.Image_URL || row.image_url || row.Image || row.image || row.url || row.URL || row.thumbnail || row.Thumbnail)
     });
   }
 
@@ -88,18 +135,21 @@ function renderPlans(rows) {
   const deduped = [];
   const seen = new Set();
   for (const row of rows) {
-    if (String(row.Status || "").toLowerCase() !== "live") continue;
-    if (seen.has(row.Plan_Key)) continue;
-    seen.add(row.Plan_Key);
+    const status = String(pick(row, ["Status", "status"], "live")).toLowerCase();
+    const planKey = String(pick(row, ["Plan_Key", "plan_key", "Plan Key", "plan key"], "")).trim();
+    if (status !== "live") continue;
+    if (!planKey || seen.has(planKey)) continue;
+    seen.add(planKey);
     deduped.push(row);
   }
 
   wrap.innerHTML = deduped.map(row => `
     <article class="plan-card">
-      <h3>${escapeHtml(row.Plan_Name)}</h3>
-      <p class="muted">${escapeHtml(row.Description || "")}</p>
-      <p class="muted">Duration: ${escapeHtml(row.Duration_Days)} days • Meals/day: ${escapeHtml(row.Meals_Per_Day)}</p>
-      <a class="btn btn-soft" href="${escapeHtml(planUrl(row.Plan_Key))}">View ${escapeHtml(row.Plan_Name)}</a>
+      <h3>${escapeHtml(cleanPlanTitle(pick(row, ["Plan_Name", "plan_name", "Plan Name", "plan name"], "")) || pick(row, ["Plan_Name", "plan_name", "Plan Name", "plan name"], ""))}</h3>
+      <p class="muted">${escapeHtml(pick(row, ["Description", "description"], ""))}</p>
+      <p class="muted">Duration: ${escapeHtml(pick(row, ["Duration_Days", "duration_days", "Duration Days", "duration days"], "-"))} days • Meals/day: ${escapeHtml(pick(row, ["Meals_Per_Day", "meals_per_day", "Meals Per Day", "meals per day"], "-"))}</p>
+      <p class="legend" style="font-weight:700;color:#14532d">Starting at ${escapeHtml(planPriceLabel(row))}</p>
+      <a class="btn btn-soft" href="${escapeHtml(planUrl(pick(row, ["Plan_Key", "plan_key", "Plan Key", "plan key"], "")))}">View ${escapeHtml(cleanPlanTitle(pick(row, ["Plan_Name", "plan_name", "Plan Name", "plan name"], "")) || pick(row, ["Plan_Name", "plan_name", "Plan Name", "plan name"], ""))}</a>
     </article>
   `).join("");
 }
@@ -197,14 +247,18 @@ function attachDietChartForm() {
     ]);
 
     const catalogDishes = catalogRows
-      .filter(row => String(row.record_type || row.Record_Type || "").toLowerCase() === "dish")
+      .filter(row => {
+        const type = String(row.record_type || row.Record_Type || "").toLowerCase();
+        if (!type) return true;
+        return type === "dish" || type === "addon";
+      })
       .map(row => ({
-        Dish_ID: row.id || row.ID || "",
-        Dish_Name: row.name || row.Name || "",
-        Category: row.category || row.Category || "",
-        Meal_Type: row.meal_type || row.Meal_Type || "",
-        Image_URL: row.image_url || row.Image_URL || "",
-        Price: row.price || row.Price || "",
+        Dish_ID: row.id || row.ID || row.addon_id || row.Addon_ID || "",
+        Dish_Name: row.name || row.Name || row.addon_name || row.Addon_Name || "",
+        Category: row.category || row.Category || row.addon_type || row.Addon_Type || "",
+        Meal_Type: row.meal_type || row.Meal_Type || row.addon_type || row.Addon_Type || "",
+        Image_URL: row.image_url || row.Image_URL || row.addon_image_url || row.Addon_Image_URL || row.url || row.URL || row.thumbnail || row.Thumbnail || row.source || row.Source || "",
+        Price: row.price || row.Price || row.unit_price || row.Unit_Price || "",
         Status: row.status || row.Status || "live"
       }))
       .filter(row => row.Dish_ID && row.Dish_Name);
