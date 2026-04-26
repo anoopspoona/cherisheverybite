@@ -274,14 +274,8 @@ async function render() {
   const authCard = document.getElementById("auth-card");
   const profileCard = document.getElementById("profile-card");
   const summary = document.getElementById("user-summary");
-  const authTitle = authCard?.querySelector("h2");
-  const authEnabled = Boolean(window.cebAuth?.enabled);
   const googleSupported = Boolean(window.cebAuth?.enabled && window.cebAuth?.supportsGoogleOAuth);
   const googleLoginBtn = document.getElementById("google-login-btn");
-
-  if (authTitle) {
-    authTitle.textContent = authEnabled ? "Sign Up (Secure)" : "Sign Up (Local Demo)";
-  }
   if (googleLoginBtn) {
     googleLoginBtn.style.display = googleSupported ? "inline-flex" : "none";
   }
@@ -310,8 +304,6 @@ async function render() {
   const pickedLat = params.get("picked_lat");
   const pickedLon = params.get("picked_lon");
   const pickedLabel = params.get("picked_label") || "";
-  const signupForm = document.getElementById("signup-form");
-  const loginForm = document.getElementById("login-form");
   const feedback = document.getElementById("auth-feedback");
   const logoutBtn = document.getElementById("logout-btn");
   const googleLoginBtn = document.getElementById("google-login-btn");
@@ -346,101 +338,10 @@ async function render() {
     addressLabelInput.addEventListener("input", updatePickAddressLink);
   }
 
-  if (signupForm) {
-    signupForm.addEventListener("submit", async event => {
-      event.preventDefault();
-      const name = document.getElementById("signup-name")?.value.trim() || "";
-      const email = (document.getElementById("signup-email")?.value || "").trim().toLowerCase();
-      const password = document.getElementById("signup-password")?.value || "";
-      if (!name || !email || !password) {
-        setAuthFeedback("Please fill name, email, and password.");
-        return;
-      }
-
-      try {
-        if (window.cebAuth?.enabled) {
-          const result = await window.cebAuth.signUp(email, password, { name });
-          if (!result.ok) {
-            setAuthFeedback(result.message || "Could not create account.");
-            return;
-          }
-          setAuthFeedback("Account created. Check email if confirmation is required.");
-        } else {
-          if (runtime.enforceSecureAuth) {
-            setAuthFeedback("Secure auth is required. Configure Supabase before creating accounts.");
-            return;
-          }
-          const users = readUsers();
-          if (users.some(user => user.email === email)) {
-            setAuthFeedback("Account already exists. Please login.");
-            return;
-          }
-          const passwordHash = await hashPassword(password);
-          users.push({ name, email, passwordHash });
-          writeUsers(users);
-          localStorage.setItem(CURRENT_USER_KEY, email);
-          setAuthFeedback("Local account created successfully.");
-        }
-      } catch (error) {
-        setAuthFeedback(error instanceof Error ? error.message : "Could not create account.");
-        return;
-      }
-
-      await render().catch(() => {
-        setAuthFeedback("Account created, but profile view failed to load. Please refresh.");
-      });
-    });
-  }
-
-  if (loginForm) {
-    loginForm.addEventListener("submit", async event => {
-      event.preventDefault();
-      const email = (document.getElementById("login-email")?.value || "").trim().toLowerCase();
-      const password = document.getElementById("login-password")?.value || "";
-      if (!email || !password) {
-        setAuthFeedback("Please enter email and password.");
-        return;
-      }
-
-      try {
-        if (window.cebAuth?.enabled) {
-          const result = await window.cebAuth.signIn(email, password);
-          if (!result.ok) {
-            setAuthFeedback(result.message || "Invalid login.");
-            return;
-          }
-          setAuthFeedback("Logged in.");
-        } else {
-          if (runtime.enforceSecureAuth) {
-            setAuthFeedback("Secure auth is required. Configure Supabase before login.");
-            return;
-          }
-          const passwordHash = await hashPassword(password);
-          const user = readUsers().find(entry =>
-            entry.email === email && (entry.passwordHash === passwordHash || entry.password === password)
-          );
-          if (!user) {
-            setAuthFeedback("Invalid email or password.");
-            return;
-          }
-          localStorage.setItem(CURRENT_USER_KEY, email);
-          setAuthFeedback("Logged in (local mode).");
-        }
-      } catch (error) {
-        setAuthFeedback(error instanceof Error ? error.message : "Login failed.");
-        return;
-      }
-
-      await render().catch(() => {
-        setAuthFeedback("Login succeeded, but profile view failed to load. Please refresh.");
-      });
-    });
-  }
-
   if (googleLoginBtn) {
     googleLoginBtn.addEventListener("click", async () => {
       if (!window.cebAuth?.enabled || !window.cebAuth?.supportsGoogleOAuth) {
-        setAuthFeedback("Google login is available only when Supabase Auth is configured.");
+        setAuthFeedback("Google login is unavailable. Configure Supabase Auth in account.html runtime settings.");
         return;
       }
       const result = await window.cebAuth.signInWithGoogle();

@@ -255,12 +255,12 @@ async function loadAddonCatalog() {
           if (activeMap.has(key)) {
             const qty = getDateAddonTotal(key);
             box.classList.add("active");
+            if (selectedAddonDate === key) box.classList.add("selected");
             box.setAttribute("data-action", "open-addon-panel");
             box.setAttribute("data-date", key);
             box.innerHTML += `
-              <button class="day-addon-open" type="button" data-action="open-addon-panel" data-date="${key}" aria-label="Open add-ons for ${key}">+</button>
               <div class="dish">${escapeHtml(activeMap.get(key))}</div>
-              ${qty > 0 ? `<div class="legend">Add-ons selected: ${qty}</div>` : ""}
+              ${qty > 0 ? `<div class="day-addon-count">${qty} add-on${qty > 1 ? "s" : ""}</div>` : `<div class="day-hint">Tap to customize</div>`}
             `;
           } else if (current.getDay() === 0) {
             box.innerHTML += `<div class="dish">Sunday</div>`;
