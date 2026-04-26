@@ -19,6 +19,17 @@ function normalizePrice(price) {
   return value || "TBD";
 }
 
+function resolveImageUrl(value) {
+  const raw = String(value || "").trim();
+  if (!raw) return "cherish-logo.jpg";
+  if (/^(https?:)?\/\//i.test(raw)) return raw;
+  if (raw.startsWith("assets/")) return raw;
+  if (/\.(png|jpe?g|webp|gif|avif|svg)$/i.test(raw) && !raw.includes("/")) {
+    return `assets/dishes/${raw}`;
+  }
+  return raw.replace(/^\.\//, "");
+}
+
 function planPriceLabel(row = {}) {
   const candidates = [
     row.Price,
@@ -54,7 +65,7 @@ function groupMenu(rows) {
       mealType: row.Meal_Type || row.meal_type || "",
       price: normalizePrice(row.Price || row.price || ""),
       tag: row.Tag || row.tag || "",
-      imageUrl: row.Image_URL || row.image_url || row.Image || row.image || "cherish-logo.jpg"
+      imageUrl: resolveImageUrl(row.Image_URL || row.image_url || row.Image || row.image || row.url || row.URL || row.thumbnail || row.Thumbnail)
     });
   }
 
@@ -227,7 +238,7 @@ function attachDietChartForm() {
         Dish_Name: row.name || row.Name || row.addon_name || row.Addon_Name || "",
         Category: row.category || row.Category || row.addon_type || row.Addon_Type || "",
         Meal_Type: row.meal_type || row.Meal_Type || row.addon_type || row.Addon_Type || "",
-        Image_URL: row.image_url || row.Image_URL || row.addon_image_url || row.Addon_Image_URL || row.source || row.Source || "",
+        Image_URL: row.image_url || row.Image_URL || row.addon_image_url || row.Addon_Image_URL || row.url || row.URL || row.thumbnail || row.Thumbnail || row.source || row.Source || "",
         Price: row.price || row.Price || row.unit_price || row.Unit_Price || "",
         Status: row.status || row.Status || "live"
       }))
