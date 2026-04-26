@@ -194,7 +194,7 @@ Behavior:
 ## UX updates
 
 - Navigation on pages is simplified to only three primary buttons: **Our Menu**, **Subscription Plans**, and **Order Now**.
-- A floating minimizable sidebar (`assets/js/sidebar.js`, `assets/css/sidebar.css`) provides quick access to **User Account** and **Admin Console**.
+- A modern animated left sidebar (`assets/js/sidebar.js`, `assets/css/sidebar.css`) is controlled by a top-left three-line (hamburger) button and provides quick access to **User Account** and **Admin Console**.
 - Account page always shows phone OTP login inputs; if Supabase phone auth is not configured, submit feedback explains why.
 
 ## Docs

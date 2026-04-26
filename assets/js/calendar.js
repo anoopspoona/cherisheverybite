@@ -450,6 +450,13 @@ async function loadAddonCatalog() {
     if (type) feedback.classList.add(type);
   }
 
+  function setFeedback(type, message) {
+    if (!feedback) return;
+    feedback.textContent = message;
+    feedback.classList.remove("error", "success");
+    if (type) feedback.classList.add(type);
+  }
+
   function updateConfirmLink() {
     if (!confirmBtn || !currentSelection) return;
     const name = nameInput?.value.trim() || "";
@@ -500,6 +507,11 @@ async function loadAddonCatalog() {
       .join("\n");
     const addonLines = (orderPayload.dailyAddons || [])
       .map(entry => `${entry.date}: ${entry.items.map(item => `${item.name} x${item.qty}`).join(", ")}`)
+      .join("\n");
+    const addonLines = addonCatalog
+      .map(item => ({ ...item, qty: selectedAddons.get(item.id) || 0 }))
+      .filter(item => item.qty > 0)
+      .map(item => `${item.name} x${item.qty}${item.price ? ` (${item.price})` : ""}`)
       .join("\n");
     const addonLines = addonCatalog
       .map(item => ({ ...item, qty: selectedAddons.get(item.id) || 0 }))

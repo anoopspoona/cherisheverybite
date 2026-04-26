@@ -1,17 +1,22 @@
 (function initFloatingSidebar() {
   const currentUser = String(localStorage.getItem("ceb_current_user_v1") || "").trim();
-  const minimizedKey = "ceb_sidebar_minimized_v1";
-  const minimized = localStorage.getItem(minimizedKey) === "1";
+  const openKey = "ceb_sidebar_open_v1";
+  const open = localStorage.getItem(openKey) === "1";
 
   const toggle = document.createElement("button");
   toggle.className = "ceb-side-toggle";
   toggle.type = "button";
-  toggle.textContent = minimized ? "☰ Settings" : "✕ Close";
+  toggle.innerHTML = `<span class="bars" aria-hidden="true"><span></span><span></span><span></span></span>`;
   toggle.setAttribute("aria-label", "Toggle account and admin settings");
+
+  const backdrop = document.createElement("div");
+  backdrop.className = "ceb-side-backdrop";
+  backdrop.setAttribute("data-open", open ? "true" : "false");
 
   const panel = document.createElement("aside");
   panel.className = "ceb-side";
-  panel.setAttribute("data-minimized", minimized ? "true" : "false");
+  panel.setAttribute("data-open", open ? "true" : "false");
+  panel.setAttribute("aria-label", "Settings sidebar");
   panel.innerHTML = `
     <h3>Settings</h3>
     <p>${currentUser ? `Signed in as ${currentUser}` : "Not signed in yet"}</p>
@@ -21,17 +26,23 @@
     </div>
   `;
 
-  function setMinimized(next) {
-    panel.setAttribute("data-minimized", next ? "true" : "false");
-    toggle.textContent = next ? "☰ Settings" : "✕ Close";
-    localStorage.setItem(minimizedKey, next ? "1" : "0");
+  function setOpen(next) {
+    panel.setAttribute("data-open", next ? "true" : "false");
+    backdrop.setAttribute("data-open", next ? "true" : "false");
+    localStorage.setItem(openKey, next ? "1" : "0");
   }
 
   toggle.addEventListener("click", () => {
-    const nowMinimized = panel.getAttribute("data-minimized") === "true";
-    setMinimized(!nowMinimized);
+    const isOpen = panel.getAttribute("data-open") === "true";
+    setOpen(!isOpen);
   });
 
+  backdrop.addEventListener("click", () => setOpen(false));
+  document.addEventListener("keydown", event => {
+    if (event.key === "Escape") setOpen(false);
+  });
+
+  document.body.appendChild(backdrop);
   document.body.appendChild(panel);
   document.body.appendChild(toggle);
 })();
