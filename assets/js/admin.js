@@ -1,6 +1,9 @@
 const MENU_PATH = "menu.csv";
 const PRICE_PATH = "prices.csv";
+const CATALOG_PATH = "catalog.csv";
 const runtime = window.cebRuntime || {};
+let preservedCatalogNonDishRows = [];
+let hasCatalogSchema = false;
 
 function setFeedback(message) {
   const el = document.getElementById("admin-feedback");
@@ -74,9 +77,31 @@ async function saveMenuOverrides(rows) {
   const priceRows = rows.map(({ Dish_ID, Price, Status }) => ({
     Dish_ID, Price, Status
   }));
+  const catalogDishRows = rows.map(({ Dish_ID, Dish_Name, Category, Meal_Type, Image_URL, Price, Status }) => ({
+    ...(hasCatalogSchema ? {} : {
+      id: Dish_ID,
+      name: Dish_Name,
+      category: Category,
+      meal_type: Meal_Type,
+      image_url: Image_URL,
+      price: Price,
+      status: Status || "live",
+      record_type: "dish"
+    }),
+    ID: Dish_ID,
+    Name: Dish_Name,
+    Category,
+    Meal_Type,
+    Image_URL,
+    Price,
+    Status: Status || "live",
+    Record_Type: "dish"
+  }));
+  const catalogRows = [...catalogDishRows, ...preservedCatalogNonDishRows];
   if (runtime.requireBackendSync && !window.cebBackend?.apiBase) {
     return { ok: false, message: "Backend sync is required. Configure CEB_BACKEND_CONFIG first." };
   }
+  window.cebCsvTools.writeOverride(CATALOG_PATH, window.cebCsvTools.serializeCSV(catalogRows));
   window.cebCsvTools.writeOverride(MENU_PATH, window.cebCsvTools.serializeCSV(menuRows));
   window.cebCsvTools.writeOverride(PRICE_PATH, window.cebCsvTools.serializeCSV(priceRows));
   if (window.cebBackend?.saveAdminMenu) {
@@ -128,40 +153,126 @@ async function saveCalendarOverride() {
   setFeedback(`Saved override for ${path}.`);
 }
 
-function enforceAdminAccess() {
-  const allowedEmails = Array.isArray(runtime.adminEmails) ? runtime.adminEmails : [];
-  if (!allowedEmails.length) return true;
-  const current = String(localStorage.getItem("ceb_current_user_v1") || "").toLowerCase();
-  const allowed = allowedEmails.includes(current);
-  if (allowed) return true;
-  const controls = document.querySelectorAll("button, textarea, input, select");
+function setControlsEnabled(enabled) {
+  const controls = document.querySelectorAll("#admin-console button, #admin-console textarea, #admin-console input, #admin-console select");
   controls.forEach(el => {
     if (el instanceof HTMLButtonElement || el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement || el instanceof HTMLSelectElement) {
-      el.disabled = true;
+      el.disabled = !enabled;
     }
   });
-  setFeedback("Admin access denied for this account. Update CEB_RUNTIME_CONFIG.adminEmails.");
+}
+
+function setAdminConsoleVisible(visible) {
+  const consoleWrap = document.getElementById("admin-console");
+  if (consoleWrap) consoleWrap.style.display = visible ? "grid" : "none";
+}
+
+async function getCurrentAdminIdentifier() {
+  if (window.cebAuth?.enabled) {
+    const user = await window.cebAuth.getCurrentUser();
+    return String(user?.email || "").trim().toLowerCase();
+  }
+  return String(localStorage.getItem("ceb_current_user_v1") || "").trim().toLowerCase();
+}
+
+async function enforceAdminAccess() {
+  const allowedEmails = Array.isArray(runtime.adminEmails) ? runtime.adminEmails.map(v => String(v || "").trim().toLowerCase()) : [];
+  const current = await getCurrentAdminIdentifier();
+  const loginBtn = document.getElementById("admin-google-login");
+  const logoutBtn = document.getElementById("admin-logout");
+  const authStatus = document.getElementById("admin-auth-status");
+
+  if (!allowedEmails.length) {
+    setAdminConsoleVisible(true);
+    setControlsEnabled(true);
+    if (authStatus) authStatus.textContent = "No admin email restrictions are configured.";
+    return true;
+  }
+
+  const isAllowed = Boolean(current && allowedEmails.includes(current));
+  setAdminConsoleVisible(isAllowed);
+  setControlsEnabled(isAllowed);
+
+  if (loginBtn) loginBtn.style.display = isAllowed ? "none" : "inline-flex";
+  if (logoutBtn) logoutBtn.style.display = current ? "inline-flex" : "none";
+
+  if (isAllowed) {
+    if (authStatus) authStatus.textContent = `Signed in as ${current}. Admin access granted.`;
+    setFeedback("Admin access granted.");
+    return true;
+  }
+
+  if (!current) {
+    if (authStatus) authStatus.textContent = "Admin login required. Continue with Google to access this console.";
+    setFeedback("Admin login required. Continue with Google.");
+  } else {
+    if (authStatus) authStatus.textContent = `Signed in as ${current}. This account is not authorized for admin changes.`;
+    setFeedback("Admin access denied. Only anoop.anoops@gmail.com can modify admin content.");
+  }
   return false;
 }
 
 (async function initAdmin() {
-  const [menuRows, priceRows] = await Promise.all([
+  const [catalogRows, menuRows, priceRows] = await Promise.all([
+    fetchCSV(CATALOG_PATH).catch(() => []),
     fetchCSV(MENU_PATH).catch(() => []),
     fetchCSV(PRICE_PATH).catch(() => [])
   ]);
+  const normalizedCatalogRows = catalogRows.map(row => {
+    const normalized = {};
+    Object.keys(row || {}).forEach(key => {
+      normalized[key] = row[key];
+    });
+    return normalized;
+  });
+  hasCatalogSchema = normalizedCatalogRows.some(row => "Record_Type" in row || "record_type" in row);
+  preservedCatalogNonDishRows = normalizedCatalogRows.filter(row => String(row.Record_Type || row.record_type || "").toLowerCase() !== "dish");
+  const catalogDishRows = normalizedCatalogRows
+    .filter(row => String(row.Record_Type || row.record_type || "").toLowerCase() === "dish")
+    .map(row => ({
+      Dish_ID: row.ID || row.id || row.Dish_ID || row.dish_id || "",
+      Dish_Name: row.Name || row.name || row.Dish_Name || row.dish_name || "",
+      Category: row.Category || row.category || "",
+      Meal_Type: row.Meal_Type || row.meal_type || "",
+      Image_URL: row.Image_URL || row.image_url || "",
+      Price: row.Price || row.price || "",
+      Status: row.Status || row.status || "live"
+    }))
+    .filter(row => row.Dish_ID && row.Dish_Name);
   const priceMap = new Map(priceRows.map(row => [row.Dish_ID || row.dish_id || "", row]));
-  let stateRows = menuRows.map(row => {
+  let stateRows = (catalogDishRows.length ? catalogDishRows : menuRows).map(row => {
     const id = row.Dish_ID || row.dish_id || "";
     const price = priceMap.get(id) || {};
     return normalizeMenuRow({
       ...row,
-      Price: price.Price || price.price || "",
-      Status: price.Status || price.status || "live"
+      Price: row.Price || row.price || price.Price || price.price || "",
+      Status: row.Status || row.status || price.Status || price.status || "live"
     });
   });
   renderMenuTable(stateRows);
   await loadCalendarEditor();
-  if (!enforceAdminAccess()) return;
+  await enforceAdminAccess();
+
+  document.getElementById("admin-google-login")?.addEventListener("click", async () => {
+    if (!window.cebAuth?.enabled) {
+      setFeedback("Google auth is not configured. Check CEB_SUPABASE_CONFIG.");
+      return;
+    }
+    const redirectTo = new URL("admin.html", window.location.href).toString();
+    const result = await window.cebAuth.signInWithGoogle(redirectTo);
+    if (!result?.ok) {
+      setFeedback(result?.message || "Could not start Google sign-in.");
+    }
+  });
+
+  document.getElementById("admin-logout")?.addEventListener("click", async () => {
+    if (window.cebAuth?.enabled) {
+      await window.cebAuth.signOut();
+    } else {
+      localStorage.removeItem("ceb_current_user_v1");
+    }
+    await enforceAdminAccess();
+  });
 
   document.getElementById("menu-add")?.addEventListener("click", () => {
     stateRows.push(normalizeMenuRow({ Dish_ID: `dish_${Date.now()}` }));
@@ -189,9 +300,10 @@ function enforceAdminAccess() {
   });
 
   document.getElementById("menu-reset")?.addEventListener("click", () => {
+    window.cebCsvTools.clearOverride(CATALOG_PATH);
     window.cebCsvTools.clearOverride(MENU_PATH);
     window.cebCsvTools.clearOverride(PRICE_PATH);
-    setFeedback("Menu overrides cleared.");
+    setFeedback("Menu overrides cleared for catalog/menu/price.");
   });
 
   document.getElementById("cal-load")?.addEventListener("click", loadCalendarEditor);
