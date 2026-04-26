@@ -9,14 +9,6 @@ const PLAN_PAGE_BY_KEY = {
   diabetic: "diabetic-plan.html"
 };
 
-function pick(row, keys, fallback = "") {
-  for (const key of keys) {
-    const value = row?.[key];
-    if (value !== undefined && value !== null && String(value).trim() !== "") return value;
-  }
-  return fallback;
-}
-
 function planUrl(planKey) {
   const key = String(planKey || "").trim().toLowerCase();
   return PLAN_PAGE_BY_KEY[key] || `plan.html?plan=${encodeURIComponent(planKey || "")}`;
@@ -55,15 +47,6 @@ function planPriceLabel(row = {}) {
   if (!first) return "Price on request";
   const text = String(first).trim();
   return /^[₹$]/.test(text) ? text : `₹${text}`;
-}
-
-function cleanPlanTitle(name = "") {
-  const text = String(name || "").trim();
-  if (!text) return "";
-  return text
-    .replace(/\s*[-–]\s*lunch\s*$/i, "")
-    .replace(/\s+lunch\s*$/i, "")
-    .trim();
 }
 
 function groupMenu(rows) {
@@ -135,21 +118,19 @@ function renderPlans(rows) {
   const deduped = [];
   const seen = new Set();
   for (const row of rows) {
-    const status = String(pick(row, ["Status", "status"], "live")).toLowerCase();
-    const planKey = String(pick(row, ["Plan_Key", "plan_key", "Plan Key", "plan key"], "")).trim();
-    if (status !== "live") continue;
-    if (!planKey || seen.has(planKey)) continue;
-    seen.add(planKey);
+    if (String(row.Status || "").toLowerCase() !== "live") continue;
+    if (seen.has(row.Plan_Key)) continue;
+    seen.add(row.Plan_Key);
     deduped.push(row);
   }
 
   wrap.innerHTML = deduped.map(row => `
     <article class="plan-card">
-      <h3>${escapeHtml(cleanPlanTitle(pick(row, ["Plan_Name", "plan_name", "Plan Name", "plan name"], "")) || pick(row, ["Plan_Name", "plan_name", "Plan Name", "plan name"], ""))}</h3>
-      <p class="muted">${escapeHtml(pick(row, ["Description", "description"], ""))}</p>
-      <p class="muted">Duration: ${escapeHtml(pick(row, ["Duration_Days", "duration_days", "Duration Days", "duration days"], "-"))} days • Meals/day: ${escapeHtml(pick(row, ["Meals_Per_Day", "meals_per_day", "Meals Per Day", "meals per day"], "-"))}</p>
+      <h3>${escapeHtml(row.Plan_Name)}</h3>
+      <p class="muted">${escapeHtml(row.Description || "")}</p>
+      <p class="muted">Duration: ${escapeHtml(row.Duration_Days)} days • Meals/day: ${escapeHtml(row.Meals_Per_Day)}</p>
       <p class="legend" style="font-weight:700;color:#14532d">Starting at ${escapeHtml(planPriceLabel(row))}</p>
-      <a class="btn btn-soft" href="${escapeHtml(planUrl(pick(row, ["Plan_Key", "plan_key", "Plan Key", "plan key"], "")))}">View ${escapeHtml(cleanPlanTitle(pick(row, ["Plan_Name", "plan_name", "Plan Name", "plan name"], "")) || pick(row, ["Plan_Name", "plan_name", "Plan Name", "plan name"], ""))}</a>
+      <a class="btn btn-soft" href="${escapeHtml(planUrl(row.Plan_Key))}">View ${escapeHtml(row.Plan_Name)}</a>
     </article>
   `).join("");
 }
