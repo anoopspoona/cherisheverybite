@@ -566,7 +566,6 @@ async function loadAddonCatalog() {
       if (deliveryLocationParam && locationMap.has(deliveryLocationParam)) {
         locationSelect.value = deliveryLocationParam;
       }
-    }
 
     async function refresh() {
       const selectedPlan = planSelect?.value || plan;
