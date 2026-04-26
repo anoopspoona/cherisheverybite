@@ -17,6 +17,14 @@ const CURRENT_USER_KEY = "ceb_current_user_v1";
 const ADDRESS_KEY = "ceb_saved_addresses_v1";
 const PROFILE_KEY = "ceb_customer_profiles_v1";
 
+function pick(row, keys, fallback = "") {
+  for (const key of keys) {
+    const value = row?.[key];
+    if (value !== undefined && value !== null && String(value).trim() !== "") return value;
+  }
+  return fallback;
+}
+
 function csvFor(plan, meal) {
   return `calendar_${plan}_${meal}.csv`;
 }
@@ -111,13 +119,13 @@ async function loadDishes(plan, meal, variantKey = "") {
   const planMealsRows = await loadPlanMeals();
   const normalizedVariant = String(variantKey || "").trim().toLowerCase();
   const byPlanMeal = planMealsRows
-    .filter(row => String(row.Plan_Key || row.plan_key || "").trim().toLowerCase() === String(plan || "").trim().toLowerCase())
-    .filter(row => String(row.Meal_Type || row.meal_type || "").trim().toLowerCase() === String(meal || "").trim().toLowerCase());
+    .filter(row => String(pick(row, ["Plan_Key", "plan_key", "Plan Key", "plan key"], "")).trim().toLowerCase() === String(plan || "").trim().toLowerCase())
+    .filter(row => String(pick(row, ["Meal_Type", "meal_type", "Meal Type", "meal type"], "")).trim().toLowerCase() === String(meal || "").trim().toLowerCase());
 
   if (byPlanMeal.length) {
-    const hasVariantColumn = byPlanMeal.some(row => String(row.Variant_Key || row.variant_key || "").trim());
+    const hasVariantColumn = byPlanMeal.some(row => String(pick(row, ["Variant_Key", "variant_key", "Variant Key", "variant key"], "")).trim());
     const variantFiltered = hasVariantColumn && normalizedVariant && normalizedVariant !== "standard"
-      ? byPlanMeal.filter(row => String(row.Variant_Key || row.variant_key || "").trim().toLowerCase() === normalizedVariant)
+      ? byPlanMeal.filter(row => String(pick(row, ["Variant_Key", "variant_key", "Variant Key", "variant key"], "")).trim().toLowerCase() === normalizedVariant)
       : byPlanMeal;
     const hasComponentColumn = variantFiltered.some(row => String(row.Component || row.component || "").trim());
     const mainRows = hasComponentColumn
@@ -136,13 +144,13 @@ async function loadDishes(plan, meal, variantKey = "") {
 async function loadAddonCatalog() {
   const catalogRows = await fetchCSV("catalog.csv").catch(() => []);
   const addonRows = catalogRows
-    .filter(row => String(row.record_type || row.Record_Type || "").toLowerCase() === "addon")
+    .filter(row => String(pick(row, ["record_type", "Record_Type", "Record Type"], "")).toLowerCase() === "addon")
     .map(row => ({
-      id: row.id || row.ID || row.addon_id || row.Addon_ID || "",
-      name: row.name || row.Name || row.addon_name || row.Addon_Name || "",
-      category: row.category || row.Category || row.addon_type || row.Addon_Type || "Add-on",
-      price: row.price || row.Price || row.unit_price || row.Unit_Price || "",
-      status: row.status || row.Status || "live"
+      id: pick(row, ["id", "ID", "addon_id", "Addon_ID", "Addon ID"], ""),
+      name: pick(row, ["name", "Name", "addon_name", "Addon_Name", "Addon Name"], ""),
+      category: pick(row, ["category", "Category", "addon_type", "Addon_Type", "Addon Type"], "Add-on"),
+      price: pick(row, ["price", "Price", "unit_price", "Unit_Price", "Unit Price"], ""),
+      status: pick(row, ["status", "Status"], "live")
     }))
     .filter(row => row.id && row.name && String(row.status).toLowerCase() === "live");
 
@@ -151,11 +159,11 @@ async function loadAddonCatalog() {
   const rows = await fetchCSV("addons.csv").catch(() => []);
   return rows
     .map(row => ({
-      id: row.Addon_ID || row.addon_id || row.id || "",
-      name: row.Addon_Name || row.addon_name || row.Name || row.name || "",
-      category: row.Category || row.category || row.Addon_Type || row.addon_type || "Add-on",
-      price: row.Price || row.price || row.Unit_Price || row.unit_price || "",
-      status: row.Status || row.status || "live"
+      id: pick(row, ["Addon_ID", "addon_id", "Addon ID", "id"], ""),
+      name: pick(row, ["Addon_Name", "addon_name", "Addon Name", "Name", "name"], ""),
+      category: pick(row, ["Category", "category", "Addon_Type", "addon_type", "Addon Type"], "Add-on"),
+      price: pick(row, ["Price", "price", "Unit_Price", "unit_price", "Unit Price"], ""),
+      status: pick(row, ["Status", "status"], "live")
     }))
     .filter(row => row.id && row.name && String(row.status).toLowerCase() === "live");
 }
@@ -567,9 +575,9 @@ async function loadAddonCatalog() {
       const normalizedPlan = String(selectedPlan || "").trim().toLowerCase();
       const normalizedVariant = String(variant || "").trim().toLowerCase();
       const livePlanRows = allPlans
-        .filter(row => String(row.Plan_Key || row.plan_key || "").trim().toLowerCase() === normalizedPlan)
-        .filter(row => String(row.Status || row.status || "live").trim().toLowerCase() === "live");
-      const matchingVariantRow = livePlanRows.find(row => String(row.Variant_Key || row.variant_key || "").trim().toLowerCase() === normalizedVariant);
+        .filter(row => String(pick(row, ["Plan_Key", "plan_key", "Plan Key", "plan key"], "")).trim().toLowerCase() === normalizedPlan)
+        .filter(row => String(pick(row, ["Status", "status"], "live")).trim().toLowerCase() === "live");
+      const matchingVariantRow = livePlanRows.find(row => String(pick(row, ["Variant_Key", "variant_key", "Variant Key", "variant key"], "")).trim().toLowerCase() === normalizedVariant);
       const planRow = matchingVariantRow || livePlanRows[0] || null;
       const basePrice = getPlanPeriodPrice(planRow, selectedPeriod);
 
