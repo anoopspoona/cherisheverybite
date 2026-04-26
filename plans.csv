@@ -1,4 +1,4 @@
-Plan_Key,Plan_Name,Variant_Key,Variant_Name,Duration_Days,Meals_Per_Day,Price for weekly subscription,Price for monthly subscription,Status,Description
+Plan_Key,Plan_Name,Variant_Key,Variant_Name,Duration_Days,Meals_Per_Day,Price for monthly subscription,Price for weekly subscription,Status,Description
 elite,Elite Plan-Lunch,veg,Veg,24,Upto 4,18000,4500,live,"Premium weekly rotation with lunch, snack, drink and dinner options."
 elite,Elite Plan-Lunch,nonveg,Non-Veg,24,Upto 4,18000,4500,live,Premium weekly rotation with higher-protein non-veg selections.
 elite,Elite Plan-DInner,veg,Veg,24,Upto 4,18000,4500,live,"Premium weekly rotation with lunch, snack, drink and dinner options."
