@@ -129,6 +129,8 @@ async function loadAddonCatalog() {
     const pickLocationBtn = document.getElementById("pick-location-btn");
     const notesInput = document.getElementById("customer-notes");
     const dayAddonPanel = document.getElementById("day-addon-panel");
+    const dayAddonBackdrop = document.getElementById("day-addon-backdrop");
+    const dayAddonCloseBtn = document.getElementById("day-addon-close");
     const dayAddonTitle = document.getElementById("day-addon-title");
     const dayAddonGrid = document.getElementById("day-addon-grid");
 
@@ -157,6 +159,13 @@ async function loadAddonCatalog() {
       }
     })();
     const currentProfile = savedProfiles[currentUserEmail] || {};
+
+    function setDayAddonPanelOpen(open) {
+      if (!dayAddonPanel || !dayAddonBackdrop) return;
+      dayAddonPanel.hidden = !open;
+      dayAddonBackdrop.hidden = !open;
+      dayAddonPanel.classList.toggle("is-open", open);
+    }
 
     function setFeedback(type, message) {
       if (!feedback) return;
@@ -191,7 +200,7 @@ async function loadAddonCatalog() {
     function renderDayAddonPanel() {
       if (!dayAddonPanel || !dayAddonGrid || !dayAddonTitle) return;
       if (!selectedAddonDate || !currentSelection) {
-        dayAddonPanel.hidden = true;
+        setDayAddonPanelOpen(false);
         dayAddonGrid.innerHTML = "";
         dayAddonTitle.textContent = "Add-ons";
         return;
@@ -199,12 +208,12 @@ async function loadAddonCatalog() {
 
       const validDate = currentSelection.schedule.some(entry => entry.date === selectedAddonDate);
       if (!validDate) {
-        dayAddonPanel.hidden = true;
+        setDayAddonPanelOpen(false);
         return;
       }
 
       const dateMap = dayAddonItems.get(selectedAddonDate) || new Map();
-      dayAddonPanel.hidden = false;
+      setDayAddonPanelOpen(true);
       dayAddonTitle.textContent = `Add-ons • ${selectedAddonDate}`;
       dayAddonGrid.innerHTML = addonCatalog.map(item => {
         const qty = Number(dateMap.get(item.id) || 0);
@@ -260,6 +269,7 @@ async function loadAddonCatalog() {
             box.setAttribute("data-date", key);
             box.innerHTML += `
               <div class="dish">${escapeHtml(activeMap.get(key))}</div>
+              <button class="day-addon-trigger" type="button" data-action="open-addon-panel" data-date="${key}">Add-ons</button>
               ${qty > 0 ? `<div class="day-addon-count">${qty} add-on${qty > 1 ? "s" : ""}</div>` : `<div class="day-hint">Tap to customize</div>`}
             `;
           } else if (current.getDay() === 0) {
@@ -621,9 +631,10 @@ async function loadAddonCatalog() {
     if (dayAddonGrid) {
       dayAddonGrid.addEventListener("click", async event => {
         const target = event.target instanceof HTMLElement ? event.target : null;
-        const addonId = target?.getAttribute("data-addon-id");
-        const action = target?.getAttribute("data-action");
-        const date = target?.getAttribute("data-date") || selectedAddonDate;
+        const actionEl = target?.closest("[data-action]");
+        const addonId = actionEl?.getAttribute("data-addon-id");
+        const action = actionEl?.getAttribute("data-action");
+        const date = actionEl?.getAttribute("data-date") || selectedAddonDate;
         if (!addonId || !action || !date) return;
 
         const mapForDate = dayAddonItems.get(date) || new Map();
@@ -646,15 +657,28 @@ async function loadAddonCatalog() {
     if (calendarGrid) {
       calendarGrid.addEventListener("click", event => {
         const target = event.target instanceof HTMLElement ? event.target : null;
-        const action = target?.getAttribute("data-action");
+        const actionEl = target?.closest("[data-action]");
+        const action = actionEl?.getAttribute("data-action");
         if (action !== "open-addon-panel") return;
-        const date = target?.getAttribute("data-date");
+        const date = actionEl?.getAttribute("data-date");
         if (!date) return;
         selectedAddonDate = date;
         renderDayAddonPanel();
         saveDraft();
       });
     }
+
+    dayAddonCloseBtn?.addEventListener("click", () => {
+      selectedAddonDate = "";
+      renderDayAddonPanel();
+      saveDraft();
+    });
+
+    dayAddonBackdrop?.addEventListener("click", () => {
+      selectedAddonDate = "";
+      renderDayAddonPanel();
+      saveDraft();
+    });
 
     await loadLocations();
     addonCatalog = await loadAddonCatalog();

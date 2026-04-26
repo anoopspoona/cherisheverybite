@@ -85,13 +85,17 @@
 
     <section id="calendar-grid" class="calendar-grid"></section>
 
-    <section id="day-addon-panel" class="day-addon-panel" hidden>
+    <div id="day-addon-backdrop" class="day-addon-backdrop" hidden></div>
+    <aside id="day-addon-panel" class="day-addon-panel" hidden>
       <div class="addons-head">
-        <h2 id="day-addon-title">Add-ons</h2>
+        <div class="day-addon-head-row">
+          <h2 id="day-addon-title">Add-ons</h2>
+          <button id="day-addon-close" class="btn btn-soft" type="button">Close</button>
+        </div>
         <p class="legend">Select add-ons for the chosen day. Use + / - to adjust quantity.</p>
       </div>
       <div id="day-addon-grid" class="addons-grid"></div>
-    </section>
+    </aside>
   </main>
   <script>
     window.CEB_BACKEND_CONFIG = {
