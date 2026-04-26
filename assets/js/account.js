@@ -272,22 +272,12 @@ async function render() {
   const summary = document.getElementById("user-summary");
   const authTitle = authCard?.querySelector("h2");
   const authEnabled = Boolean(window.cebAuth?.enabled);
-  const phoneOtpSupported = Boolean(window.cebAuth?.enabled && window.cebAuth?.supportsPhoneOtp);
   const googleSupported = Boolean(window.cebAuth?.enabled && window.cebAuth?.supportsGoogleOAuth);
-  const phoneForms = [
-    document.getElementById("phone-request-form"),
-    document.getElementById("phone-verify-form")
-  ];
   const googleLoginBtn = document.getElementById("google-login-btn");
 
   if (authTitle) {
     authTitle.textContent = authEnabled ? "Sign Up (Secure)" : "Sign Up (Local Demo)";
   }
-  phoneForms.forEach(form => {
-    if (!form) return;
-    form.style.display = "flex";
-    form.style.opacity = phoneOtpSupported ? "1" : "0.85";
-  });
   if (googleLoginBtn) {
     googleLoginBtn.style.display = googleSupported ? "inline-flex" : "none";
   }
@@ -316,8 +306,6 @@ async function render() {
   const loginForm = document.getElementById("login-form");
   const feedback = document.getElementById("auth-feedback");
   const logoutBtn = document.getElementById("logout-btn");
-  const phoneRequestForm = document.getElementById("phone-request-form");
-  const phoneVerifyForm = document.getElementById("phone-verify-form");
   const googleLoginBtn = document.getElementById("google-login-btn");
   const subscriptionsList = document.getElementById("subscriptions-list");
   const addressForm = document.getElementById("address-form");
@@ -330,29 +318,38 @@ async function render() {
       const name = document.getElementById("signup-name")?.value.trim() || "";
       const email = (document.getElementById("signup-email")?.value || "").trim().toLowerCase();
       const password = document.getElementById("signup-password")?.value || "";
+      if (!name || !email || !password) {
+        if (feedback) feedback.textContent = "Please fill name, email, and password.";
+        return;
+      }
 
-      if (window.cebAuth?.enabled) {
-        const result = await window.cebAuth.signUp(email, password, { name });
-        if (!result.ok) {
-          if (feedback) feedback.textContent = result.message || "Could not create account.";
-          return;
+      try {
+        if (window.cebAuth?.enabled) {
+          const result = await window.cebAuth.signUp(email, password, { name });
+          if (!result.ok) {
+            if (feedback) feedback.textContent = result.message || "Could not create account.";
+            return;
+          }
+          if (feedback) feedback.textContent = "Account created. Check email if confirmation is required.";
+        } else {
+          if (runtime.enforceSecureAuth) {
+            if (feedback) feedback.textContent = "Secure auth is required. Configure Supabase before creating accounts.";
+            return;
+          }
+          const users = readUsers();
+          if (users.some(user => user.email === email)) {
+            if (feedback) feedback.textContent = "Account already exists. Please login.";
+            return;
+          }
+          const passwordHash = await hashPassword(password);
+          users.push({ name, email, passwordHash });
+          writeUsers(users);
+          localStorage.setItem(CURRENT_USER_KEY, email);
+          if (feedback) feedback.textContent = "Local account created successfully.";
         }
-        if (feedback) feedback.textContent = "Account created. Check email if confirmation is required.";
-      } else {
-        if (runtime.enforceSecureAuth) {
-          if (feedback) feedback.textContent = "Secure auth is required. Configure Supabase before creating accounts.";
-          return;
-        }
-        const users = readUsers();
-        if (users.some(user => user.email === email)) {
-          if (feedback) feedback.textContent = "Account already exists. Please login.";
-          return;
-        }
-        const passwordHash = await hashPassword(password);
-        users.push({ name, email, passwordHash });
-        writeUsers(users);
-        localStorage.setItem(CURRENT_USER_KEY, email);
-        if (feedback) feedback.textContent = "Local account created successfully.";
+      } catch (error) {
+        if (feedback) feedback.textContent = error instanceof Error ? error.message : "Could not create account.";
+        return;
       }
 
       await render();
@@ -364,6 +361,10 @@ async function render() {
       event.preventDefault();
       const email = (document.getElementById("login-email")?.value || "").trim().toLowerCase();
       const password = document.getElementById("login-password")?.value || "";
+      if (!email || !password) {
+        if (feedback) feedback.textContent = "Please enter email and password.";
+        return;
+      }
 
       if (window.cebAuth?.enabled) {
         const result = await window.cebAuth.signIn(email, password);
@@ -413,42 +414,6 @@ async function render() {
       } else {
         localStorage.removeItem(CURRENT_USER_KEY);
       }
-      await render();
-    });
-  }
-
-  if (phoneRequestForm) {
-    phoneRequestForm.addEventListener("submit", async event => {
-      event.preventDefault();
-      const phone = (document.getElementById("phone-number")?.value || "").trim();
-      if (!window.cebAuth?.enabled || !window.cebAuth?.supportsPhoneOtp) {
-        if (feedback) feedback.textContent = "Phone OTP is available only when Supabase Auth is configured.";
-        return;
-      }
-      const result = await window.cebAuth.requestPhoneOtp(phone);
-      if (!result.ok) {
-        if (feedback) feedback.textContent = result.message || "Could not send OTP.";
-        return;
-      }
-      if (feedback) feedback.textContent = "OTP sent. Enter the code to verify.";
-    });
-  }
-
-  if (phoneVerifyForm) {
-    phoneVerifyForm.addEventListener("submit", async event => {
-      event.preventDefault();
-      const phone = (document.getElementById("phone-number")?.value || "").trim();
-      const otp = (document.getElementById("phone-otp")?.value || "").trim();
-      if (!window.cebAuth?.enabled || !window.cebAuth?.supportsPhoneOtp) {
-        if (feedback) feedback.textContent = "Phone OTP is available only when Supabase Auth is configured.";
-        return;
-      }
-      const result = await window.cebAuth.verifyPhoneOtp(phone, otp);
-      if (!result.ok) {
-        if (feedback) feedback.textContent = result.message || "Invalid OTP.";
-        return;
-      }
-      if (feedback) feedback.textContent = "Phone login successful.";
       await render();
     });
   }
