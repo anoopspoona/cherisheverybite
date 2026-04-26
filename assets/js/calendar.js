@@ -40,7 +40,13 @@ function monthStart(d) {
   return new Date(d.getFullYear(), d.getMonth(), 1);
 }
 
-function renderCalendarMonths(startDate, activeMap) {
+function getDateAddonTotal(date, dayAddonItems) {
+  const rows = dayAddonItems.get(date);
+  if (!rows) return 0;
+  return Array.from(rows.values()).reduce((sum, qty) => sum + Number(qty || 0), 0);
+}
+
+function renderCalendarMonths(startDate, activeMap, dayAddonItems) {
   const wrap = document.getElementById("calendar-grid");
   if (!wrap) return;
   wrap.innerHTML = "";
@@ -71,8 +77,15 @@ function renderCalendarMonths(startDate, activeMap) {
       box.innerHTML = `<div class="num">${day}</div>`;
 
       if (activeMap.has(key)) {
+        const qty = getDateAddonTotal(key, dayAddonItems);
         box.classList.add("active");
-        box.innerHTML += `<div class="dish">${escapeHtml(activeMap.get(key))}</div>`;
+        box.setAttribute("data-action", "open-addon-panel");
+        box.setAttribute("data-date", key);
+        box.innerHTML += `
+          <button class="day-addon-open" type="button" data-action="open-addon-panel" data-date="${key}" aria-label="Open add-ons for ${key}">+</button>
+          <div class="dish">${escapeHtml(activeMap.get(key))}</div>
+          ${qty > 0 ? `<div class="legend">Add-ons selected: ${qty}</div>` : ""}
+        `;
       } else if (current.getDay() === 0) {
         box.innerHTML += `<div class="dish">Sunday</div>`;
       }
@@ -88,6 +101,33 @@ function renderCalendarMonths(startDate, activeMap) {
 async function loadDishes(plan, meal) {
   const rows = await fetchCSV(csvFor(plan, meal));
   return rows.map(row => row.Dish || row.dish || "").filter(Boolean);
+}
+
+async function loadAddonCatalog() {
+  const catalogRows = await fetchCSV("catalog.csv").catch(() => []);
+  const addonRows = catalogRows
+    .filter(row => String(row.record_type || row.Record_Type || "").toLowerCase() === "addon")
+    .map(row => ({
+      id: row.id || row.ID || row.addon_id || row.Addon_ID || "",
+      name: row.name || row.Name || row.addon_name || row.Addon_Name || "",
+      category: row.category || row.Category || row.addon_type || row.Addon_Type || "Add-on",
+      price: row.price || row.Price || row.unit_price || row.Unit_Price || "",
+      status: row.status || row.Status || "live"
+    }))
+    .filter(row => row.id && row.name && String(row.status).toLowerCase() === "live");
+
+  if (addonRows.length) return addonRows;
+
+  const rows = await fetchCSV("addons.csv").catch(() => []);
+  return rows
+    .map(row => ({
+      id: row.Addon_ID || row.addon_id || row.id || "",
+      name: row.Addon_Name || row.addon_name || row.Name || row.name || "",
+      category: row.Category || row.category || row.Addon_Type || row.addon_type || "Add-on",
+      price: row.Price || row.price || row.Unit_Price || row.unit_price || "",
+      status: row.Status || row.status || "live"
+    }))
+    .filter(row => row.id && row.name && String(row.status).toLowerCase() === "live");
 }
 
 (async function init() {
@@ -118,10 +158,16 @@ async function loadDishes(plan, meal) {
   const mapLinkInput = document.getElementById("map-app-link");
   const pickLocationBtn = document.getElementById("pick-location-btn");
   const notesInput = document.getElementById("customer-notes");
-  const addonsGrid = document.getElementById("addons-grid");
+  const calendarGrid = document.getElementById("calendar-grid");
+  const dayAddonPanel = document.getElementById("day-addon-panel");
+  const dayAddonTitle = document.getElementById("day-addon-title");
+  const dayAddonGrid = document.getElementById("day-addon-grid");
+
   const locationMap = new Map();
-  const selectedAddons = new Map();
+  const dayAddonItems = new Map();
   let addonCatalog = [];
+  let selectedAddonDate = "";
+
   const currentUserEmail = window.localStorage.getItem(CURRENT_USER_KEY) || "";
   const knownUsers = (() => {
     try {
@@ -146,6 +192,7 @@ async function loadDishes(plan, meal) {
   if (mealSelect) mealSelect.value = meal;
   if (title) title.textContent = `${PLAN_LABELS[plan] || "Plan"} • ${meal[0].toUpperCase() + meal.slice(1)} Calendar`;
   if (back) back.href = `${plan}-plan.html`;
+
   function updatePickerLink() {
     if (!pickLocationBtn) return;
     const pickerParams = new URLSearchParams({
@@ -189,6 +236,13 @@ async function loadDishes(plan, meal) {
     }
   }
 
+  function serializeDayAddonItems() {
+    return Array.from(dayAddonItems.entries()).map(([date, itemMap]) => ({
+      date,
+      items: Array.from(itemMap.entries()).map(([id, qty]) => ({ id, qty }))
+    }));
+  }
+
   function saveDraft() {
     const payload = {
       name: nameInput?.value.trim() || "",
@@ -200,7 +254,8 @@ async function loadDishes(plan, meal) {
       plan: planSelect?.value || "",
       meal: mealSelect?.value || "",
       period: periodSelect?.value || "",
-      addons: Array.from(selectedAddons.entries()).map(([id, qty]) => ({ id, qty })),
+      dayAddonItems: serializeDayAddonItems(),
+      selectedAddonDate,
       userEmail: currentUserEmail
     };
     try {
@@ -222,9 +277,16 @@ async function loadDishes(plan, meal) {
     if (!params.get("meal") && mealSelect && draft.meal) mealSelect.value = draft.meal;
     if (!params.get("period") && periodSelect && draft.period) periodSelect.value = draft.period;
     if (!deliveryLocationParam && locationSelect && draft.locationId) locationSelect.value = draft.locationId;
-    if (Array.isArray(draft.addons)) {
-      draft.addons.forEach(item => {
-        if (item?.id && Number(item.qty) > 0) selectedAddons.set(String(item.id), Number(item.qty));
+    selectedAddonDate = String(draft.selectedAddonDate || "");
+    if (Array.isArray(draft.dayAddonItems)) {
+      draft.dayAddonItems.forEach(entry => {
+        if (!entry?.date || !Array.isArray(entry.items)) return;
+        const itemMap = new Map();
+        entry.items.forEach(item => {
+          const qty = Number(item?.qty || 0);
+          if (item?.id && qty > 0) itemMap.set(String(item.id), qty);
+        });
+        if (itemMap.size) dayAddonItems.set(String(entry.date), itemMap);
       });
     }
   }
@@ -262,7 +324,27 @@ async function loadDishes(plan, meal) {
     }
   }
 
+  function getAddonBreakdownForDate(date) {
+    const itemMap = dayAddonItems.get(date);
+    if (!itemMap) return [];
+    return Array.from(itemMap.entries())
+      .map(([id, qty]) => {
+        const addon = addonCatalog.find(row => row.id === id);
+        return addon ? { id, name: addon.name, qty, price: addon.price } : null;
+      })
+      .filter(Boolean);
+  }
+
   function buildOrderPayload() {
+    const schedule = (currentSelection?.schedule || []).map(entry => {
+      const addons = getAddonBreakdownForDate(entry.date);
+      return {
+        ...entry,
+        addons,
+        addonQty: addons.reduce((sum, item) => sum + Number(item.qty || 0), 0)
+      };
+    });
+
     return {
       savedAt: new Date().toISOString(),
       name: nameInput?.value.trim() || "",
@@ -276,10 +358,11 @@ async function loadDishes(plan, meal) {
       period: currentSelection?.period || "",
       start: currentSelection?.start || "",
       end: currentSelection?.end || "",
-      addons: addonCatalog
-        .map(item => ({ ...item, qty: selectedAddons.get(item.id) || 0 }))
-        .filter(item => item.qty > 0)
-        .map(item => ({ id: item.id, name: item.name, qty: item.qty, price: item.price }))
+      totalAddons: schedule.reduce((sum, entry) => sum + Number(entry.addonQty || 0), 0),
+      dailyAddons: schedule
+        .filter(entry => Number(entry.addonQty || 0) > 0)
+        .map(entry => ({ date: entry.date, items: entry.addons })),
+      schedule
     };
   }
 
@@ -320,33 +403,32 @@ async function loadDishes(plan, meal) {
     }
   }
 
-  async function loadAddons() {
-    const rows = await fetchCSV("addons.csv").catch(() => []);
-    addonCatalog = rows
-      .map(row => ({
-        id: row.Addon_ID || row.addon_id || row.id || "",
-        name: row.Addon_Name || row.addon_name || row.Name || row.name || "",
-        category: row.Category || row.category || "Add-on",
-        price: row.Price || row.price || ""
-      }))
-      .filter(item => item.id && item.name);
-  }
-
-  function renderAddons() {
-    if (!addonsGrid) return;
-    if (!addonCatalog.length) {
-      addonsGrid.innerHTML = `<p class="legend">Add-ons will appear here when addons.csv is available.</p>`;
+  function renderDayAddonPanel() {
+    if (!dayAddonPanel || !dayAddonTitle || !dayAddonGrid) return;
+    if (!selectedAddonDate) {
+      dayAddonPanel.hidden = true;
       return;
     }
-    addonsGrid.innerHTML = addonCatalog.map(item => {
-      const qty = selectedAddons.get(item.id) || 0;
+    dayAddonPanel.hidden = false;
+    dayAddonTitle.textContent = `Add-ons for ${selectedAddonDate}`;
+
+    const itemMap = dayAddonItems.get(selectedAddonDate) || new Map();
+
+    if (!addonCatalog.length) {
+      dayAddonGrid.innerHTML = `<p class="legend">Add-ons unavailable (check catalog.csv/addons.csv).</p>`;
+      return;
+    }
+
+    dayAddonGrid.innerHTML = addonCatalog.map(item => {
+      const qty = Number(itemMap.get(item.id) || 0);
       return `
         <article class="addon-item">
           <div class="addon-title">${escapeHtml(item.name)}</div>
           <div class="addon-meta">${escapeHtml(item.category)}${item.price ? ` • ${escapeHtml(item.price)}` : ""}</div>
           <div class="addon-actions">
-            <button class="addon-plus" type="button" data-addon-id="${escapeHtml(item.id)}" aria-label="Add ${escapeHtml(item.name)}">+</button>
+            <button class="addon-btn" type="button" data-action="addon-minus" data-addon-id="${escapeHtml(item.id)}">-</button>
             <span class="addon-qty">Qty: ${qty}</span>
+            <button class="addon-btn" type="button" data-action="addon-plus" data-addon-id="${escapeHtml(item.id)}">+</button>
           </div>
         </article>
       `;
@@ -373,6 +455,11 @@ async function loadDishes(plan, meal) {
       activeMap.set(iso, dishes[idx % dishes.length]);
     });
 
+    Array.from(dayAddonItems.keys()).forEach(date => {
+      if (!activeMap.has(date)) dayAddonItems.delete(date);
+    });
+    if (selectedAddonDate && !activeMap.has(selectedAddonDate)) selectedAddonDate = "";
+
     currentSelection = {
       plan: selectedPlan,
       meal: selectedMeal,
@@ -386,7 +473,8 @@ async function loadDishes(plan, meal) {
       }))
     };
 
-    renderCalendarMonths(start, activeMap);
+    renderCalendarMonths(start, activeMap, dayAddonItems);
+    renderDayAddonPanel();
   }
 
   function setFeedback(type, message) {
@@ -440,13 +528,12 @@ async function loadDishes(plan, meal) {
       return;
     }
 
-    const scheduleLines = (currentSelection.schedule || [])
-      .map(entry => `${entry.date}: ${entry.dish}`)
+    const orderPayload = buildOrderPayload();
+    const scheduleLines = (orderPayload.schedule || [])
+      .map(entry => `${entry.date}: ${entry.dish}${entry.addonQty ? ` (Add-ons: ${entry.addonQty})` : ""}`)
       .join("\n");
-    const addonLines = addonCatalog
-      .map(item => ({ ...item, qty: selectedAddons.get(item.id) || 0 }))
-      .filter(item => item.qty > 0)
-      .map(item => `${item.name} x${item.qty}${item.price ? ` (${item.price})` : ""}`)
+    const addonLines = (orderPayload.dailyAddons || [])
+      .map(entry => `${entry.date}: ${entry.items.map(item => `${item.name} x${item.qty}`).join(", ")}`)
       .join("\n");
 
     const message = [
@@ -464,7 +551,8 @@ async function loadDishes(plan, meal) {
       `Active Days: ${currentSelection.activeDays}`,
       `Start Date: ${currentSelection.start}`,
       `End Date: ${currentSelection.end}`,
-      addonLines ? "Add-ons:" : "",
+      `Total Add-ons: ${orderPayload.totalAddons || 0}`,
+      addonLines ? "Add-ons by day:" : "",
       addonLines || "",
       "Day-wise Menu:",
       scheduleLines,
@@ -475,7 +563,6 @@ async function loadDishes(plan, meal) {
     setFeedback("success", "Ready. Tap confirm to continue on WhatsApp.");
     saveDraft();
   }
-
 
   if (confirmBtn) {
     confirmBtn.addEventListener("click", async event => {
@@ -532,24 +619,57 @@ async function loadDishes(plan, meal) {
     });
   });
 
-  if (addonsGrid) {
-    addonsGrid.addEventListener("click", event => {
-      const target = event.target;
-      if (!(target instanceof HTMLElement)) return;
-      const addonId = target.getAttribute("data-addon-id");
-      if (!addonId) return;
-      const currentQty = selectedAddons.get(addonId) || 0;
-      selectedAddons.set(addonId, currentQty + 1);
-      renderAddons();
+  if (calendarGrid) {
+    calendarGrid.addEventListener("click", async event => {
+      const target = event.target instanceof HTMLElement ? event.target : null;
+      if (!target) return;
+      const actionTarget = target.closest("[data-action='open-addon-panel']");
+      if (!(actionTarget instanceof HTMLElement)) return;
+      const date = actionTarget.getAttribute("data-date") || "";
+      if (!date) return;
+      selectedAddonDate = date;
+      renderDayAddonPanel();
+      updateConfirmLink();
+      saveDraft();
+    });
+  }
+
+  if (dayAddonGrid) {
+    dayAddonGrid.addEventListener("click", event => {
+      const target = event.target instanceof HTMLElement ? event.target : null;
+      if (!target || !selectedAddonDate) return;
+      const action = target.getAttribute("data-action");
+      const addonId = target.getAttribute("data-addon-id") || "";
+      if (!action || !addonId) return;
+
+      const itemMap = dayAddonItems.get(selectedAddonDate) || new Map();
+      const qty = Number(itemMap.get(addonId) || 0);
+      if (action === "addon-plus") {
+        itemMap.set(addonId, qty + 1);
+      }
+      if (action === "addon-minus") {
+        const nextQty = Math.max(0, qty - 1);
+        if (nextQty > 0) itemMap.set(addonId, nextQty);
+        else itemMap.delete(addonId);
+      }
+
+      if (itemMap.size) dayAddonItems.set(selectedAddonDate, itemMap);
+      else dayAddonItems.delete(selectedAddonDate);
+
+      renderDayAddonPanel();
+      if (currentSelection) {
+        const start = new Date(currentSelection.start);
+        const activeMap = new Map(currentSelection.schedule.map(item => [item.date, item.dish]));
+        renderCalendarMonths(start, activeMap, dayAddonItems);
+      }
       updateConfirmLink();
       saveDraft();
     });
   }
 
   await loadLocations();
+  addonCatalog = await loadAddonCatalog();
   applyDraft();
-  await loadAddons();
-  renderAddons();
   await refresh();
   updateConfirmLink();
   saveDraft();

@@ -19,7 +19,9 @@ header{position:sticky;top:0;background:rgba(255,255,255,.95);border-bottom:1px 
 .day.empty{background:transparent;border-color:transparent}
 .day .num{font-weight:700;font-size:.78rem}
 .day.active{background:#fff5f5;border-color:#f2c7c9}
+.day.active{cursor:pointer;position:relative}
 .day .dish{margin-top:5px;color:#374151;line-height:1.2}
+.day-addon-open{position:absolute;right:6px;top:6px;border:1px solid rgba(31,109,71,.24);background:#eef8f2;color:#165b3a;border-radius:999px;width:24px;height:24px;font-size:.95rem;font-weight:700;line-height:1;cursor:pointer}
 .legend{font-size:.88rem;color:var(--muted)}
 @media(max-width:980px){.controls{grid-template-columns:repeat(2,minmax(0,1fr))}.calendar-grid{grid-template-columns:1fr}}
 
@@ -27,15 +29,14 @@ header{position:sticky;top:0;background:rgba(255,255,255,.95);border-bottom:1px 
 .legend.error{margin-top:10px;padding:10px 12px;border-radius:10px;background:#fff1f2;border:1px solid #fecdd3;color:#9f1239;font-weight:700}
 .legend.success{margin-top:10px;padding:10px 12px;border-radius:10px;background:#ecfdf3;border:1px solid #bbf7d0;color:#166534;font-weight:700}
 
-
-.addons-panel{margin:12px 0 18px;background:#fff;border:1px solid rgba(0,0,0,.09);border-radius:16px;padding:16px}
+.day-addon-panel{margin:12px 0 18px;background:#fff;border:1px solid rgba(0,0,0,.09);border-radius:16px;padding:16px}
 .addons-head h2{margin:0 0 6px;color:var(--green)}
 .addons-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
 .addon-item{border:1px solid #e5ece8;border-radius:12px;padding:10px;display:grid;gap:8px;background:#f9fcfa}
 .addon-title{font-weight:700}
 .addon-meta{font-size:.82rem;color:var(--muted)}
 .addon-actions{display:flex;align-items:center;justify-content:space-between;gap:8px}
-.addon-plus{border:1px solid rgba(31,109,71,.24);background:#eef8f2;color:#165b3a;border-radius:999px;width:34px;height:34px;font-size:1.15rem;font-weight:700;cursor:pointer}
+.addon-btn{border:1px solid rgba(31,109,71,.24);background:#eef8f2;color:#165b3a;border-radius:999px;width:34px;height:34px;font-size:1.15rem;font-weight:700;cursor:pointer}
 .addon-qty{font-weight:700;color:#14532d}
 @media(max-width:980px){.addons-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:680px){.addons-grid{grid-template-columns:1fr}}

@@ -75,21 +75,20 @@
       </div>
     </section>
 
-
-    <section class="addons-panel">
-      <div class="addons-head">
-        <h2>Add-ons</h2>
-        <p class="legend">Tap + to add extra protein, snacks, accompaniments, drinks, and more.</p>
-      </div>
-      <div id="addons-grid" class="addons-grid"></div>
-    </section>
-
     <p>
       <a id="confirm-subscription" class="btn btn-green" href="#" target="_blank" rel="noopener">Confirm Subscription</a>
     </p>
     <p id="confirm-feedback" class="legend"></p>
 
     <section id="calendar-grid" class="calendar-grid"></section>
+
+    <section id="day-addon-panel" class="day-addon-panel" hidden>
+      <div class="addons-head">
+        <h2 id="day-addon-title">Add-ons</h2>
+        <p class="legend">Select add-ons for the chosen day. Use + / - to adjust quantity.</p>
+      </div>
+      <div id="day-addon-grid" class="addons-grid"></div>
+    </section>
   </main>
 
   <script src="assets/js/common.js"></script>
