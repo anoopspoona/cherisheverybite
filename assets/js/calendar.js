@@ -128,13 +128,11 @@ async function loadAddonCatalog() {
     const mapLinkInput = document.getElementById("map-app-link");
     const pickLocationBtn = document.getElementById("pick-location-btn");
     const notesInput = document.getElementById("customer-notes");
-    const addonsGrid = document.getElementById("addons-grid");
     const dayAddonPanel = document.getElementById("day-addon-panel");
     const dayAddonTitle = document.getElementById("day-addon-title");
     const dayAddonGrid = document.getElementById("day-addon-grid");
 
     const locationMap = new Map();
-    const selectedAddons = new Map();
     const dayAddonItems = new Map();
     let selectedAddonDate = "";
     let addonCatalog = [];
@@ -188,29 +186,6 @@ async function loadAddonCatalog() {
         start_date: startInput?.value || ""
       });
       pickLocationBtn.href = `map-picker.html?${pickerParams.toString()}`;
-    }
-
-    function renderAddons() {
-      if (!addonsGrid) return;
-      if (!addonCatalog.length) {
-        addonsGrid.innerHTML = `<p class="legend">Add-ons will appear here when addons.csv is available.</p>`;
-        return;
-      }
-
-      addonsGrid.innerHTML = addonCatalog.map(item => {
-        const qty = selectedAddons.get(item.id) || 0;
-        return `
-          <article class="addon-item">
-            <div class="addon-title">${escapeHtml(item.name)}</div>
-            <div class="addon-meta">${escapeHtml(item.category)}${item.price ? ` • ${escapeHtml(item.price)}` : ""}</div>
-            <div class="addon-actions">
-              <button class="addon-plus" type="button" data-action="global-plus" data-addon-id="${escapeHtml(item.id)}" aria-label="Add ${escapeHtml(item.name)}">+</button>
-              <button class="addon-plus" type="button" data-action="global-minus" data-addon-id="${escapeHtml(item.id)}" aria-label="Remove ${escapeHtml(item.name)}">-</button>
-              <span class="addon-qty">Qty: ${qty}</span>
-            </div>
-          </article>
-        `;
-      }).join("");
     }
 
     function renderDayAddonPanel() {
@@ -336,26 +311,6 @@ async function loadAddonCatalog() {
       }
     }
 
-    function serializeDayAddons() {
-      return Array.from(dayAddonItems.entries()).map(([date, itemMap]) => ({
-        date,
-        items: Array.from(itemMap.entries()).map(([id, qty]) => ({ id, qty }))
-      }));
-    }
-
-    function applySerializedDayAddons(rows) {
-      dayAddonItems.clear();
-      if (!Array.isArray(rows)) return;
-      rows.forEach(entry => {
-        if (!entry?.date || !Array.isArray(entry.items)) return;
-        const m = new Map();
-        entry.items.forEach(item => {
-          if (item?.id && Number(item.qty) > 0) m.set(String(item.id), Number(item.qty));
-        });
-        if (m.size) dayAddonItems.set(entry.date, m);
-      });
-    }
-
     function saveDraft() {
       const payload = {
         name: nameInput?.value.trim() || "",
@@ -367,9 +322,6 @@ async function loadAddonCatalog() {
         plan: planSelect?.value || "",
         meal: mealSelect?.value || "",
         period: periodSelect?.value || "",
-        addons: Array.from(selectedAddons.entries()).map(([id, qty]) => ({ id, qty })),
-        dayAddons: serializeDayAddons(),
-        selectedAddonDate,
         userEmail: currentUserEmail
       };
       try {
@@ -391,13 +343,8 @@ async function loadAddonCatalog() {
       if (!params.get("meal") && mealSelect && draft.meal) mealSelect.value = draft.meal;
       if (!params.get("period") && periodSelect && draft.period) periodSelect.value = draft.period;
       if (!deliveryLocationParam && locationSelect && draft.locationId) locationSelect.value = draft.locationId;
-      if (Array.isArray(draft.addons)) {
-        draft.addons.forEach(item => {
-          if (item?.id && Number(item.qty) > 0) selectedAddons.set(String(item.id), Number(item.qty));
-        });
-      }
-      applySerializedDayAddons(draft.dayAddons || []);
-      if (typeof draft.selectedAddonDate === "string") selectedAddonDate = draft.selectedAddonDate;
+      dayAddonItems.clear();
+      selectedAddonDate = "";
     }
 
     function buildOrderPayload() {
@@ -431,10 +378,7 @@ async function loadAddonCatalog() {
         end: currentSelection?.end || "",
         activeDays: currentSelection?.activeDays || 0,
         schedule: currentSelection?.schedule || [],
-        addons: addonCatalog
-          .map(item => ({ ...item, qty: selectedAddons.get(item.id) || 0 }))
-          .filter(item => item.qty > 0)
-          .map(item => ({ id: item.id, name: item.name, qty: item.qty, price: item.price })),
+        addons: [],
         dailyAddons
       };
     }
@@ -563,9 +507,6 @@ async function loadAddonCatalog() {
       const scheduleLines = (orderPayload.schedule || [])
         .map(entry => `${entry.date}: ${entry.dish}${entry.addonQty ? ` (Add-ons: ${entry.addonQty})` : ""}`)
         .join("\n");
-      const addonLines = (orderPayload.addons || [])
-        .map(item => `${item.name} x${item.qty}${item.price ? ` (${item.price})` : ""}`)
-        .join("\n");
       const dayAddonLines = (orderPayload.dailyAddons || [])
         .filter(entry => Array.isArray(entry.items) && entry.items.length)
         .map(entry => `${entry.date}: ${entry.items.map(item => `${item.name} x${item.qty}`).join(", ")}`)
@@ -586,8 +527,6 @@ async function loadAddonCatalog() {
         `Active Days: ${currentSelection.activeDays}`,
         `Start Date: ${currentSelection.start}`,
         `End Date: ${currentSelection.end}`,
-        addonLines ? "Add-ons:" : "",
-        addonLines || "",
         dayAddonLines ? "Day-wise Add-ons:" : "",
         dayAddonLines || "",
         "Day-wise Menu:",
@@ -679,24 +618,6 @@ async function loadAddonCatalog() {
       });
     });
 
-    if (addonsGrid) {
-      addonsGrid.addEventListener("click", event => {
-        const target = event.target instanceof HTMLElement ? event.target : null;
-        const addonId = target?.getAttribute("data-addon-id");
-        const action = target?.getAttribute("data-action");
-        if (!addonId || !action) return;
-        const currentQty = selectedAddons.get(addonId) || 0;
-        if (action === "global-plus") selectedAddons.set(addonId, currentQty + 1);
-        if (action === "global-minus") {
-          if (currentQty <= 1) selectedAddons.delete(addonId);
-          else selectedAddons.set(addonId, currentQty - 1);
-        }
-        renderAddons();
-        updateConfirmLink();
-        saveDraft();
-      });
-    }
-
     if (dayAddonGrid) {
       dayAddonGrid.addEventListener("click", async event => {
         const target = event.target instanceof HTMLElement ? event.target : null;
@@ -738,7 +659,6 @@ async function loadAddonCatalog() {
     await loadLocations();
     addonCatalog = await loadAddonCatalog();
     applyDraft();
-    renderAddons();
     updatePickerLink();
     await refresh();
     updateConfirmLink();

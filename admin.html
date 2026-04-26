@@ -17,7 +17,7 @@
       </div>
       <div class="nav-actions">
         <a class="btn btn-soft" href="index.html">Home</a>
-      <a class="btn btn-soft" href="menu.html">Our Menu</a>
+        <a class="btn btn-soft" href="menu.html">Our Menu</a>
         <a class="btn btn-soft" href="plans.html">Subscription Plans</a>
         <a class="btn btn-primary" href="https://order.cherisheverybite.com/outlet/56752198194843" target="_blank" rel="noopener">Order Now</a>
       </div>
@@ -25,7 +25,16 @@
   </header>
 
   <main class="section">
-    <div class="container admin-grid">
+    <div class="container card" id="admin-auth-gate">
+      <h2>Admin Access</h2>
+      <p class="muted" id="admin-auth-status">Sign in with the authorized Google account to manage admin content.</p>
+      <div class="action-row">
+        <button id="admin-google-login" class="btn btn-primary" type="button">Continue with Google</button>
+        <button id="admin-logout" class="btn btn-soft" type="button">Logout</button>
+      </div>
+    </div>
+
+    <div class="container admin-grid" id="admin-console">
       <section class="card">
         <h2>Menu Manager</h2>
         <p class="muted">Add, edit, or delete dishes. Changes are saved as browser overrides and reflected across the site.</p>
@@ -72,9 +81,22 @@
     </div>
   </main>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    window.CEB_RUNTIME_CONFIG = {
+      enforceSecureAuth: true,
+      requireBackendSync: false,
+      adminEmails: ["anoop.anoops@gmail.com"]
+    };
+    window.CEB_SUPABASE_CONFIG = {
+      url: "https://jiequzelkoqrjngwixio.supabase.co",
+      anonKey: "sb_publishable_2VsGVDkiOgBHxA4EKqXivw_vJvf8Zit"
+    };
+  </script>
   <script src="assets/js/common.js"></script>
   <script src="assets/js/runtime.js"></script>
   <script src="assets/js/backend.js"></script>
+  <script src="assets/js/auth.js"></script>
   <script src="assets/js/admin.js"></script>
   <script src="assets/js/sidebar.js"></script>
 </body>

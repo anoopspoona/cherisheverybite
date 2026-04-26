@@ -16,9 +16,9 @@
       async signIn() {
         return { ok: false, reason: runtime.enforceSecureAuth ? "secure_auth_required" : "auth_not_configured" };
       },
-      async signInWithGoogle() {
-        return { ok: false, reason: "auth_not_configured" };
-      },
+    async signInWithGoogle() {
+      return { ok: false, reason: "auth_not_configured" };
+    },
       async signOut() {
         localStorage.removeItem(CURRENT_USER_KEY);
         return { ok: true };
@@ -74,11 +74,11 @@
       await refreshMirrorFromSession();
       return { ok: true };
     },
-    async signInWithGoogle() {
+    async signInWithGoogle(redirectTo = oauthRedirectTo) {
       const { error } = await client.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo: oauthRedirectTo
+          redirectTo
         }
       });
       if (error) return { ok: false, message: error.message };

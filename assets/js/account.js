@@ -302,6 +302,10 @@ async function render() {
 }
 
 (async function init() {
+  const params = new URLSearchParams(window.location.search);
+  const pickedLat = params.get("picked_lat");
+  const pickedLon = params.get("picked_lon");
+  const pickedLabel = params.get("picked_label") || "";
   const signupForm = document.getElementById("signup-form");
   const loginForm = document.getElementById("login-form");
   const feedback = document.getElementById("auth-feedback");
@@ -311,6 +315,28 @@ async function render() {
   const addressForm = document.getElementById("address-form");
   const addressesList = document.getElementById("addresses-list");
   const profileForm = document.getElementById("profile-form");
+  const addressLabelInput = document.getElementById("address-label");
+  const addressLinkInput = document.getElementById("address-link");
+  const pickAddressBtn = document.getElementById("pick-address-btn");
+
+  function updatePickAddressLink() {
+    if (!pickAddressBtn) return;
+    const qp = new URLSearchParams({
+      return_to: "account.html",
+      picked_label: addressLabelInput?.value.trim() || "Pinned Location"
+    });
+    pickAddressBtn.href = `map-picker.html?${qp.toString()}`;
+  }
+
+  if (pickedLat && pickedLon) {
+    if (addressLinkInput) addressLinkInput.value = `https://maps.google.com/?q=${pickedLat},${pickedLon}`;
+    if (addressLabelInput && pickedLabel) addressLabelInput.value = pickedLabel;
+    if (feedback) feedback.textContent = "Pinned location selected. Click 'Save Address' to keep it for future orders.";
+  }
+  updatePickAddressLink();
+  if (addressLabelInput) {
+    addressLabelInput.addEventListener("input", updatePickAddressLink);
+  }
 
   if (signupForm) {
     signupForm.addEventListener("submit", async event => {
