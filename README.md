@@ -55,6 +55,10 @@ python3 scripts/validate_data.py
 Homepage menu attempts Google Sheets CSV first (if configured), then falls back to local `prices.csv`.
 Homepage featured dish slideshow reads from `hero_slides.csv` (if present and `status=live` rows exist).
 
+### Dish thumbnails
+
+Save dish image files under `assets/dishes/` (or another folder under `assets/`) and set the relative path in `catalog.csv` dish rows (`image_url`/`Image_URL`), for example `assets/dishes/veg-bowl.jpg`.
+
 To configure Google Sheets source, see `google_sheet_setup.md`.
 
 

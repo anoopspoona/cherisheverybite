@@ -6,12 +6,14 @@ const HUB = { lat: 8.575357388981113, lon: 76.91238872393365 };
   const plan = params.get("plan") || "elite";
   const meal = params.get("meal") || "lunch";
   const period = params.get("period") || "weekly";
+  const pickedLabelParam = params.get("picked_label") || "Pinned Location";
 
   const back = document.getElementById("back-calendar");
   const useLocation = document.getElementById("use-location");
   const useCurrentLocation = document.getElementById("use-current-location");
   const coords = document.getElementById("coords");
   const pinLabel = document.getElementById("pin-label");
+  if (pinLabel) pinLabel.value = pickedLabelParam;
 
   const carryParams = new URLSearchParams(params);
   carryParams.set("plan", plan);
