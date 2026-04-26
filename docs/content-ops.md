@@ -1,9 +1,10 @@
 # Content Operations Guide
 
 ## Update menu items
-1. Edit `prices.csv` and keep header columns unchanged.
-2. Mark unavailable rows as `hidden` in `status`.
-3. Keep `no` values numeric and unique per row.
+1. Edit `catalog.csv` and update rows with `record_type=dish` (or `Record_Type=dish`).
+2. Update these dish fields in one place: `id/ID`, `name/Name`, `category/Category`, `meal_type/Meal_Type`, `image_url/Image_URL`, `price/Price`, `status/Status`.
+3. Mark unavailable dishes as `hidden`.
+4. Thumbnails should be saved under `assets/dishes/` (or any folder under `assets/`) and referenced in `image_url` as a relative path (example: `assets/dishes/grilled-paneer.jpg`).
 
 ## Update subscription meal source
 1. Edit `meals.csv` for plan preview data.
