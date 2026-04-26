@@ -154,7 +154,7 @@ This is a Phase 3 baseline. Production-grade Phase 3 should additionally persist
 
 `admin.html` provides browser-based operations for non-developer content management:
 
-- Add/edit/delete dishes in Menu Manager and save as CSV overrides (`catalog.csv` + `dishes.csv`, with backward-compatible `menu.csv` and `prices.csv` overrides).
+- Add/edit/delete dishes in Menu Manager and save as CSV overrides (`menu.csv`, `prices.csv`).
 - Load and edit subscription dish rotations per plan/meal (`calendar_<plan>_<meal>.csv`).
 - Reset individual overrides to fall back to repository CSV files.
 
@@ -190,6 +190,12 @@ Behavior:
 - Configure Supabase auth providers and redirect URLs.
 - Configure backend endpoints listed above with server-side authorization and validation.
 - Verify account + calendar + admin flows end-to-end in staging before go-live.
+
+## UX updates
+
+- Navigation on pages is simplified to only three primary buttons: **Our Menu**, **Subscription Plans**, and **Order Now**.
+- A floating minimizable sidebar (`assets/js/sidebar.js`, `assets/css/sidebar.css`) provides quick access to **User Account** and **Admin Console**.
+- Account page always shows phone OTP login inputs; if Supabase phone auth is not configured, submit feedback explains why.
 
 ## Docs
 

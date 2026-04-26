@@ -284,7 +284,9 @@ async function render() {
     authTitle.textContent = authEnabled ? "Sign Up (Secure)" : "Sign Up (Local Demo)";
   }
   phoneForms.forEach(form => {
-    if (form) form.style.display = phoneOtpSupported ? "flex" : "none";
+    if (!form) return;
+    form.style.display = "flex";
+    form.style.opacity = phoneOtpSupported ? "1" : "0.85";
   });
   if (googleLoginBtn) {
     googleLoginBtn.style.display = googleSupported ? "inline-flex" : "none";
