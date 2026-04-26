@@ -10,6 +10,7 @@
 <body>
   <header>
     <div class="container nav">
+      <a class="btn btn-soft" href="index.html">Home</a>
       <a class="btn btn-soft" href="menu.html">Our Menu</a>
       <a class="btn btn-soft" href="plans.html">Subscription Plans</a>
       <a class="btn btn-soft" href="https://order.cherisheverybite.com/outlet/56752198194843" target="_blank" rel="noopener">Order Now</a>
@@ -47,6 +48,8 @@
           <option value="weightloss">Weight Loss</option>
           <option value="diabetic">Diabetic</option>
           <option value="smoothie">Smoothie</option>
+          <option value="salad">Salad</option>
+          <option value="customised">Customised</option>
         </select>
       </div>
       <div>
@@ -75,29 +78,25 @@
       </div>
     </section>
 
-
-    <section class="addons-panel">
-      <div class="addons-head">
-        <h2>Add-ons</h2>
-        <p class="legend">Tap + to add extra protein, snacks, accompaniments, drinks, and more.</p>
-      </div>
-      <div id="addons-grid" class="addons-grid"></div>
-    </section>
-
     <p>
       <a id="confirm-subscription" class="btn btn-green" href="#" target="_blank" rel="noopener">Confirm Subscription</a>
     </p>
     <p id="confirm-feedback" class="legend"></p>
+    <section id="cost-summary" class="cost-summary" aria-live="polite"></section>
 
     <section id="calendar-grid" class="calendar-grid"></section>
 
-    <section id="day-addon-panel" class="day-addon-panel" hidden>
+    <div id="day-addon-backdrop" class="day-addon-backdrop" hidden></div>
+    <aside id="day-addon-panel" class="day-addon-panel" hidden>
       <div class="addons-head">
-        <h2 id="day-addon-title">Add-ons</h2>
+        <div class="day-addon-head-row">
+          <h2 id="day-addon-title">Add-ons</h2>
+          <button id="day-addon-close" class="btn btn-soft" type="button">Close</button>
+        </div>
         <p class="legend">Select add-ons for the chosen day. Use + / - to adjust quantity.</p>
       </div>
       <div id="day-addon-grid" class="addons-grid"></div>
-    </section>
+    </aside>
   </main>
   <script>
     window.CEB_BACKEND_CONFIG = {
