@@ -9,19 +9,12 @@
   if (!enabled) {
     window.cebAuth = {
       enabled: false,
-      supportsPhoneOtp: false,
       supportsGoogleOAuth: false,
       async signUp() {
         return { ok: false, reason: runtime.enforceSecureAuth ? "secure_auth_required" : "auth_not_configured" };
       },
       async signIn() {
         return { ok: false, reason: runtime.enforceSecureAuth ? "secure_auth_required" : "auth_not_configured" };
-      },
-      async requestPhoneOtp() {
-        return { ok: false, reason: "auth_not_configured" };
-      },
-      async verifyPhoneOtp() {
-        return { ok: false, reason: "auth_not_configured" };
       },
       async signInWithGoogle() {
         return { ok: false, reason: "auth_not_configured" };
@@ -39,6 +32,14 @@
   }
 
   const client = window.supabase.createClient(url, anonKey);
+  const oauthRedirectTo = new URL("account.html", window.location.href).toString();
+
+  if (window.location.hash && window.location.hash.includes("access_token=")) {
+    client.auth.getSession().finally(() => {
+      const cleanUrl = `${window.location.pathname}${window.location.search}`;
+      window.history.replaceState({}, document.title, cleanUrl);
+    });
+  }
 
   async function refreshMirrorFromSession() {
     const { data } = await client.auth.getSession();
@@ -56,7 +57,6 @@
 
   window.cebAuth = {
     enabled: true,
-    supportsPhoneOtp: true,
     supportsGoogleOAuth: true,
     async signUp(email, password, metadata = {}) {
       const { error } = await client.auth.signUp({
@@ -74,26 +74,11 @@
       await refreshMirrorFromSession();
       return { ok: true };
     },
-    async requestPhoneOtp(phone) {
-      const { error } = await client.auth.signInWithOtp({ phone });
-      if (error) return { ok: false, message: error.message };
-      return { ok: true };
-    },
-    async verifyPhoneOtp(phone, token) {
-      const { error } = await client.auth.verifyOtp({
-        phone,
-        token,
-        type: "sms"
-      });
-      if (error) return { ok: false, message: error.message };
-      await refreshMirrorFromSession();
-      return { ok: true };
-    },
     async signInWithGoogle() {
       const { error } = await client.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo: window.location.href
+          redirectTo: oauthRedirectTo
         }
       });
       if (error) return { ok: false, message: error.message };
