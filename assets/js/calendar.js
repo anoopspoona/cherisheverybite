@@ -127,10 +127,11 @@ async function loadDishes(plan, meal, variantKey = "") {
     const variantFiltered = hasVariantColumn && normalizedVariant && normalizedVariant !== "standard"
       ? byPlanMeal.filter(row => String(pick(row, ["Variant_Key", "variant_key", "Variant Key", "variant key"], "")).trim().toLowerCase() === normalizedVariant)
       : byPlanMeal;
-    const hasComponentColumn = variantFiltered.some(row => String(row.Component || row.component || "").trim());
+    const effectiveRows = variantFiltered.length ? variantFiltered : byPlanMeal;
+    const hasComponentColumn = effectiveRows.some(row => String(row.Component || row.component || "").trim());
     const mainRows = hasComponentColumn
-      ? variantFiltered.filter(row => String(row.Component || row.component || "").trim().toLowerCase() === "main")
-      : variantFiltered;
+      ? effectiveRows.filter(row => String(row.Component || row.component || "").trim().toLowerCase() === "main")
+      : effectiveRows;
     const items = mainRows
       .map(row => row.Item_Name || row.item_name || row.Dish || row.dish || "")
       .filter(Boolean);

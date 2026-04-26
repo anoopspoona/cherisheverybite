@@ -235,10 +235,14 @@ function updateCalendarLinks(planKey, variantKey) {
 
     const filteredMeals = meals.filter(row => {
       const rowPlanKey = String(pick(row, ["Plan_Key", "plan_key", "Plan Key", "plan key"], "")).trim().toLowerCase();
-      const rowVariantKey = String(pick(row, ["Variant_Key", "variant_key", "Variant Key", "variant key"], "")).trim();
-      return rowPlanKey === String(planKey || "").trim().toLowerCase() && rowVariantKey === variantKey;
+      const rowVariantKey = String(pick(row, ["Variant_Key", "variant_key", "Variant Key", "variant key"], "")).trim().toLowerCase();
+      return rowPlanKey === String(planKey || "").trim().toLowerCase() && rowVariantKey === String(variantKey || "").trim().toLowerCase();
     });
-    renderPlanDays(filteredMeals);
+    const fallbackMeals = meals.filter(row => {
+      const rowPlanKey = String(pick(row, ["Plan_Key", "plan_key", "Plan Key", "plan key"], "")).trim().toLowerCase();
+      return rowPlanKey === String(planKey || "").trim().toLowerCase();
+    });
+    renderPlanDays(filteredMeals.length ? filteredMeals : fallbackMeals);
   }
 
   if (variantSelect) variantSelect.addEventListener("change", refresh);
