@@ -13,6 +13,15 @@ function getPlanLabel(planKey) {
   return labels[planKey] || "Plan";
 }
 
+function cleanPlanTitle(name = "") {
+  const text = String(name || "").trim();
+  if (!text) return "";
+  return text
+    .replace(/\s*[-–]\s*lunch\s*$/i, "")
+    .replace(/\s+lunch\s*$/i, "")
+    .trim();
+}
+
 function planPriceLabel(row = {}) {
   const candidates = [
     row.Price,
@@ -80,7 +89,7 @@ function renderPlanMeta(planRows) {
   if (prices.monthly) priceParts.push(`Monthly: ${prices.monthly}`);
   if (prices.weekly) priceParts.push(`Weekly: ${prices.weekly}`);
   if (!priceParts.length) priceParts.push(`Starting at ${planPriceLabel(first)}`);
-  document.getElementById("plan-title").textContent = first.Plan_Name;
+  document.getElementById("plan-title").textContent = cleanPlanTitle(first.Plan_Name) || first.Plan_Name;
   document.getElementById("plan-desc").textContent = first.Description || "";
   document.getElementById("plan-meta").textContent = `Duration: ${first.Duration_Days} days • Meals/day: ${first.Meals_Per_Day} • ${priceParts.join(" • ")}`;
 }
@@ -154,7 +163,7 @@ function updateWhatsapp(planName, variantName) {
   const link = document.getElementById("enquire-btn");
   if (!link) return;
   const text = [
-    `Hi Cherish Every Bite, I am interested in the ${planName}.`,
+    `Hi Cherish Every Bite, I am interested in the ${cleanPlanTitle(planName) || planName}.`,
     variantName ? `Preferred variant: ${variantName}.` : "",
     "Please share pricing, add-ons and subscription details."
   ].filter(Boolean).join(" ");

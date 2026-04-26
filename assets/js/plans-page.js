@@ -8,6 +8,15 @@ const PLAN_PAGE_BY_KEY = {
   diabetic: "diabetic-plan.html"
 };
 
+function cleanPlanTitle(name = "") {
+  const text = String(name || "").trim();
+  if (!text) return "";
+  return text
+    .replace(/\s*[-–]\s*lunch\s*$/i, "")
+    .replace(/\s+lunch\s*$/i, "")
+    .trim();
+}
+
 function planPriceLabel(row = {}) {
   const candidates = [
     row.Price,
@@ -67,7 +76,7 @@ function renderPlans(rows) {
       .join(" • ");
     return `
       <article class="day-card" style="padding:18px; background:linear-gradient(180deg,#ffffff,#f7fbf8); border-color:rgba(31,109,71,.14)">
-        <h3>${escapeHtml(row.Plan_Name || row.plan_name || "Subscription Plan")}</h3>
+        <h3>${escapeHtml(cleanPlanTitle(row.Plan_Name || row.plan_name || "Subscription Plan"))}</h3>
         <p class="muted">${escapeHtml(row.Description || row.description || "Curated meal plan with healthy rotations.")}</p>
         <p class="legend" style="font-weight:700;color:#14532d;margin:8px 0 4px;">${escapeHtml(priceLine || `Starting at ${planPriceLabel(row)}`)}</p>
         <p class="muted" style="margin:0 0 10px;">${escapeHtml(row.Duration_Days || row.duration_days || "-")} days • ${escapeHtml(row.Meals_Per_Day || row.meals_per_day || "-")} meals/day</p>
