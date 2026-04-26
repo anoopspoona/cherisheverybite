@@ -10,6 +10,7 @@
 <body>
   <header>
     <div class="container nav">
+      <a class="btn btn-soft" href="index.html">Home</a>
       <a class="btn btn-soft" href="menu.html">Our Menu</a>
       <a class="btn btn-soft" href="plans.html">Subscription Plans</a>
       <a class="btn btn-red" href="https://order.cherisheverybite.com/outlet/56752198194843" target="_blank" rel="noopener">Order Now</a>
@@ -20,45 +21,11 @@
     <section class="hero-card">
       <h1>Subscription Plans</h1>
       <p class="muted">Choose a plan to view full day-wise meals and enquire on WhatsApp.</p>
-      <div class="grid" style="grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); margin-top: 20px;">
-        <article class="day-card">
-          <h3>Elite Plan</h3>
-          <p class="muted">Premium weekly rotation with flexible options.</p>
-          <p><a class="btn btn-soft" href="elite-plan.html">View Elite Plan</a></p>
-        </article>
-        <article class="day-card">
-          <h3>Salad Plan</h3>
-          <p class="muted">Fresh salad-focused plan for lighter eating days.</p>
-          <p><a class="btn btn-soft" href="salad-plan.html">View Salad Plan</a></p>
-        </article>
-        <article class="day-card">
-          <h3>Weight Loss Plan</h3>
-          <p class="muted">Calorie-conscious, high-protein meal combinations.</p>
-          <p><a class="btn btn-soft" href="weightloss-plan.html">View Weight Loss Plan</a></p>
-        </article>
-        <article class="day-card">
-          <h3>Diabetic Plan</h3>
-          <p class="muted">Low-glycemic options curated for blood sugar management.</p>
-          <p><a class="btn btn-soft" href="diabetic-plan.html">View Diabetic Plan</a></p>
-        </article>
-        <article class="day-card">
-          <h3>Smoothie Plan</h3>
-          <p class="muted">Nutrient-dense smoothie routines for busy schedules.</p>
-          <p><a class="btn btn-soft" href="smoothie-plan.html">View Smoothie Plan</a></p>
-        </article>
-        <article class="day-card">
-          <h3>Basic Plan</h3>
-          <p class="muted">Simple entry plan with balanced daily meals.</p>
-          <p><a class="btn btn-soft" href="basic-plan.html">View Basic Plan</a></p>
-        </article>
-        <article class="day-card">
-          <h3>Customised Plan</h3>
-          <p class="muted">Pick from curated customization options.</p>
-          <p><a class="btn btn-soft" href="customised-plan.html">View Customised Plan</a></p>
-        </article>
-      </div>
+      <div id="plans-grid" class="grid" style="grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); margin-top: 20px;"></div>
     </section>
   </main>
+  <script src="assets/js/common.js"></script>
+  <script src="assets/js/plans-page.js"></script>
   <script src="assets/js/sidebar.js"></script>
 </body>
 </html>
