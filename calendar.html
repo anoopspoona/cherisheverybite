@@ -82,7 +82,13 @@
 
     <section id="calendar-grid" class="calendar-grid"></section>
   </main>
-
+  <script>
+    window.CEB_BACKEND_CONFIG = {
+      apiBase: "https://api.yourdomain.com",
+      apiToken: "YOUR_BACKEND_BEARER_TOKEN",
+      timeoutMs: 8000
+    };
+  </script>
   <script src="assets/js/common.js"></script>
   <script src="assets/js/backend.js"></script>
   <script src="assets/js/calendar.js"></script>
