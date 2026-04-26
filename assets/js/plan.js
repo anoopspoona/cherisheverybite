@@ -13,6 +13,25 @@ function getPlanLabel(planKey) {
   return labels[planKey] || "Plan";
 }
 
+function planPriceLabel(row = {}) {
+  const candidates = [
+    row.Price,
+    row.price,
+    row.Plan_Price,
+    row.plan_price,
+    row.Base_Price,
+    row.base_price,
+    row.Monthly_Price,
+    row.monthly_price,
+    row.Variant_Price,
+    row.variant_price
+  ];
+  const first = candidates.find(value => String(value || "").trim());
+  if (!first) return "Price on request";
+  const text = String(first).trim();
+  return /^[₹$]/.test(text) ? text : `₹${text}`;
+}
+
 function uniqueVariants(rows) {
   const out = [];
   const seen = new Set();
@@ -44,7 +63,7 @@ function renderPlanMeta(planRows) {
   const first = planRows[0];
   document.getElementById("plan-title").textContent = first.Plan_Name;
   document.getElementById("plan-desc").textContent = first.Description || "";
-  document.getElementById("plan-meta").textContent = `Duration: ${first.Duration_Days} days • Meals/day: ${first.Meals_Per_Day}`;
+  document.getElementById("plan-meta").textContent = `Duration: ${first.Duration_Days} days • Meals/day: ${first.Meals_Per_Day} • Starting at ${planPriceLabel(first)}`;
 }
 
 function renderCustomOptions(options) {
@@ -150,7 +169,7 @@ function updateCalendarLinks(planKey, variantKey) {
   function refresh() {
     const variantKey = variantSelect?.value || (planRows[0] ? planRows[0].Variant_Key : "");
     const selectedPlan = planRows.find(row => row.Variant_Key === variantKey) || planRows[0];
-    document.getElementById("selected-variant").textContent = selectedPlan ? selectedPlan.Variant_Name : "";
+    document.getElementById("selected-variant").textContent = selectedPlan ? `${selectedPlan.Variant_Name} (${planPriceLabel(selectedPlan)})` : "";
     updateWhatsapp(selectedPlan?.Plan_Name || getPlanLabel(planKey), selectedPlan?.Variant_Name || "");
     updateCalendarLinks(planKey, variantKey);
 
