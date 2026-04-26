@@ -67,7 +67,32 @@ function haversineKm(a, b) {
   return R * (2 * Math.atan2(Math.sqrt(x), Math.sqrt(1 - x)));
 }
 
-async function loadDishes(plan, meal) {
+let planMealsCache = null;
+
+async function loadPlanMeals() {
+  if (planMealsCache) return planMealsCache;
+  planMealsCache = await fetchCSV("plan_meals.csv").catch(() => []);
+  return planMealsCache;
+}
+
+async function loadDishes(plan, meal, variantKey = "") {
+  const planMealsRows = await loadPlanMeals();
+  const normalizedVariant = String(variantKey || "").trim().toLowerCase();
+  const byPlanMeal = planMealsRows
+    .filter(row => String(row.Plan_Key || row.plan_key || "").trim().toLowerCase() === String(plan || "").trim().toLowerCase())
+    .filter(row => String(row.Meal_Type || row.meal_type || "").trim().toLowerCase() === String(meal || "").trim().toLowerCase());
+
+  if (byPlanMeal.length) {
+    const hasVariantColumn = byPlanMeal.some(row => String(row.Variant_Key || row.variant_key || "").trim());
+    const variantFiltered = hasVariantColumn && normalizedVariant && normalizedVariant !== "standard"
+      ? byPlanMeal.filter(row => String(row.Variant_Key || row.variant_key || "").trim().toLowerCase() === normalizedVariant)
+      : byPlanMeal;
+    const items = variantFiltered
+      .map(row => row.Item_Name || row.item_name || row.Dish || row.dish || "")
+      .filter(Boolean);
+    if (items.length) return items;
+  }
+
   const rows = await fetchCSV(csvFor(plan, meal));
   return rows.map(row => row.Dish || row.dish || "").filter(Boolean);
 }
@@ -104,6 +129,7 @@ async function loadAddonCatalog() {
     const params = new URLSearchParams(window.location.search);
     const plan = params.get("plan") || "elite";
     const meal = params.get("meal") || "lunch";
+    const variant = params.get("variant") || "standard";
     const pickedLat = params.get("picked_lat");
     const pickedLon = params.get("picked_lon");
     const pickedLabel = params.get("picked_label") || "Pinned Location";
@@ -184,6 +210,7 @@ async function loadAddonCatalog() {
       if (!pickLocationBtn) return;
       const pickerParams = new URLSearchParams({
         plan: planSelect?.value || plan,
+        variant: variant,
         meal: mealSelect?.value || meal,
         period: periodSelect?.value || "weekly",
         return_to: "calendar.html",
@@ -438,7 +465,7 @@ async function loadAddonCatalog() {
       if (back) back.href = `${selectedPlan}-plan.html`;
       updatePickerLink();
 
-      const dishRows = await loadDishes(selectedPlan, selectedMeal).catch(() => []);
+      const dishRows = await loadDishes(selectedPlan, selectedMeal, variant).catch(() => []);
       const dishes = dishRows.length ? dishRows : ["Menu to be updated"];
       const activeCount = selectedPeriod === "monthly" ? 24 : 6;
       const dates = nextActiveDates(start, activeCount);
