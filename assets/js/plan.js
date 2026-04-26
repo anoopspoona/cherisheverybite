@@ -13,6 +13,48 @@ function getPlanLabel(planKey) {
   return labels[planKey] || "Plan";
 }
 
+function cleanPlanTitle(name = "") {
+  const text = String(name || "").trim();
+  if (!text) return "";
+  return text
+    .replace(/\s*[-–]\s*lunch\s*$/i, "")
+    .replace(/\s+lunch\s*$/i, "")
+    .trim();
+}
+
+function planPriceLabel(row = {}) {
+  const candidates = [
+    row.Price,
+    row.price,
+    row.Plan_Price,
+    row.plan_price,
+    row.Base_Price,
+    row.base_price,
+    row.Monthly_Price,
+    row.monthly_price,
+    row.Variant_Price,
+    row.variant_price
+  ];
+  const first = candidates.find(value => String(value || "").trim());
+  if (!first) return "Price on request";
+  const text = String(first).trim();
+  return /^[₹$]/.test(text) ? text : `₹${text}`;
+}
+
+function planPeriodPrices(row = {}) {
+  const monthlyRaw = row["Price for monthly subscription"] || row.price_for_monthly_subscription || row.Monthly_Price || row.monthly_price || "";
+  const weeklyRaw = row["Price for weekly subscription"] || row.price_for_weekly_subscription || row.Weekly_Price || row.weekly_price || "";
+  const normalize = value => {
+    const text = String(value || "").trim();
+    if (!text) return "";
+    return /^[₹$]/.test(text) ? text : `₹${text}`;
+  };
+  return {
+    monthly: normalize(monthlyRaw),
+    weekly: normalize(weeklyRaw)
+  };
+}
+
 function uniqueVariants(rows) {
   const out = [];
   const seen = new Set();
@@ -42,9 +84,14 @@ function renderVariantOptions(rows) {
 function renderPlanMeta(planRows) {
   if (!planRows.length) return;
   const first = planRows[0];
-  document.getElementById("plan-title").textContent = first.Plan_Name;
+  const prices = planPeriodPrices(first);
+  const priceParts = [];
+  if (prices.monthly) priceParts.push(`Monthly: ${prices.monthly}`);
+  if (prices.weekly) priceParts.push(`Weekly: ${prices.weekly}`);
+  if (!priceParts.length) priceParts.push(`Starting at ${planPriceLabel(first)}`);
+  document.getElementById("plan-title").textContent = cleanPlanTitle(first.Plan_Name) || first.Plan_Name;
   document.getElementById("plan-desc").textContent = first.Description || "";
-  document.getElementById("plan-meta").textContent = `Duration: ${first.Duration_Days} days • Meals/day: ${first.Meals_Per_Day}`;
+  document.getElementById("plan-meta").textContent = `Duration: ${first.Duration_Days} days • Meals/day: ${first.Meals_Per_Day} • ${priceParts.join(" • ")}`;
 }
 
 function renderCustomOptions(options) {
@@ -116,7 +163,7 @@ function updateWhatsapp(planName, variantName) {
   const link = document.getElementById("enquire-btn");
   if (!link) return;
   const text = [
-    `Hi Cherish Every Bite, I am interested in the ${planName}.`,
+    `Hi Cherish Every Bite, I am interested in the ${cleanPlanTitle(planName) || planName}.`,
     variantName ? `Preferred variant: ${variantName}.` : "",
     "Please share pricing, add-ons and subscription details."
   ].filter(Boolean).join(" ");
@@ -150,7 +197,13 @@ function updateCalendarLinks(planKey, variantKey) {
   function refresh() {
     const variantKey = variantSelect?.value || (planRows[0] ? planRows[0].Variant_Key : "");
     const selectedPlan = planRows.find(row => row.Variant_Key === variantKey) || planRows[0];
-    document.getElementById("selected-variant").textContent = selectedPlan ? selectedPlan.Variant_Name : "";
+    const prices = planPeriodPrices(selectedPlan || {});
+    const priceText = [prices.monthly ? `Monthly ${prices.monthly}` : "", prices.weekly ? `Weekly ${prices.weekly}` : ""]
+      .filter(Boolean)
+      .join(" • ");
+    document.getElementById("selected-variant").textContent = selectedPlan
+      ? `${selectedPlan.Variant_Name}${priceText ? ` (${priceText})` : ` (${planPriceLabel(selectedPlan)})`}`
+      : "";
     updateWhatsapp(selectedPlan?.Plan_Name || getPlanLabel(planKey), selectedPlan?.Variant_Name || "");
     updateCalendarLinks(planKey, variantKey);
 
