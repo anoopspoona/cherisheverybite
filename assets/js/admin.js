@@ -1,6 +1,7 @@
 const MENU_PATH = "menu.csv";
 const PRICE_PATH = "prices.csv";
 const DISHES_PATH = "dishes.csv";
+const CATALOG_PATH = "catalog.csv";
 const ADMIN_EMAILS_KEY = "ceb_admin_emails_v1";
 const runtime = window.cebRuntime || {};
 
@@ -129,11 +130,41 @@ async function saveMenuOverrides(rows) {
   const combinedRows = rows.map(({ Dish_ID, Dish_Name, Category, Meal_Type, Image_URL, Price, Status }) => ({
     Dish_ID, Dish_Name, Category, Meal_Type, Image_URL, Price, Status
   }));
+  const existingCatalog = await fetchCSV(CATALOG_PATH).catch(() => []);
+  let addonCatalog = existingCatalog.filter(row => String(row.record_type || row.Record_Type || "").toLowerCase() === "addon");
+  if (!addonCatalog.length) {
+    const legacyAddons = await fetchCSV("addons.csv").catch(() => []);
+    addonCatalog = legacyAddons.map(row => ({
+      record_type: "addon",
+      id: row.Addon_ID || row.addon_id || "",
+      name: row.Addon_Name || row.addon_name || "",
+      category: row.Category || row.category || row.Addon_Type || row.addon_type || "",
+      meal_type: "",
+      image_url: "",
+      price: row.Price || row.price || row.Unit_Price || row.unit_price || "",
+      status: row.Status || row.status || "live",
+      billing_mode: row.Billing_Mode || row.billing_mode || "",
+      source: "addons.csv"
+    })).filter(row => row.id && row.name);
+  }
+  const dishCatalog = combinedRows.map(row => ({
+    record_type: "dish",
+    id: row.Dish_ID,
+    name: row.Dish_Name,
+    category: row.Category,
+    meal_type: row.Meal_Type,
+    image_url: row.Image_URL,
+    price: row.Price,
+    status: row.Status,
+    billing_mode: "",
+    source: "menu_manager"
+  }));
 
   if (runtime.requireBackendSync && !window.cebBackend?.apiBase) {
     return { ok: false, message: "Backend sync is required. Configure CEB_BACKEND_CONFIG first." };
   }
 
+  window.cebCsvTools.writeOverride(CATALOG_PATH, window.cebCsvTools.serializeCSV([...dishCatalog, ...addonCatalog]));
   window.cebCsvTools.writeOverride(DISHES_PATH, window.cebCsvTools.serializeCSV(combinedRows));
   window.cebCsvTools.writeOverride(MENU_PATH, window.cebCsvTools.serializeCSV(menuRows));
   window.cebCsvTools.writeOverride(PRICE_PATH, window.cebCsvTools.serializeCSV(priceRows));
@@ -220,6 +251,20 @@ async function enforceAdminAccess() {
 }
 
 async function loadMenuRows() {
+  const catalog = await fetchCSV(CATALOG_PATH).catch(() => []);
+  const catalogDishes = catalog
+    .filter(row => String(row.record_type || row.Record_Type || "").toLowerCase() === "dish")
+    .map(row => normalizeMenuRow({
+      Dish_ID: row.id || row.ID || "",
+      Dish_Name: row.name || row.Name || "",
+      Category: row.category || row.Category || "",
+      Meal_Type: row.meal_type || row.Meal_Type || "",
+      Image_URL: row.image_url || row.Image_URL || "",
+      Price: row.price || row.Price || "",
+      Status: row.status || row.Status || "live"
+    }));
+  if (catalogDishes.length) return catalogDishes;
+
   const combined = await fetchCSV(DISHES_PATH).catch(() => []);
   if (combined.length) return combined.map(normalizeMenuRow);
 
@@ -303,6 +348,7 @@ async function loadMenuRows() {
   });
 
   document.getElementById("menu-reset")?.addEventListener("click", () => {
+    window.cebCsvTools.clearOverride(CATALOG_PATH);
     window.cebCsvTools.clearOverride(DISHES_PATH);
     window.cebCsvTools.clearOverride(MENU_PATH);
     window.cebCsvTools.clearOverride(PRICE_PATH);

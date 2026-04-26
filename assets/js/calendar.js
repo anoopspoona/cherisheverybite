@@ -40,7 +40,13 @@ function monthStart(d) {
   return new Date(d.getFullYear(), d.getMonth(), 1);
 }
 
-function renderCalendarMonths(startDate, activeMap, dailyAddons) {
+function getDateAddonTotal(date, dayAddonItems) {
+  const rows = dayAddonItems.get(date);
+  if (!rows) return 0;
+  return Array.from(rows.values()).reduce((sum, qty) => sum + Number(qty || 0), 0);
+}
+
+function renderCalendarMonths(startDate, activeMap, dayAddonItems) {
   const wrap = document.getElementById("calendar-grid");
   if (!wrap) return;
   wrap.innerHTML = "";
@@ -71,15 +77,14 @@ function renderCalendarMonths(startDate, activeMap, dailyAddons) {
       box.innerHTML = `<div class="num">${day}</div>`;
 
       if (activeMap.has(key)) {
-        const qty = Number(dailyAddons.get(key) || 0);
+        const qty = getDateAddonTotal(key, dayAddonItems);
         box.classList.add("active");
+        box.setAttribute("data-action", "open-addon-panel");
+        box.setAttribute("data-date", key);
         box.innerHTML += `
+          <button class="day-addon-open" type="button" data-action="open-addon-panel" data-date="${key}" aria-label="Open add-ons for ${key}">+</button>
           <div class="dish">${escapeHtml(activeMap.get(key))}</div>
-          <div class="day-addon-row">
-            <button class="day-addon-btn" type="button" data-action="minus-addon" data-date="${key}" aria-label="Reduce add-ons for ${key}">-</button>
-            <span class="day-addon-qty">Add-ons: ${qty}</span>
-            <button class="day-addon-btn" type="button" data-action="plus-addon" data-date="${key}" aria-label="Add add-ons for ${key}">+</button>
-          </div>
+          ${qty > 0 ? `<div class="legend">Add-ons selected: ${qty}</div>` : ""}
         `;
       } else if (current.getDay() === 0) {
         box.innerHTML += `<div class="dish">Sunday</div>`;
@@ -96,6 +101,33 @@ function renderCalendarMonths(startDate, activeMap, dailyAddons) {
 async function loadDishes(plan, meal) {
   const rows = await fetchCSV(csvFor(plan, meal));
   return rows.map(row => row.Dish || row.dish || "").filter(Boolean);
+}
+
+async function loadAddonCatalog() {
+  const catalogRows = await fetchCSV("catalog.csv").catch(() => []);
+  const addonRows = catalogRows
+    .filter(row => String(row.record_type || row.Record_Type || "").toLowerCase() === "addon")
+    .map(row => ({
+      id: row.id || row.ID || row.addon_id || row.Addon_ID || "",
+      name: row.name || row.Name || row.addon_name || row.Addon_Name || "",
+      category: row.category || row.Category || row.addon_type || row.Addon_Type || "Add-on",
+      price: row.price || row.Price || row.unit_price || row.Unit_Price || "",
+      status: row.status || row.Status || "live"
+    }))
+    .filter(row => row.id && row.name && String(row.status).toLowerCase() === "live");
+
+  if (addonRows.length) return addonRows;
+
+  const rows = await fetchCSV("addons.csv").catch(() => []);
+  return rows
+    .map(row => ({
+      id: row.Addon_ID || row.addon_id || row.id || "",
+      name: row.Addon_Name || row.addon_name || row.Name || row.name || "",
+      category: row.Category || row.category || row.Addon_Type || row.addon_type || "Add-on",
+      price: row.Price || row.price || row.Unit_Price || row.unit_price || "",
+      status: row.Status || row.status || "live"
+    }))
+    .filter(row => row.id && row.name && String(row.status).toLowerCase() === "live");
 }
 
 (async function init() {
@@ -127,8 +159,15 @@ async function loadDishes(plan, meal) {
   const pickLocationBtn = document.getElementById("pick-location-btn");
   const notesInput = document.getElementById("customer-notes");
   const calendarGrid = document.getElementById("calendar-grid");
+  const dayAddonPanel = document.getElementById("day-addon-panel");
+  const dayAddonTitle = document.getElementById("day-addon-title");
+  const dayAddonGrid = document.getElementById("day-addon-grid");
+
   const locationMap = new Map();
-  const dailyAddons = new Map();
+  const dayAddonItems = new Map();
+  let addonCatalog = [];
+  let selectedAddonDate = "";
+
   const currentUserEmail = window.localStorage.getItem(CURRENT_USER_KEY) || "";
   const knownUsers = (() => {
     try {
@@ -153,6 +192,7 @@ async function loadDishes(plan, meal) {
   if (mealSelect) mealSelect.value = meal;
   if (title) title.textContent = `${PLAN_LABELS[plan] || "Plan"} • ${meal[0].toUpperCase() + meal.slice(1)} Calendar`;
   if (back) back.href = `${plan}-plan.html`;
+
   function updatePickerLink() {
     if (!pickLocationBtn) return;
     const pickerParams = new URLSearchParams({
@@ -196,6 +236,13 @@ async function loadDishes(plan, meal) {
     }
   }
 
+  function serializeDayAddonItems() {
+    return Array.from(dayAddonItems.entries()).map(([date, itemMap]) => ({
+      date,
+      items: Array.from(itemMap.entries()).map(([id, qty]) => ({ id, qty }))
+    }));
+  }
+
   function saveDraft() {
     const payload = {
       name: nameInput?.value.trim() || "",
@@ -207,7 +254,8 @@ async function loadDishes(plan, meal) {
       plan: planSelect?.value || "",
       meal: mealSelect?.value || "",
       period: periodSelect?.value || "",
-      dailyAddons: Array.from(dailyAddons.entries()).map(([date, qty]) => ({ date, qty })),
+      dayAddonItems: serializeDayAddonItems(),
+      selectedAddonDate,
       userEmail: currentUserEmail
     };
     try {
@@ -229,9 +277,16 @@ async function loadDishes(plan, meal) {
     if (!params.get("meal") && mealSelect && draft.meal) mealSelect.value = draft.meal;
     if (!params.get("period") && periodSelect && draft.period) periodSelect.value = draft.period;
     if (!deliveryLocationParam && locationSelect && draft.locationId) locationSelect.value = draft.locationId;
-    if (Array.isArray(draft.dailyAddons)) {
-      draft.dailyAddons.forEach(item => {
-        if (item?.date && Number(item.qty) > 0) dailyAddons.set(String(item.date), Number(item.qty));
+    selectedAddonDate = String(draft.selectedAddonDate || "");
+    if (Array.isArray(draft.dayAddonItems)) {
+      draft.dayAddonItems.forEach(entry => {
+        if (!entry?.date || !Array.isArray(entry.items)) return;
+        const itemMap = new Map();
+        entry.items.forEach(item => {
+          const qty = Number(item?.qty || 0);
+          if (item?.id && qty > 0) itemMap.set(String(item.id), qty);
+        });
+        if (itemMap.size) dayAddonItems.set(String(entry.date), itemMap);
       });
     }
   }
@@ -269,8 +324,27 @@ async function loadDishes(plan, meal) {
     }
   }
 
+  function getAddonBreakdownForDate(date) {
+    const itemMap = dayAddonItems.get(date);
+    if (!itemMap) return [];
+    return Array.from(itemMap.entries())
+      .map(([id, qty]) => {
+        const addon = addonCatalog.find(row => row.id === id);
+        return addon ? { id, name: addon.name, qty, price: addon.price } : null;
+      })
+      .filter(Boolean);
+  }
+
   function buildOrderPayload() {
-    const schedule = currentSelection?.schedule || [];
+    const schedule = (currentSelection?.schedule || []).map(entry => {
+      const addons = getAddonBreakdownForDate(entry.date);
+      return {
+        ...entry,
+        addons,
+        addonQty: addons.reduce((sum, item) => sum + Number(item.qty || 0), 0)
+      };
+    });
+
     return {
       savedAt: new Date().toISOString(),
       name: nameInput?.value.trim() || "",
@@ -287,7 +361,8 @@ async function loadDishes(plan, meal) {
       totalAddons: schedule.reduce((sum, entry) => sum + Number(entry.addonQty || 0), 0),
       dailyAddons: schedule
         .filter(entry => Number(entry.addonQty || 0) > 0)
-        .map(entry => ({ date: entry.date, qty: Number(entry.addonQty) }))
+        .map(entry => ({ date: entry.date, items: entry.addons })),
+      schedule
     };
   }
 
@@ -328,6 +403,38 @@ async function loadDishes(plan, meal) {
     }
   }
 
+  function renderDayAddonPanel() {
+    if (!dayAddonPanel || !dayAddonTitle || !dayAddonGrid) return;
+    if (!selectedAddonDate) {
+      dayAddonPanel.hidden = true;
+      return;
+    }
+    dayAddonPanel.hidden = false;
+    dayAddonTitle.textContent = `Add-ons for ${selectedAddonDate}`;
+
+    const itemMap = dayAddonItems.get(selectedAddonDate) || new Map();
+
+    if (!addonCatalog.length) {
+      dayAddonGrid.innerHTML = `<p class="legend">Add-ons unavailable (check catalog.csv/addons.csv).</p>`;
+      return;
+    }
+
+    dayAddonGrid.innerHTML = addonCatalog.map(item => {
+      const qty = Number(itemMap.get(item.id) || 0);
+      return `
+        <article class="addon-item">
+          <div class="addon-title">${escapeHtml(item.name)}</div>
+          <div class="addon-meta">${escapeHtml(item.category)}${item.price ? ` • ${escapeHtml(item.price)}` : ""}</div>
+          <div class="addon-actions">
+            <button class="addon-btn" type="button" data-action="addon-minus" data-addon-id="${escapeHtml(item.id)}">-</button>
+            <span class="addon-qty">Qty: ${qty}</span>
+            <button class="addon-btn" type="button" data-action="addon-plus" data-addon-id="${escapeHtml(item.id)}">+</button>
+          </div>
+        </article>
+      `;
+    }).join("");
+  }
+
   async function refresh() {
     const selectedPlan = planSelect?.value || plan;
     const selectedMeal = mealSelect?.value || meal;
@@ -348,9 +455,10 @@ async function loadDishes(plan, meal) {
       activeMap.set(iso, dishes[idx % dishes.length]);
     });
 
-    Array.from(dailyAddons.keys()).forEach(date => {
-      if (!activeMap.has(date)) dailyAddons.delete(date);
+    Array.from(dayAddonItems.keys()).forEach(date => {
+      if (!activeMap.has(date)) dayAddonItems.delete(date);
     });
+    if (selectedAddonDate && !activeMap.has(selectedAddonDate)) selectedAddonDate = "";
 
     currentSelection = {
       plan: selectedPlan,
@@ -366,7 +474,8 @@ async function loadDishes(plan, meal) {
       }))
     };
 
-    renderCalendarMonths(start, activeMap, dailyAddons);
+    renderCalendarMonths(start, activeMap, dayAddonItems);
+    renderDayAddonPanel();
   }
 
   function setFeedback(type, message) {
@@ -420,12 +529,12 @@ async function loadDishes(plan, meal) {
       return;
     }
 
-    const scheduleLines = (currentSelection.schedule || [])
+    const orderPayload = buildOrderPayload();
+    const scheduleLines = (orderPayload.schedule || [])
       .map(entry => `${entry.date}: ${entry.dish}${entry.addonQty ? ` (Add-ons: ${entry.addonQty})` : ""}`)
       .join("\n");
-    const addonLines = (currentSelection.schedule || [])
-      .filter(entry => Number(entry.addonQty || 0) > 0)
-      .map(entry => `${entry.date}: ${entry.addonQty}`)
+    const addonLines = (orderPayload.dailyAddons || [])
+      .map(entry => `${entry.date}: ${entry.items.map(item => `${item.name} x${item.qty}`).join(", ")}`)
       .join("\n");
     const totalAddons = (currentSelection.schedule || []).reduce((sum, entry) => sum + Number(entry.addonQty || 0), 0);
 
@@ -444,7 +553,7 @@ async function loadDishes(plan, meal) {
       `Active Days: ${currentSelection.activeDays}`,
       `Start Date: ${currentSelection.start}`,
       `End Date: ${currentSelection.end}`,
-      `Total Add-ons: ${totalAddons}`,
+      `Total Add-ons: ${orderPayload.totalAddons || 0}`,
       addonLines ? "Add-ons by day:" : "",
       addonLines || "",
       "Day-wise Menu:",
@@ -456,7 +565,6 @@ async function loadDishes(plan, meal) {
     setFeedback("success", "Ready. Tap confirm to continue on WhatsApp.");
     saveDraft();
   }
-
 
   if (confirmBtn) {
     confirmBtn.addEventListener("click", async event => {
@@ -517,27 +625,52 @@ async function loadDishes(plan, meal) {
     calendarGrid.addEventListener("click", async event => {
       const target = event.target instanceof HTMLElement ? event.target : null;
       if (!target) return;
+      const actionTarget = target.closest("[data-action='open-addon-panel']");
+      if (!(actionTarget instanceof HTMLElement)) return;
+      const date = actionTarget.getAttribute("data-date") || "";
+      if (!date) return;
+      selectedAddonDate = date;
+      renderDayAddonPanel();
+      updateConfirmLink();
+      saveDraft();
+    });
+  }
+
+  if (dayAddonGrid) {
+    dayAddonGrid.addEventListener("click", event => {
+      const target = event.target instanceof HTMLElement ? event.target : null;
+      if (!target || !selectedAddonDate) return;
       const action = target.getAttribute("data-action");
-      const date = target.getAttribute("data-date") || "";
-      if (!action || !date) return;
+      const addonId = target.getAttribute("data-addon-id") || "";
+      if (!action || !addonId) return;
 
-      const currentQty = Number(dailyAddons.get(date) || 0);
-      if (action === "plus-addon") {
-        dailyAddons.set(date, currentQty + 1);
+      const itemMap = dayAddonItems.get(selectedAddonDate) || new Map();
+      const qty = Number(itemMap.get(addonId) || 0);
+      if (action === "addon-plus") {
+        itemMap.set(addonId, qty + 1);
       }
-      if (action === "minus-addon") {
-        const nextQty = Math.max(0, currentQty - 1);
-        if (nextQty === 0) dailyAddons.delete(date);
-        else dailyAddons.set(date, nextQty);
+      if (action === "addon-minus") {
+        const nextQty = Math.max(0, qty - 1);
+        if (nextQty > 0) itemMap.set(addonId, nextQty);
+        else itemMap.delete(addonId);
       }
 
-      await refresh();
+      if (itemMap.size) dayAddonItems.set(selectedAddonDate, itemMap);
+      else dayAddonItems.delete(selectedAddonDate);
+
+      renderDayAddonPanel();
+      if (currentSelection) {
+        const start = new Date(currentSelection.start);
+        const activeMap = new Map(currentSelection.schedule.map(item => [item.date, item.dish]));
+        renderCalendarMonths(start, activeMap, dayAddonItems);
+      }
       updateConfirmLink();
       saveDraft();
     });
   }
 
   await loadLocations();
+  addonCatalog = await loadAddonCatalog();
   applyDraft();
   await refresh();
   updateConfirmLink();
