@@ -131,7 +131,10 @@ async function saveCalendarOverride() {
 function enforceAdminAccess() {
   const allowedEmails = Array.isArray(runtime.adminEmails) ? runtime.adminEmails : [];
   if (!allowedEmails.length) return true;
-  const current = String(localStorage.getItem("ceb_current_user_v1") || "").toLowerCase();
+  const current = String(localStorage.getItem("ceb_current_user_v1") || "").trim().toLowerCase();
+  if (!current) {
+    setFeedback("Admin login required. Please sign in from account page with an allowed email.");
+  }
   const allowed = allowedEmails.includes(current);
   if (allowed) return true;
   const controls = document.querySelectorAll("button, textarea, input, select");
