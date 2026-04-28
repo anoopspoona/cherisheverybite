@@ -41,16 +41,16 @@
         </select>
       </div>
       <div>
-        <label for="plan-select">Plan</label>
-        <select id="plan-select">
-          <option value="elite">Elite</option>
-          <option value="basic">Basic</option>
-          <option value="weightloss">Weight Loss</option>
-          <option value="diabetic">Diabetic</option>
-          <option value="smoothie">Smoothie</option>
-          <option value="salad">Salad</option>
-          <option value="customised">Customised</option>
+        <label for="variant-select">Food Preference</label>
+        <select id="variant-select">
+          <option value="veg">Veg</option>
+          <option value="nonveg">Non-Veg</option>
+          <option value="standard">Standard</option>
         </select>
+      </div>
+      <div>
+        <label for="plan-select">Plan</label>
+        <select id="plan-select"></select>
       </div>
       <div>
         <label for="customer-name">Name</label>
@@ -78,8 +78,15 @@
       </div>
     </section>
 
+    <section class="day-card" style="margin:12px 0;padding:16px;">
+      <p id="subscription-price" class="legend" style="font-weight:700;color:#14532d;margin:0 0 8px;">Plan price: --</p>
+      <p id="addons-price" class="legend" style="margin:0 0 8px;">Add-on total: ₹0</p>
+      <p id="bill-total" class="legend" style="font-weight:700;margin:0;">Total bill: --</p>
+    </section>
+
     <p>
       <a id="confirm-subscription" class="btn btn-green" href="#" target="_blank" rel="noopener">Confirm Subscription</a>
+      <a id="back-to-subscription" class="btn btn-soft" href="plans.html">Back to Subscription</a>
     </p>
     <p id="confirm-feedback" class="legend"></p>
 

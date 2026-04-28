@@ -32,19 +32,20 @@ function resolveImageUrl(value) {
 
 function planPriceLabel(row = {}) {
   const candidates = [
+    row["Price for monthly subscription"],
+    row.Monthly_Price,
+    row.monthly_price,
     row.Price,
     row.price,
     row.Plan_Price,
     row.plan_price,
     row.Base_Price,
     row.base_price,
-    row.Monthly_Price,
-    row.monthly_price,
     row.Variant_Price,
     row.variant_price
   ];
   const first = candidates.find(value => String(value || "").trim());
-  if (!first) return "Price on request";
+  if (!first) return "";
   const text = String(first).trim();
   return /^[₹$]/.test(text) ? text : `₹${text}`;
 }
@@ -124,15 +125,19 @@ function renderPlans(rows) {
     deduped.push(row);
   }
 
-  wrap.innerHTML = deduped.map(row => `
+  wrap.innerHTML = deduped.map(row => {
+    const price = planPriceLabel(row);
+    const planLabel = String(row.Plan_Key || row.plan_key || row.Plan_Name || "Plan").trim();
+    return `
     <article class="plan-card">
-      <h3>${escapeHtml(row.Plan_Name)}</h3>
+      <h3>${escapeHtml(planLabel)}</h3>
       <p class="muted">${escapeHtml(row.Description || "")}</p>
       <p class="muted">Duration: ${escapeHtml(row.Duration_Days)} days • Meals/day: ${escapeHtml(row.Meals_Per_Day)}</p>
-      <p class="legend" style="font-weight:700;color:#14532d">Starting at ${escapeHtml(planPriceLabel(row))}</p>
-      <a class="btn btn-soft" href="${escapeHtml(planUrl(row.Plan_Key))}">View ${escapeHtml(row.Plan_Name)}</a>
+      ${price ? `<p class="legend" style="font-weight:700;color:#14532d">Starting at ${escapeHtml(price)}</p>` : ""}
+      <a class="btn btn-soft" href="${escapeHtml(planUrl(row.Plan_Key))}">View ${escapeHtml(planLabel)}</a>
     </article>
-  `).join("");
+  `;
+  }).join("");
 }
 
 function normalizeSlides(rows) {
