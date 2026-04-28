@@ -20,7 +20,31 @@
   <main class="container hero">
     <section class="hero-card">
       <h1>Subscription Plans</h1>
-      <p class="muted">Choose a plan to view full day-wise meals and enquire on WhatsApp.</p>
+      <p class="muted">Choose your preferences and continue to the subscription calendar.</p>
+      <section class="controls" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-top:18px;">
+        <div>
+          <label for="plan-period-select">Duration</label>
+          <select id="plan-period-select">
+            <option value="weekly">Weekly</option>
+            <option value="monthly">Monthly</option>
+          </select>
+        </div>
+        <div>
+          <label for="plan-meal-select">Meal Slot</label>
+          <select id="plan-meal-select">
+            <option value="lunch">Lunch</option>
+            <option value="dinner">Dinner</option>
+          </select>
+        </div>
+        <div>
+          <label for="plan-variant-select">Food Preference</label>
+          <select id="plan-variant-select">
+            <option value="veg">Veg</option>
+            <option value="nonveg">Non-Veg</option>
+            <option value="standard">Standard</option>
+          </select>
+        </div>
+      </section>
       <div id="plans-grid" class="grid" style="grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); margin-top: 20px;"></div>
     </section>
   </main>

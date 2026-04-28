@@ -1,17 +1,15 @@
 const WHATSAPP_NUMBER = "916282023762";
-const PLAN_PAGE_BY_KEY = {
-  elite: "elite-plan.html",
-  salad: "salad-plan.html",
-  weightloss: "weightloss-plan.html",
-  basic: "basic-plan.html",
-  customised: "customised-plan.html",
-  smoothie: "smoothie-plan.html",
-  diabetic: "diabetic-plan.html"
-};
+function normalizeKey(value) {
+  return String(value || "").trim().toLowerCase();
+}
 
-function planUrl(planKey) {
-  const key = String(planKey || "").trim().toLowerCase();
-  return PLAN_PAGE_BY_KEY[key] || `plan.html?plan=${encodeURIComponent(planKey || "")}`;
+function calendarUrlForPlan(row = {}) {
+  const planKey = normalizeKey(row.Plan_Key || row.plan_key || "");
+  const planName = normalizeKey(row.Plan_Name || row.plan_name || "");
+  const meal = planName.includes("dinner") ? "dinner" : "lunch";
+  const variant = normalizeKey(row.Variant_Key || row.variant_key || "veg") || "veg";
+  const period = "weekly";
+  return `calendar.html?plan=${encodeURIComponent(planKey)}&meal=${encodeURIComponent(meal)}&period=${encodeURIComponent(period)}&variant=${encodeURIComponent(variant)}`;
 }
 
 function normalizePrice(price) {
@@ -30,23 +28,16 @@ function resolveImageUrl(value) {
   return raw.replace(/^\.\//, "");
 }
 
-function planPriceLabel(row = {}) {
-  const candidates = [
-    row.Price,
-    row.price,
-    row.Plan_Price,
-    row.plan_price,
-    row.Base_Price,
-    row.base_price,
-    row.Monthly_Price,
-    row.monthly_price,
-    row.Variant_Price,
-    row.variant_price
-  ];
-  const first = candidates.find(value => String(value || "").trim());
-  if (!first) return "Price on request";
-  const text = String(first).trim();
+function moneyLabel(value) {
+  const text = String(value || "").trim();
+  if (!text) return "";
   return /^[₹$]/.test(text) ? text : `₹${text}`;
+}
+
+function getPlanPriceLines(row = {}) {
+  const weekly = moneyLabel(row["Price for weekly subscription"] || row.Weekly_Price || row.weekly_price);
+  const monthly = moneyLabel(row["Price for monthly subscription"] || row.Monthly_Price || row.monthly_price || row.Price || row.price);
+  return { weekly, monthly };
 }
 
 function groupMenu(rows) {
@@ -124,15 +115,21 @@ function renderPlans(rows) {
     deduped.push(row);
   }
 
-  wrap.innerHTML = deduped.map(row => `
+  wrap.innerHTML = deduped.map(row => {
+    const { weekly, monthly } = getPlanPriceLines(row);
+    const planLabel = String(row.Plan_Key || row.plan_key || row.Plan_Name || "Plan").trim();
+    const calendarUrl = calendarUrlForPlan(row);
+    return `
     <article class="plan-card">
-      <h3>${escapeHtml(row.Plan_Name)}</h3>
+      <h3>${escapeHtml(planLabel)}</h3>
       <p class="muted">${escapeHtml(row.Description || "")}</p>
       <p class="muted">Duration: ${escapeHtml(row.Duration_Days)} days • Meals/day: ${escapeHtml(row.Meals_Per_Day)}</p>
-      <p class="legend" style="font-weight:700;color:#14532d">Starting at ${escapeHtml(planPriceLabel(row))}</p>
-      <a class="btn btn-soft" href="${escapeHtml(planUrl(row.Plan_Key))}">View ${escapeHtml(row.Plan_Name)}</a>
+      <p class="legend" style="font-weight:700;color:#14532d;margin-bottom:6px;">Weekly: ${escapeHtml(weekly || "--")}</p>
+      <p class="legend" style="font-weight:700;color:#14532d;margin-top:0;">Monthly: ${escapeHtml(monthly || "--")}</p>
+      <a class="btn btn-soft" href="${escapeHtml(calendarUrl)}">View Plan</a>
     </article>
-  `).join("");
+  `;
+  }).join("");
 }
 
 function normalizeSlides(rows) {
