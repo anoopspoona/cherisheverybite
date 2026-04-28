@@ -143,10 +143,10 @@ body {
 .story-card h2 { color: #fff; }
 .story-card p { margin: 0; color: rgba(255,255,255,.96); }
 .story-card:nth-child(1) {
-  background: url("assets/hero/Shop photo.jpg") center/cover no-repeat;
+  background: url("../hero/Shop photo.jpg") center/cover no-repeat;
 }
 .story-card:nth-child(2) {
-  background: url("assets/hero/Picture20.png") center/cover no-repeat;
+  background: url("../hero/Picture20.png") center/cover no-repeat;
 }
 
 .section-top h2,
