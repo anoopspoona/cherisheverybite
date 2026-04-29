@@ -30,26 +30,6 @@ function parseNumeric(value) {
   return Number.isFinite(numeric) ? numeric : 0;
 }
 
-function normalizeKey(value) {
-  return String(value || "").trim().toLowerCase();
-}
-
-function formatLabel(value) {
-  const text = String(value || "").trim();
-  return text || "-";
-}
-
-function formatCurrency(value) {
-  const numeric = Number(String(value || "").replace(/[^0-9.]/g, ""));
-  if (!Number.isFinite(numeric) || numeric <= 0) return null;
-  return `₹${numeric.toLocaleString("en-IN")}`;
-}
-
-function parseNumeric(value) {
-  const numeric = Number(String(value || "").replace(/[^0-9.]/g, ""));
-  return Number.isFinite(numeric) ? numeric : 0;
-}
-
 function csvFor(plan, meal) {
   return `calendar_${plan}_${meal}.csv`;
 }
