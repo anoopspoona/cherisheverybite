@@ -27,6 +27,16 @@ header{position:sticky;top:0;background:rgba(255,255,255,.95);border-bottom:1px 
 .day-addon-trigger{margin-top:8px;border:1px solid rgba(31,109,71,.22);background:#f0faf4;color:#14532d;border-radius:999px;padding:4px 10px;font-size:.72rem;font-weight:700;cursor:pointer}
 .legend{font-size:.88rem;color:var(--muted)}
 @media(max-width:980px){.controls{grid-template-columns:repeat(2,minmax(0,1fr))}.calendar-grid{grid-template-columns:1fr}}
+@media(max-width:720px){
+  .container{width:min(1120px,calc(100% - 20px))}
+  .nav{justify-content:center}
+  .nav .btn{flex:1 1 calc(50% - 8px);min-width:140px}
+  .controls{grid-template-columns:1fr}
+  .month-card{padding:10px}
+  .day{min-height:74px;padding:6px}
+  .day .dish{font-size:.72rem}
+  #confirm-subscription,#back-to-subscription{width:100%;margin-bottom:8px}
+}
 
 .legend{padding:0}
 .legend.error{margin-top:10px;padding:10px 12px;border-radius:10px;background:#fff1f2;border:1px solid #fecdd3;color:#9f1239;font-weight:700}

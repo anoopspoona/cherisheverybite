@@ -143,10 +143,10 @@ body {
 .story-card h2 { color: #fff; }
 .story-card p { margin: 0; color: rgba(255,255,255,.96); }
 .story-card:nth-child(1) {
-  background: url("assets/hero/Picture24.png") center/cover no-repeat;
+  background: url("../hero/Shop photo.jpg") center/cover no-repeat;
 }
 .story-card:nth-child(2) {
-  background: url("assets/hero/Picture22.png") center/cover no-repeat;
+  background: url("../hero/Picture20.png") center/cover no-repeat;
 }
 
 .section-top h2,
@@ -203,6 +203,13 @@ body {
 }
 
 @media (max-width: 720px) {
+  .container { width: min(1120px, calc(100% - 20px)); }
+  .nav { justify-content: center; }
+  .nav-actions { width: 100%; }
+  .nav-actions .btn { flex: 1 1 calc(50% - 8px); min-width: 140px; }
+  .plan-card .btn { width: 100%; }
+  .item-list li { grid-template-columns: 24px 52px 1fr; }
+  .item-list li .price { grid-column: 2 / 4; justify-self: start; }
   .hero-strip-item { width: 50vw; height: 36vw; }
 }
 
