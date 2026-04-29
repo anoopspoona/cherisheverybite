@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Console | Cherish Every Bite</title>
+  <link rel="stylesheet" href="assets/css/main.css" />
+  <link rel="stylesheet" href="assets/css/admin.css" />
+  <link rel="stylesheet" href="assets/css/sidebar.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container nav">
+      <div class="brand">
+        <h1>Admin Console</h1>
+        <p>Menu and subscription calendar management</p>
+      </div>
+      <div class="nav-actions">
+        <a class="btn btn-soft" href="menu.html">Our Menu</a>
+        <a class="btn btn-soft" href="plans.html">Subscription Plans</a>
+        <a class="btn btn-primary" href="https://order.cherisheverybite.com/outlet/56752198194843" target="_blank" rel="noopener">Order Now</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="section">
+    <div class="container admin-grid">
+      <section class="card">
+        <h2>Menu Manager</h2>
+        <p class="muted">Add, edit, or delete dishes. Changes are saved as browser overrides and reflected across the site.</p>
+        <div class="action-row">
+          <button id="menu-add" class="btn btn-soft" type="button">Add Dish</button>
+          <button id="menu-save" class="btn btn-primary" type="button">Save Menu</button>
+          <button id="menu-reset" class="btn btn-soft" type="button">Reset Menu Override</button>
+        </div>
+        <div id="menu-table-wrap" class="table-wrap"></div>
+      </section>
+
+      <section class="card">
+        <h2>Subscription Calendar Manager</h2>
+        <p class="muted">Set dish rotation for each plan + meal pair. One dish per line.</p>
+        <div class="calendar-controls">
+          <label>Plan
+            <select id="cal-plan">
+              <option value="elite">Elite</option>
+              <option value="basic">Basic</option>
+              <option value="weightloss">Weight Loss</option>
+              <option value="diabetic">Diabetic</option>
+              <option value="smoothie">Smoothie</option>
+            </select>
+          </label>
+          <label>Meal
+            <select id="cal-meal">
+              <option value="lunch">Lunch</option>
+              <option value="dinner">Dinner</option>
+            </select>
+          </label>
+          <button id="cal-load" class="btn btn-soft" type="button">Load</button>
+        </div>
+        <textarea id="calendar-dishes" rows="14" placeholder="Dish 1&#10;Dish 2&#10;Dish 3"></textarea>
+        <div class="action-row">
+          <button id="cal-save" class="btn btn-primary" type="button">Save Calendar</button>
+          <button id="cal-reset" class="btn btn-soft" type="button">Reset Calendar Override</button>
+        </div>
+      </section>
+    </div>
+    <div class="container">
+      <p id="admin-feedback" class="muted"></p>
+    </div>
+  </main>
+
+  <script src="assets/js/common.js"></script>
+  <script src="assets/js/runtime.js"></script>
+  <script src="assets/js/backend.js"></script>
+  <script src="assets/js/admin.js"></script>
+  <script src="assets/js/sidebar.js"></script>
+</body>
+</html>

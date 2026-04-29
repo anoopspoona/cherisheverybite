@@ -1,0 +1,15 @@
+.admin-grid{display:grid;grid-template-columns:1.25fr 1fr;gap:16px}
+.table-wrap{overflow:auto;margin-top:12px}
+table{width:100%;border-collapse:collapse}
+th,td{border:1px solid rgba(0,0,0,.12);padding:8px;vertical-align:top}
+th{background:#f3f7f4;text-align:left}
+input,select,textarea{width:100%;border:1px solid rgba(0,0,0,.15);border-radius:8px;padding:8px;font:inherit}
+.action-row{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+.calendar-controls{display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:end}
+.delete-row{background:#fff4f4;color:#99171d;border:1px solid rgba(153,23,29,.2)}
+@media(max-width:980px){.admin-grid{grid-template-columns:1fr}}
+@media(max-width:700px){
+  .calendar-controls{grid-template-columns:1fr}
+  .action-row .btn{flex:1 1 100%}
+  th,td{padding:6px}
+}
