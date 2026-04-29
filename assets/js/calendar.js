@@ -7,6 +7,28 @@ const USERS_KEY = "ceb_users_v1";
 const CURRENT_USER_KEY = "ceb_current_user_v1";
 const ADDRESS_KEY = "ceb_saved_addresses_v1";
 const PROFILE_KEY = "ceb_customer_profiles_v1";
+const SUBSCRIPTION_CYCLE_ANCHOR_KEY = "ceb_subscription_cycle_anchor_v1";
+const DEFAULT_SUBSCRIPTION_CYCLE_ANCHOR = "2026-05-01";
+
+function normalizeKey(value) {
+  return String(value || "").trim().toLowerCase();
+}
+
+function formatLabel(value) {
+  const text = String(value || "").trim();
+  return text || "-";
+}
+
+function formatCurrency(value) {
+  const numeric = Number(String(value || "").replace(/[^0-9.]/g, ""));
+  if (!Number.isFinite(numeric) || numeric <= 0) return null;
+  return `₹${numeric.toLocaleString("en-IN")}`;
+}
+
+function parseNumeric(value) {
+  const numeric = Number(String(value || "").replace(/[^0-9.]/g, ""));
+  return Number.isFinite(numeric) ? numeric : 0;
+}
 
 function normalizeKey(value) {
   return String(value || "").trim().toLowerCase();
@@ -110,6 +132,51 @@ async function loadDishes(plan, meal, variantKey = "") {
 
   const rows = await fetchCSV(csvFor(plan, meal));
   return rows.map(row => row.Dish || row.dish || "").filter(Boolean);
+}
+
+function getSubscriptionCycleAnchorDate() {
+  const stored = String(window.localStorage.getItem(SUBSCRIPTION_CYCLE_ANCHOR_KEY) || "").trim();
+  const anchor = /^\d{4}-\d{2}-\d{2}$/.test(stored) ? stored : DEFAULT_SUBSCRIPTION_CYCLE_ANCHOR;
+  const parsed = new Date(anchor);
+  return Number.isNaN(parsed.getTime()) ? new Date(DEFAULT_SUBSCRIPTION_CYCLE_ANCHOR) : parsed;
+}
+
+function daysDiff(a, b) {
+  const msPerDay = 24 * 60 * 60 * 1000;
+  const utcA = Date.UTC(a.getFullYear(), a.getMonth(), a.getDate());
+  const utcB = Date.UTC(b.getFullYear(), b.getMonth(), b.getDate());
+  return Math.floor((utcA - utcB) / msPerDay);
+}
+
+function cycleWeekLabelForDate(targetDate, anchorDate) {
+  const diff = daysDiff(targetDate, anchorDate);
+  const normalized = ((Math.floor(diff / 7) % 4) + 4) % 4;
+  return `w${normalized + 1}`;
+}
+
+function dayNameForDate(date) {
+  return date.toLocaleDateString("en-US", { weekday: "long" }).toLowerCase();
+}
+
+function mealForDate(planMealRows, date, mealType) {
+  const dayLabel = dayNameForDate(date);
+  const weekLabel = cycleWeekLabelForDate(date, getSubscriptionCycleAnchorDate());
+  const forDay = planMealRows.filter(row => {
+    const rowWeek = normalizeKey(row.Week || row.week);
+    const rowDay = normalizeKey(row.Day || row.day);
+    const rowMeal = normalizeKey(row.Meal_Type || row.meal_type);
+    if (rowMeal !== normalizeKey(mealType)) return false;
+    return rowWeek === weekLabel && rowDay === dayLabel;
+  });
+  if (!forDay.length) return "";
+
+  const mainRows = forDay.filter(row => normalizeKey(row.Component || row.component) === "main");
+  const source = mainRows.length ? mainRows : forDay;
+  const items = source
+    .map(row => row.Item_Name || row.item_name || row.Dish || row.dish || "")
+    .map(value => String(value || "").trim())
+    .filter(Boolean);
+  return Array.from(new Set(items)).join(" • ");
 }
 
 
@@ -598,13 +665,24 @@ async function loadAddonCatalog() {
       if (title) title.textContent = `${formatLabel(selectedPlan)} • ${selectedMeal[0].toUpperCase() + selectedMeal.slice(1)} • ${formatVariantLabel(selectedVariant)}`;
       updatePickerLink();
 
-      const dishRows = await loadDishes(selectedPlan, selectedMeal, selectedVariant).catch(() => []);
-      const dishes = dishRows.length ? dishRows : ["Menu to be updated"];
+      const allPlanMeals = await loadPlanMeals();
+      const planMealRows = allPlanMeals
+        .filter(row => normalizeKey(row.Plan_Key || row.plan_key) === normalizeKey(selectedPlan))
+        .filter(row => normalizeKey(row.Meal_Type || row.meal_type) === normalizeKey(selectedMeal));
+      const variantRows = planMealRows.filter(row => {
+        const rowVariant = normalizeKey(row.Variant_Key || row.variant_key);
+        return !rowVariant || rowVariant === normalizeKey(selectedVariant);
+      });
+      const effectiveRows = variantRows.length ? variantRows : planMealRows;
+      const fallbackDishes = await loadDishes(selectedPlan, selectedMeal, selectedVariant).catch(() => []);
+      const dishes = fallbackDishes.length ? fallbackDishes : ["Menu to be updated"];
       const activeCount = selectedPeriod === "monthly" ? 24 : 6;
       const dates = nextActiveDates(start, activeCount);
       const activeMap = new Map();
       dates.forEach((iso, idx) => {
-        activeMap.set(iso, dishes[idx % dishes.length]);
+        const dateObj = new Date(iso);
+        const menuForDate = mealForDate(effectiveRows, dateObj, selectedMeal);
+        activeMap.set(iso, menuForDate || dishes[idx % dishes.length]);
       });
 
       Array.from(dayAddonItems.keys()).forEach(date => {
@@ -622,7 +700,7 @@ async function loadAddonCatalog() {
         activeDays: activeCount,
         schedule: dates.map((iso, idx) => ({
           date: iso,
-          dish: dishes[idx % dishes.length],
+          dish: activeMap.get(iso) || dishes[idx % dishes.length],
           addonQty: getDateAddonTotal(iso)
         }))
       };
