@@ -1,6 +1,8 @@
 const MENU_PATH = "menu.csv";
 const PRICE_PATH = "prices.csv";
 const CATALOG_PATH = "catalog.csv";
+const SUBSCRIPTION_CYCLE_ANCHOR_KEY = "ceb_subscription_cycle_anchor_v1";
+const DEFAULT_SUBSCRIPTION_CYCLE_ANCHOR = "2026-05-01";
 const runtime = window.cebRuntime || {};
 let preservedCatalogNonDishRows = [];
 let hasCatalogSchema = false;
@@ -167,6 +169,13 @@ function setAdminConsoleVisible(visible) {
   if (consoleWrap) consoleWrap.style.display = visible ? "grid" : "none";
 }
 
+function loadCycleAnchorSetting() {
+  const input = document.getElementById("cycle-anchor-date");
+  if (!input) return;
+  const stored = String(window.localStorage.getItem(SUBSCRIPTION_CYCLE_ANCHOR_KEY) || "").trim();
+  input.value = /^\d{4}-\d{2}-\d{2}$/.test(stored) ? stored : DEFAULT_SUBSCRIPTION_CYCLE_ANCHOR;
+}
+
 async function getCurrentAdminIdentifier() {
   if (window.cebAuth?.enabled) {
     const user = await window.cebAuth.getCurrentUser();
@@ -251,6 +260,7 @@ async function enforceAdminAccess() {
   });
   renderMenuTable(stateRows);
   await loadCalendarEditor();
+  loadCycleAnchorSetting();
   await enforceAdminAccess();
 
   document.getElementById("admin-google-login")?.addEventListener("click", async () => {
@@ -316,5 +326,22 @@ async function enforceAdminAccess() {
     if (!path) return;
     window.cebCsvTools.clearOverride(path);
     setFeedback(`Cleared calendar override for ${path}.`);
+  });
+
+  document.getElementById("cycle-save")?.addEventListener("click", () => {
+    const input = document.getElementById("cycle-anchor-date");
+    const value = String(input?.value || "").trim();
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+      setFeedback("Enter a valid cycle start date.");
+      return;
+    }
+    window.localStorage.setItem(SUBSCRIPTION_CYCLE_ANCHOR_KEY, value);
+    setFeedback(`Saved cycle start date: ${value}.`);
+  });
+
+  document.getElementById("cycle-reset")?.addEventListener("click", () => {
+    window.localStorage.removeItem(SUBSCRIPTION_CYCLE_ANCHOR_KEY);
+    loadCycleAnchorSetting();
+    setFeedback(`Cycle start date reset to default (${DEFAULT_SUBSCRIPTION_CYCLE_ANCHOR}).`);
   });
 })();
