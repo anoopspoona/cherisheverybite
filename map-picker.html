@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Select Delivery Location | Cherish Every Bite</title>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
   <link rel="stylesheet" href="assets/css/map-picker.css" />
   <link rel="stylesheet" href="assets/css/sidebar.css" />
 </head>
@@ -35,8 +34,13 @@
     <div id="map" aria-label="Delivery location map"></div>
   </main>
 
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script>
+    window.CEB_MAPS_CONFIG = {
+      googleMapsApiKey: "YOUR_GOOGLE_MAPS_API_KEY"
+    };
+  </script>
   <script src="assets/js/map-picker.js"></script>
+  <script async defer src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&callback=initMapPicker"></script>
   <script src="assets/js/sidebar.js"></script>
 </body>
 </html>
