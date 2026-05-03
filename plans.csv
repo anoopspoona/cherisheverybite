@@ -1,22 +1,18 @@
 Plan_Key,Plan_Name,Variant_Key,Variant_Name,Duration_Days,Meals_Per_Day,Price for monthly subscription,Price for weekly subscription,Status,Description
-Elite,Elite Plan-Lunch,veg,Veg,24,Upto 4,18000,4500,live,"Premium weekly rotation with lunch, snack, drink and dinner options."
-Elite,Elite Plan-Lunch,nonveg,Non-Veg,24,Upto 4,18000,4500,live,Premium weekly rotation with higher-protein non-veg selections.
-Elite,Elite Plan-DInner,veg,Veg,24,Upto 4,18000,4500,live,"Premium weekly rotation with lunch, snack, drink and dinner options."
-Elite,Elite Plan-Dinner,nonveg,Non-Veg,24,Upto 4,18000,4500,live,Premium weekly rotation with higher-protein non-veg selections.
-Budget,Budget Plan-Lunch,veg,Veg,24,Upto 4,18000,4500,live,"Pocket friendly weekly rotation with lunch, snack, drink and dinner options."
-Budget,Budget Plan-Lunch,nonveg,Non-Veg,24,Upto 4,18000,4500,live,Pocket friendly weekly rotation with higher-protein non-veg selections.
-Budget,Budget Plan-Dinner,veg,Veg,24,Upto 4,18000,4500,live,"Pocket friendly weekly rotation with lunch, snack, drink and dinner options."
-Budget,Budget Plan-Dinner,nonveg,Non-Veg,24,Upto 4,18000,4500,live,Pocket friendly weekly rotation with higher-protein non-veg selections.
-Diabetic,Diabetic Plan-Lunch,veg,Veg,24,3,10000,2500,live,Low-glycemic curated dishes designed for diabetic-friendly meal cycles.
-Diabetic,Diabetic Plan-Lunch,nonveg,Non-Veg,24,3,10000,2500,live,Low-glycemic curated dishes designed for diabetic-friendly meal cycles.
-Diabetic,Diabetic Plan-Dinner,veg,Veg,24,3,10000,2500,live,Low-glycemic curated dishes designed for diabetic-friendly meal cycles.
-Diabetic,Diabetic Plan-Dinner,nonveg,Non-Veg,24,3,10000,2500,live,Low-glycemic curated dishes designed for diabetic-friendly meal cycles.
-Basic,Basic Plan-Lunch,veg,Veg,24,2,9000,2250,live,Simple lunch and dinner combinations for everyday healthy eating.
-Basic,Basic Plan-Lunch,nonveg,Non-Veg,24,2,9000,2250,live,Simple non-veg lunch and dinner combinations.
-Basic,Basic Plan-Dinner,veg,Veg,24,2,9000,2250,live,Simple lunch and dinner combinations for everyday healthy eating.
-Basic,Basic Plan-Dinner,nonveg,Non-Veg,24,2,9000,2250,live,Simple non-veg lunch and dinner combinations.
-Weightloss,Weight Loss Plan-Lunch,veg,Veg,24,3,12000,3000,live,"Calorie-conscious lunch, drink and dinner combinations."
-Weightloss,Weight Loss Plan-Lunch,nonveg,Non-Veg,24,3,12000,3000,live,Calorie-conscious non-veg meal combinations.
-Weightloss,Weight Loss Plan-Dinner,veg,Veg,24,3,12000,3000,live,"Calorie-conscious lunch, drink and dinner combinations."
-Weightloss,Weight Loss Plan-Dinner,nonveg,Non-Veg,24,3,12000,3000,live,Calorie-conscious non-veg meal combinations.
-Smoothie,Smoothie Plan,standard,Standard,24,2,7000,1750,live,Smoothie-focused breakfast and snack routine with curated rotations.
+elite,Elite Plan-Lunch,veg,Veg,24,Upto 4,10000,2500,live,"Premium weekly rotation with lunch, snack, drink and dinner options."
+elite,Elite Plan-Lunch,nonveg,Non-Veg,24,Upto 4,10000,2500,live,Premium weekly rotation with higher-protein non-veg selections.
+elite,Elite Plan-DInner,veg,Veg,24,Upto 4,10000,2500,live,"Premium weekly rotation with lunch, snack, drink and dinner options."
+elite,Elite Plan-Dinner,nonveg,Non-Veg,24,Upto 4,10000,2500,live,Premium weekly rotation with higher-protein non-veg selections.
+diabetic,Diabetic Plan-Lunch,veg,Veg,24,3,7500,1875,live,Low-glycemic curated dishes designed for diabetic-friendly meal cycles.
+diabetic,Diabetic Plan-Lunch,nonveg,Non-Veg,24,3,7500,1875,live,Low-glycemic curated dishes designed for diabetic-friendly meal cycles.
+diabetic,Diabetic Plan-Dinner,veg,Veg,24,3,7500,1875,live,Low-glycemic curated dishes designed for diabetic-friendly meal cycles.
+diabetic,Diabetic Plan-Dinner,nonveg,Non-Veg,24,3,7500,1875,live,Low-glycemic curated dishes designed for diabetic-friendly meal cycles.
+Basic,Basic Plan-Lunch,veg,Veg,24,2,7500,1875,live,Simple lunch and dinner combinations for everyday healthy eating.
+Basic,Basic Plan-Lunch,nonveg,Non-Veg,24,2,7500,1875,live,Simple non-veg lunch and dinner combinations.
+Basic,Basic Plan-Dinner,veg,Veg,24,2,7500,1875,live,Simple lunch and dinner combinations for everyday healthy eating.
+Basic,Basic Plan-Dinner,nonveg,Non-Veg,24,2,7500,1875,live,Simple non-veg lunch and dinner combinations.
+weightloss,Weight Loss Plan-Lunch,veg,Veg,24,3,7500,1875,live,"Calorie-conscious lunch, drink and dinner combinations."
+weightloss,Weight Loss Plan-Lunch,nonveg,Non-Veg,24,3,7500,1875,live,Calorie-conscious non-veg meal combinations.
+weightloss,Weight Loss Plan-Dinner,veg,Veg,24,3,7500,1875,live,"Calorie-conscious lunch, drink and dinner combinations."
+weightloss,Weight Loss Plan-Dinner,nonveg,Non-Veg,24,3,7500,1875,live,Calorie-conscious non-veg meal combinations.
+smoothie,Smoothie Plan,standard,Standard,24,2,7000,1750,live,Smoothie-focused breakfast and snack routine with curated rotations.
