@@ -143,10 +143,10 @@ body {
 .story-card h2 { color: #fff; }
 .story-card p { margin: 0; color: rgba(255,255,255,.96); }
 .story-card:nth-child(1) {
-  background: url("assets/hero/Picture24.png") center/cover no-repeat;
+  background: url("../hero/Shop photo.jpg") center/cover no-repeat;
 }
 .story-card:nth-child(2) {
-  background: url("assets/hero/Picture22.png") center/cover no-repeat;
+  background: url("../hero/Picture20.png") center/cover no-repeat;
 }
 
 .section-top h2,
@@ -159,30 +159,82 @@ body {
 .footer-grid,
 .diet-form { display: grid; gap: var(--space-4); }
 
-.menu-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: var(--space-4); align-items: start; }
+.menu-grid { display:block; column-count:2; column-gap: var(--space-4); margin-top: var(--space-4); }
 .plan-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); margin-top: var(--space-4); }
 
 .menu-section,
 .plan-card {
   background: #fff;
-  border: 1px solid rgba(0, 0, 0, 0.07);
-  border-radius: 16px;
-  padding: var(--space-4);
-  transition: transform 0.18s ease, box-shadow 0.18s ease;
+  border: 1px solid rgba(31, 109, 71, 0.12);
+  border-radius: 18px;
+  padding: 20px;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
 }
-.menu-section { align-self: start; }
+.menu-section { align-self: start; break-inside: avoid; -webkit-column-break-inside: avoid; page-break-inside: avoid; margin: 0 0 var(--space-4); display: inline-block; width: 100%; }
 .menu-section:hover,
-.plan-card:hover { transform: translateY(-2px); box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1); }
+.plan-card:hover { transform: translateY(-2px); box-shadow: 0 14px 28px rgba(0, 0, 0, 0.1); border-color: rgba(31, 109, 71, 0.2); }
 
 .menu-title-row { display: flex; justify-content: space-between; gap: var(--space-2); align-items: center; }
-.menu-title { margin: 0; color: var(--green); }
-.item-list { list-style: none; padding: 0; margin: var(--space-3) 0 0; display: grid; gap: var(--space-2); }
-.item-list li { display: grid; grid-template-columns: 28px 56px 1fr auto; gap: var(--space-2); align-items: center; }
-.dish-thumb { width: 56px; height: 56px; border-radius: 10px; object-fit: cover; border: 1px solid rgba(0,0,0,.08); }
+.menu-title { margin: 0; color: var(--green); font-size: 1.2rem; letter-spacing: .01em; }
+.item-list { list-style: none; padding: 0; margin: 18px 0 0; display: grid; gap: 14px; }
+.item-list li { display: grid; grid-template-columns: 28px 70px 1fr auto; gap: 12px; align-items: center; padding: 10px; border-radius: 14px; background: #fbfefd; border: 1px solid rgba(31,109,71,.08); }
+.dish-thumb { width: 70px; height: 70px; border-radius: 12px; object-fit: cover; border: 1px solid rgba(0,0,0,.08); }
 .count,
-.price { font-size: 0.82rem; border-radius: 999px; padding: 6px 10px; }
+.price { font-size: 0.82rem; border-radius: 999px; padding: 7px 11px; }
 .count { background: #eef8f2; color: #165b3a; }
-.price { background: #fff4f4; color: var(--red-dark); }
+.price { background: #fff1f1; color: var(--red-dark); font-weight: 700; }
+.nutrition-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.nutrition-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-size: .72rem;
+  font-weight: 600;
+  color: #1f6d47;
+  background: linear-gradient(180deg, #f4fbf7, #eaf6ef);
+  border: 1px solid rgba(31, 109, 71, .2);
+}
+.preorder-cat-toggle { width: 100%; justify-content: space-between; margin-bottom: 8px; }
+.preorder-cat-body .item-list { margin-top: 6px; }
+.preorder-item { grid-template-columns: 1fr auto; align-items: start; }
+.preorder-item .action-row { grid-column: 1 / -1; }
+.preorder-page .section { padding-top: 22px; }
+.preorder-shell {
+  max-width: 1180px;
+  border-radius: 22px;
+  border: 1px solid rgba(31,109,71,.14);
+  box-shadow: 0 18px 44px rgba(12,48,30,.1);
+}
+.preorder-shell h2 { font-size: 1.55rem; color: #1f6d47; margin-bottom: 8px; }
+.preorder-feedback { min-height: 22px; font-weight: 600; }
+.preorder-item strong { display:block; font-size: 1.08rem; line-height:1.35; color: #123f2a; max-width: 100%; }
+.nutrition-icon { width: 16px; display: inline-flex; justify-content: center; }
+.preorder-page #preorder-menu { column-count: 1; display: block; }
+.preorder-page .menu-section { width: 100%; margin-bottom: 18px; }
+.preorder-category-bar {
+  position: sticky;
+  top: 84px;
+  z-index: 5;
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 8px 2px 12px;
+  margin-bottom: 8px;
+  background: linear-gradient(180deg,#fff,rgba(255,255,255,.92));
+}
+.preorder-cat-chip { white-space: nowrap; min-height: 40px; }
+.preorder-cat-chip.is-active {
+  background: #fff;
+  border-color: rgba(200,32,39,.42);
+  color: #9d1a20;
+  box-shadow: 0 8px 20px rgba(200,32,39,.18);
+}
+.nutrition-row-preorder { justify-content: flex-start; margin-top: 8px; }
+.nutrition-row-preorder .nutrition-pill { min-width: 78px; justify-content: center; }
+.nutrition-row-preorder .nutrition-pill.is-red { border-color: rgba(200,32,39,.3); color: #a11d24; background: #fff3f3; }
+.nutrition-row-preorder .nutrition-pill.is-green { border-color: rgba(31,109,71,.3); color: #14532d; background: #eefaf2; }
 
 .diet-form input {
   border: 1px solid rgba(0, 0, 0, 0.15);
@@ -200,9 +252,17 @@ body {
   .plan-grid,
   .footer-grid,
   .brand-story-grid { grid-template-columns: 1fr; }
+  .menu-grid { column-count: 1; }
 }
 
 @media (max-width: 720px) {
+  .container { width: min(1120px, calc(100% - 20px)); }
+  .nav { justify-content: center; }
+  .nav-actions { width: 100%; }
+  .nav-actions .btn { flex: 1 1 calc(50% - 8px); min-width: 140px; }
+  .plan-card .btn { width: 100%; }
+  .item-list li { grid-template-columns: 24px 56px 1fr; padding: 8px; }
+  .item-list li .price { grid-column: 2 / 4; justify-self: start; }
   .hero-strip-item { width: 50vw; height: 36vw; }
 }
 
