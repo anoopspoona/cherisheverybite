@@ -56,6 +56,11 @@ function groupMenu(rows) {
       mealType: row.Meal_Type || row.meal_type || "",
       price: normalizePrice(row.Price || row.price || ""),
       tag: row.Tag || row.tag || "",
+      calories: row.Calories || row.calories || "",
+      protein: row.Protein || row.protein || "",
+      carbohydrates: row.Carbohydrates || row.carbohydrates || row.Carbs || row.carbs || "",
+      fats: row.Fats || row.fats || "",
+      fiber: row.Fiber || row.fiber || "",
       imageUrl: resolveImageUrl(row.Image_URL || row.image_url || row.Image || row.image || row.url || row.URL || row.thumbnail || row.Thumbnail)
     });
   }
@@ -86,6 +91,13 @@ function renderMenu(groups) {
         <div>
           <strong>${escapeHtml(item.name)}</strong>
           ${item.mealType ? `<div class="muted">${escapeHtml(item.mealType)}</div>` : ""}
+          ${(item.calories || item.protein || item.carbohydrates || item.fats || item.fiber) ? `<div class="muted" style="font-size:.78rem;">${[
+            item.calories ? `Cal ${escapeHtml(item.calories)}` : "",
+            item.protein ? `Protein ${escapeHtml(item.protein)}g` : "",
+            item.carbohydrates ? `Carbs ${escapeHtml(item.carbohydrates)}g` : "",
+            item.fats ? `Fat ${escapeHtml(item.fats)}g` : "",
+            item.fiber ? `Fiber ${escapeHtml(item.fiber)}g` : ""
+          ].filter(Boolean).join(" • ")}</div>` : ""}
         </div>
         <span class="price">${escapeHtml(item.price)}</span>
       </li>
@@ -237,7 +249,12 @@ function attachDietChartForm() {
         Meal_Type: row.meal_type || row.Meal_Type || row.addon_type || row.Addon_Type || "",
         Image_URL: row.image_url || row.Image_URL || row.addon_image_url || row.Addon_Image_URL || row.url || row.URL || row.thumbnail || row.Thumbnail || row.source || row.Source || "",
         Price: row.price || row.Price || row.unit_price || row.Unit_Price || "",
-        Status: row.status || row.Status || "live"
+        Status: row.status || row.Status || "live",
+        Calories: row.Calories || row.calories || "",
+        Protein: row.Protein || row.protein || "",
+        Carbohydrates: row.Carbohydrates || row.carbohydrates || row.Carbs || row.carbs || "",
+        Fats: row.Fats || row.fats || "",
+        Fiber: row.Fiber || row.fiber || ""
       }))
       .filter(row => row.Dish_ID && row.Dish_Name);
     const priceMap = new Map(priceRows.map(priceRow => [priceRow.Dish_ID || priceRow.dish_id, priceRow]));
