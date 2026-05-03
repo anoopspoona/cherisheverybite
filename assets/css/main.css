@@ -196,6 +196,10 @@ body {
   background: linear-gradient(180deg, #f4fbf7, #eaf6ef);
   border: 1px solid rgba(31, 109, 71, .2);
 }
+.preorder-cat-toggle { width: 100%; justify-content: space-between; margin-bottom: 8px; }
+.preorder-cat-body .item-list { margin-top: 6px; }
+.preorder-item { grid-template-columns: 1fr auto; align-items: center; }
+.preorder-item .action-row { grid-column: 1 / -1; }
 
 .diet-form input {
   border: 1px solid rgba(0, 0, 0, 0.15);
