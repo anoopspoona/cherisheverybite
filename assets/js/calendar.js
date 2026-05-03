@@ -81,11 +81,59 @@ function haversineKm(a, b) {
 }
 
 let planMealsCache = null;
+let allPlansNutritionCache = null;
 
 async function loadPlanMeals() {
   if (planMealsCache) return planMealsCache;
   planMealsCache = await fetchCSV("plan_meals.csv").catch(() => []);
   return planMealsCache;
+}
+
+async function loadAllPlansNutrition() {
+  if (allPlansNutritionCache) return allPlansNutritionCache;
+  allPlansNutritionCache = await fetchCSV("allplans_nutrition.csv").catch(() => []);
+  return allPlansNutritionCache;
+}
+
+function weekToken(value) {
+  const text = normalizeKey(value);
+  const match = text.match(/(\d+)/);
+  if (!match) return "";
+  return `w${match[1]}`;
+}
+
+function dayToken(value) {
+  return normalizeKey(value).slice(0, 3);
+}
+
+function buildUnifiedEntry(rows, selectedPlan, selectedVariant, selectedMeal, date) {
+  const week = cycleWeekLabelForDate(date, getSubscriptionCycleAnchorDate());
+  const day = dayToken(dayNameForDate(date));
+  const planNeedle = normalizeKey(selectedPlan);
+  const mealNeedle = normalizeKey(selectedMeal);
+  const variantNeedle = normalizeKey(selectedVariant);
+
+  const matched = rows.find(row => {
+    const planLabel = normalizeKey(row.Plan || row.plan || "");
+    const rowWeek = weekToken(row.Week || row["Data.Column1"] || row.data_column1);
+    const rowDay = dayToken(row.Day || row["Data.Column2"] || row.data_column2);
+    const variantHit = !variantNeedle || planLabel.includes(variantNeedle.replace("-", ""));
+    return planLabel.includes(planNeedle) && planLabel.includes(mealNeedle) && variantHit && rowWeek === week && rowDay === day;
+  });
+  if (!matched) return null;
+
+  const cols = ["Data.Column3", "Data.Column4", "Data.Column5", "Data.Column6", "Data.Column7"]
+    .map(key => matched[key] || matched[key.toLowerCase()] || "")
+    .map(v => String(v || "").trim())
+    .filter(Boolean);
+  const nutrition = {
+    calories: matched.Calories || matched.calories || "",
+    protein: matched["Protein Carbohydrates"] ? String(matched["Protein Carbohydrates"]).split(/\s+/)[0] : (matched.Protein || matched.protein || ""),
+    carbohydrates: matched.Carbohydrates || matched.carbohydrates || "",
+    fats: matched.Fats || matched.fats || "",
+    fiber: matched.Fiber || matched.fiber || ""
+  };
+  return { dish: cols[0] || "Menu item", details: cols, nutrition };
 }
 
 async function loadDishes(plan, meal, variantKey = "") {
@@ -432,7 +480,9 @@ async function loadAddonCatalog() {
             box.setAttribute("data-action", "open-addon-panel");
             box.setAttribute("data-date", key);
             box.innerHTML += `
-              <div class="dish">${escapeHtml(activeMap.get(key))}</div>
+              <div class="dish">${escapeHtml(activeMap.get(key)?.dish || activeMap.get(key) || "")}</div>
+              ${activeMap.get(key)?.nutrition?.calories ? `<div class="day-nutrition">🔥 ${escapeHtml(activeMap.get(key).nutrition.calories)} kcal</div>` : ""}
+              ${(activeMap.get(key)?.details || []).length ? `<div class="day-popup">${escapeHtml((activeMap.get(key).details || []).join(" • "))}</div>` : ""}
               <button class="day-addon-trigger" type="button" data-action="open-addon-panel" data-date="${key}">Add-ons</button>
               ${qty > 0 ? `<div class="day-addon-count">${qty} add-on${qty > 1 ? "s" : ""}</div>` : `<div class="day-hint">Tap to customize</div>`}
             `;
@@ -646,6 +696,7 @@ async function loadAddonCatalog() {
       updatePickerLink();
 
       const allPlanMeals = await loadPlanMeals();
+      const allPlansNutritionRows = await loadAllPlansNutrition();
       const planMealRows = allPlanMeals
         .filter(row => normalizeKey(row.Plan_Key || row.plan_key) === normalizeKey(selectedPlan))
         .filter(row => normalizeKey(row.Meal_Type || row.meal_type) === normalizeKey(selectedMeal));
@@ -661,8 +712,9 @@ async function loadAddonCatalog() {
       const activeMap = new Map();
       dates.forEach((iso, idx) => {
         const dateObj = new Date(iso);
+        const unified = buildUnifiedEntry(allPlansNutritionRows, selectedPlan, selectedVariant, selectedMeal, dateObj);
         const menuForDate = mealForDate(effectiveRows, dateObj, selectedMeal);
-        activeMap.set(iso, menuForDate || dishes[idx % dishes.length]);
+        activeMap.set(iso, unified || { dish: menuForDate || dishes[idx % dishes.length], details: [], nutrition: {} });
       });
 
       Array.from(dayAddonItems.keys()).forEach(date => {
@@ -680,7 +732,7 @@ async function loadAddonCatalog() {
         activeDays: activeCount,
         schedule: dates.map((iso, idx) => ({
           date: iso,
-          dish: activeMap.get(iso) || dishes[idx % dishes.length],
+          dish: activeMap.get(iso)?.dish || activeMap.get(iso) || dishes[idx % dishes.length],
           addonQty: getDateAddonTotal(iso)
         }))
       };

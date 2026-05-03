@@ -22,6 +22,10 @@ header{position:sticky;top:0;background:rgba(255,255,255,.95);border-bottom:1px 
 .day.active:hover{border-color:#8fb99f;box-shadow:0 6px 14px rgba(15,60,35,.08);transform:translateY(-1px)}
 .day.active.selected{border-color:#1f6d47;box-shadow:0 0 0 2px rgba(31,109,71,.16)}
 .day .dish{margin-top:6px;color:#1f2937;line-height:1.25;font-weight:600}
+.day-nutrition{margin-top:6px;font-size:.7rem;color:#166534;font-weight:700}
+.day-popup{display:none;position:absolute;left:8px;right:8px;top:34px;background:#0f172a;color:#fff;border-radius:10px;padding:8px;font-size:.68rem;line-height:1.35;z-index:2;box-shadow:0 8px 20px rgba(0,0,0,.25)}
+.day.active{position:relative}
+.day.active:hover .day-popup{display:block}
 .day-addon-count{margin-top:8px;display:inline-flex;padding:3px 8px;border-radius:999px;background:#eef8f2;color:#165b3a;font-size:.72rem;font-weight:700}
 .day-hint{margin-top:8px;font-size:.72rem;color:#6b7280}
 .day-addon-trigger{margin-top:8px;border:1px solid rgba(31,109,71,.22);background:#f0faf4;color:#14532d;border-radius:999px;padding:4px 10px;font-size:.72rem;font-weight:700;cursor:pointer}
