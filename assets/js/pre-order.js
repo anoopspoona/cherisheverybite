@@ -43,13 +43,14 @@ function groupByCategory(items) {
   const confirm = document.getElementById("preorder-confirm");
 
   const today = new Date();
+  const minDate = new Date(today.getTime() + 24 * 60 * 60 * 1000);
   const maxDate = new Date(today);
   maxDate.setMonth(maxDate.getMonth() + 3);
   const fmt = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
   if (dateInput) {
-    dateInput.min = fmt(today);
+    dateInput.min = fmt(minDate);
     dateInput.max = fmt(maxDate);
-    dateInput.value = fmt(today);
+    dateInput.value = fmt(minDate);
   }
 
   const catalogRows = await fetchCSV("catalog.csv").catch(() => []);
@@ -69,7 +70,8 @@ function groupByCategory(items) {
       const inner = group.rows.map(item => {
         const qty = Number(qtyById.get(item.id) || 0);
         return `<li class="menu-card preorder-item">
-          <div class="dish-title-wrap">
+          <div class="dish-head">
+            <div class="dish-title-wrap">
             <strong class="dish-title">${escapeHtml(item.name)}</strong>
             <div class="muted">${item.mealType ? escapeHtml(item.mealType) : ""}</div>
             ${(item.calories || item.protein || item.carbohydrates || item.fats || item.fiber) ? `<div class="nutrition-chips">
@@ -79,8 +81,9 @@ function groupByCategory(items) {
               ${item.fats ? `<span class="nutrition-pill is-red"><span class="nutrition-icon">💧</span><span>${escapeHtml(item.fats)}g</span></span>` : ""}
               ${item.fiber ? `<span class="nutrition-pill is-green"><span class="nutrition-icon">🌿</span><span>${escapeHtml(item.fiber)}g</span></span>` : ""}
             </div>` : ""}
+            </div>
+            <p class="price">${escapeHtml(item.price)}</p>
           </div>
-          <p class="price" style="display:inline-flex">${escapeHtml(item.price)}</p>
           <div class="action-row" style="margin-top:8px;">
             <button class="btn btn-soft" data-id="${escapeHtml(item.id)}" data-action="minus" type="button">-</button>
             <span>Qty: ${qty}</span>
@@ -151,6 +154,17 @@ function groupByCategory(items) {
 
   [dateInput, nameInput, phoneInput].forEach(el => el?.addEventListener("input", updateConfirm));
   [dateInput, nameInput, phoneInput].forEach(el => el?.addEventListener("change", updateConfirm));
+
+  if (confirm) {
+    confirm.addEventListener("click", event => {
+      if (!confirm.href || confirm.getAttribute("href") === "#") {
+        event.preventDefault();
+        return;
+      }
+      event.preventDefault();
+      window.open(confirm.href, "_blank", "noopener");
+    });
+  }
 
   render();
   updateConfirm();
