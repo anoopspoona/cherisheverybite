@@ -36,6 +36,20 @@
 
     <div class="container admin-grid" id="admin-console">
       <section class="card">
+        <h2>Subscription Cycle Settings</h2>
+        <p class="muted">Week rotation anchor date for W1→W4 plan cycle. Default is 2026-05-01.</p>
+        <div class="calendar-controls">
+          <label>Cycle Start Date
+            <input id="cycle-anchor-date" type="date" />
+          </label>
+        </div>
+        <div class="action-row">
+          <button id="cycle-save" class="btn btn-primary" type="button">Save Cycle Start</button>
+          <button id="cycle-reset" class="btn btn-soft" type="button">Reset to Default</button>
+        </div>
+      </section>
+
+      <section class="card">
         <h2>Menu Manager</h2>
         <p class="muted">Add, edit, or delete dishes. Changes are saved as browser overrides and reflected across the site.</p>
         <div class="action-row">
