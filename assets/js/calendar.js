@@ -138,6 +138,14 @@ function buildUnifiedEntry(rows, selectedPlan, selectedVariant, selectedMeal, da
 }
 
 async function loadDishes(plan, meal, variantKey = "") {
+  if (normalizeKey(plan) === "smoothie") {
+    const rows = await fetchCSV("Smoothie-GutBoosterPlan.csv").catch(() => []);
+    const items = rows
+      .map(row => row.Dish || row.dish || row["Data.Column3"] || row["Data.Column4"] || "")
+      .map(v => String(v || "").trim())
+      .filter(Boolean);
+    if (items.length) return Array.from(new Set(items));
+  }
   const planMealsRows = await loadPlanMeals();
   const normalizedVariant = String(variantKey || "").trim().toLowerCase();
   const byPlanMeal = planMealsRows
@@ -847,8 +855,15 @@ async function loadAddonCatalog() {
     if (nameInput && !nameInput.value && currentProfile.name) nameInput.value = currentProfile.name;
     if (phoneInput && !phoneInput.value && currentProfile.phone) phoneInput.value = currentProfile.phone;
 
-    const today = new Date();
-    if (startInput) startInput.value = startDateParam || formatIso(today);
+    const minStartDate = new Date(Date.now() + 24 * 60 * 60 * 1000);
+    if (startInput) {
+      startInput.min = formatIso(minStartDate);
+      const requestedStart = startDateParam ? new Date(startDateParam) : null;
+      const safeStart = requestedStart && !Number.isNaN(requestedStart.getTime()) && requestedStart >= minStartDate
+        ? requestedStart
+        : minStartDate;
+      startInput.value = formatIso(safeStart);
+    }
 
     if (confirmBtn) {
       confirmBtn.addEventListener("click", async event => {
