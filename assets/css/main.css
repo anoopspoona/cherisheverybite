@@ -198,7 +198,9 @@ body {
 }
 .preorder-cat-toggle { width: 100%; justify-content: space-between; margin-bottom: 8px; }
 .preorder-cat-body .item-list { margin-top: 6px; }
-.preorder-item { grid-template-columns: 1fr auto; align-items: start; }
+.preorder-item { grid-template-columns: 1fr; align-items: start; row-gap: 8px; }
+.preorder-item > div { width: 100%; min-width: 0; }
+.preorder-item .price { justify-self: start; }
 .preorder-item .action-row { grid-column: 1 / -1; }
 .preorder-page .section { padding-top: 22px; }
 .preorder-shell {
@@ -232,7 +234,7 @@ body {
   box-shadow: 0 8px 20px rgba(200,32,39,.18);
 }
 .nutrition-row-preorder { justify-content: flex-start; margin-top: 8px; }
-.nutrition-row-preorder .nutrition-pill { min-width: 78px; justify-content: center; }
+.nutrition-row-preorder .nutrition-pill { min-width: 78px; justify-content: center; flex: 0 0 auto; }
 .nutrition-row-preorder .nutrition-pill.is-red { border-color: rgba(200,32,39,.3); color: #a11d24; background: #fff3f3; }
 .nutrition-row-preorder .nutrition-pill.is-green { border-color: rgba(31,109,71,.3); color: #14532d; background: #eefaf2; }
 
