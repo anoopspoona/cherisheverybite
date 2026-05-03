@@ -68,11 +68,11 @@ function groupByCategory(items) {
       const isOpen = group.category === openCategory;
       const inner = group.rows.map(item => {
         const qty = Number(qtyById.get(item.id) || 0);
-        return `<li class="preorder-item">
-          <div>
-            <strong>${escapeHtml(item.name)}</strong>
+        return `<li class="menu-card preorder-item">
+          <div class="dish-title-wrap">
+            <strong class="dish-title">${escapeHtml(item.name)}</strong>
             <div class="muted">${item.mealType ? escapeHtml(item.mealType) : ""}</div>
-            ${(item.calories || item.protein || item.carbohydrates || item.fats || item.fiber) ? `<div class="nutrition-row nutrition-row-preorder">
+            ${(item.calories || item.protein || item.carbohydrates || item.fats || item.fiber) ? `<div class="nutrition-chips">
               ${item.calories ? `<span class="nutrition-pill is-red"><span class="nutrition-icon">🔥</span><span>${escapeHtml(item.calories)}</span></span>` : ""}
               ${item.protein ? `<span class="nutrition-pill is-red"><span class="nutrition-icon">💪</span><span>${escapeHtml(item.protein)}g</span></span>` : ""}
               ${item.carbohydrates ? `<span class="nutrition-pill is-green"><span class="nutrition-icon">🌾</span><span>${escapeHtml(item.carbohydrates)}g</span></span>` : ""}

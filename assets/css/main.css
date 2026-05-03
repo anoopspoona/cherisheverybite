@@ -198,8 +198,8 @@ body {
 }
 .preorder-cat-toggle { width: 100%; justify-content: space-between; margin-bottom: 8px; }
 .preorder-cat-body .item-list { margin-top: 6px; }
-.preorder-item { grid-template-columns: 1fr; align-items: start; row-gap: 8px; }
-.preorder-item > div { width: 100%; min-width: 0; }
+.menu-card.preorder-item { display: grid; grid-template-columns: 1fr; align-items: start; row-gap: 8px; }
+.menu-card.preorder-item > div { width: 100%; min-width: 0; }
 .preorder-item .price { justify-self: start; }
 .preorder-item .action-row { grid-column: 1 / -1; }
 .preorder-page .section { padding-top: 22px; }
@@ -211,7 +211,7 @@ body {
 }
 .preorder-shell h2 { font-size: 1.55rem; color: #1f6d47; margin-bottom: 8px; }
 .preorder-feedback { min-height: 22px; font-weight: 600; }
-.preorder-item strong { display:block; font-size: 1.08rem; line-height:1.35; color: #123f2a; max-width: 100%; }
+.dish-title { display:block; font-size: 1.08rem; line-height:1.35; color: #123f2a; width: 100%; flex: 0 0 100%; }
 .nutrition-icon { width: 16px; display: inline-flex; justify-content: center; }
 .preorder-page #preorder-menu { column-count: 1; display: block; }
 .preorder-page .menu-section { width: 100%; margin-bottom: 18px; }
@@ -233,10 +233,10 @@ body {
   color: #9d1a20;
   box-shadow: 0 8px 20px rgba(200,32,39,.18);
 }
-.nutrition-row-preorder { justify-content: flex-start; margin-top: 8px; }
-.nutrition-row-preorder .nutrition-pill { min-width: 78px; justify-content: center; flex: 0 0 auto; }
-.nutrition-row-preorder .nutrition-pill.is-red { border-color: rgba(200,32,39,.3); color: #a11d24; background: #fff3f3; }
-.nutrition-row-preorder .nutrition-pill.is-green { border-color: rgba(31,109,71,.3); color: #14532d; background: #eefaf2; }
+.nutrition-chips { display:flex; flex-wrap:wrap; gap:8px; margin-top:8px; }
+.nutrition-chips .nutrition-pill { min-width: 78px; justify-content: center; flex: 0 0 auto; }
+.nutrition-chips .nutrition-pill.is-red { border-color: rgba(200,32,39,.3); color: #a11d24; background: #fff3f3; }
+.nutrition-chips .nutrition-pill.is-green { border-color: rgba(31,109,71,.3); color: #14532d; background: #eefaf2; }
 
 .diet-form input {
   border: 1px solid rgba(0, 0, 0, 0.15);
