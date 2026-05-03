@@ -18,6 +18,16 @@ function normalizeMenuRows(rows) {
     .filter(item => item.id && item.name);
 }
 
+function groupByCategory(items) {
+  const map = new Map();
+  items.forEach(item => {
+    const category = String(item.category || "Menu").trim();
+    if (!map.has(category)) map.set(category, []);
+    map.get(category).push(item);
+  });
+  return Array.from(map.entries()).map(([category, rows]) => ({ category, rows }));
+}
+
 (async function initPreOrder() {
   const dateInput = document.getElementById("preorder-date");
   const nameInput = document.getElementById("preorder-name");
@@ -39,15 +49,37 @@ function normalizeMenuRows(rows) {
   const catalogRows = await fetchCSV("catalog.csv").catch(() => []);
   const items = normalizeMenuRows(catalogRows.filter(row => String(row.record_type || row.Record_Type || "dish").toLowerCase() === "dish"));
   const qtyById = new Map();
+  let openCategory = "";
 
   function render() {
     if (!menuWrap) return;
-    menuWrap.innerHTML = items.map(item => {
-      const qty = Number(qtyById.get(item.id) || 0);
-      return `<article class="menu-section"><h3 class="menu-title">${escapeHtml(item.name)}</h3>
-      <p class="muted">${escapeHtml(item.category)}${item.mealType ? ` • ${escapeHtml(item.mealType)}` : ""}</p>
-      <p class="price" style="display:inline-flex">${escapeHtml(item.price)}</p>
-      <div class="action-row" style="margin-top:8px;"><button class="btn btn-soft" data-id="${escapeHtml(item.id)}" data-action="minus" type="button">-</button><span>Qty: ${qty}</span><button class="btn btn-soft" data-id="${escapeHtml(item.id)}" data-action="plus" type="button">+</button></div></article>`;
+    const grouped = groupByCategory(items);
+    if (!openCategory && grouped.length) openCategory = grouped[0].category;
+    menuWrap.innerHTML = grouped.map(group => {
+      const isOpen = group.category === openCategory;
+      const inner = group.rows.map(item => {
+        const qty = Number(qtyById.get(item.id) || 0);
+        return `<li class="preorder-item">
+          <div>
+            <strong>${escapeHtml(item.name)}</strong>
+            <div class="muted">${item.mealType ? escapeHtml(item.mealType) : ""}</div>
+          </div>
+          <p class="price" style="display:inline-flex">${escapeHtml(item.price)}</p>
+          <div class="action-row" style="margin-top:8px;">
+            <button class="btn btn-soft" data-id="${escapeHtml(item.id)}" data-action="minus" type="button">-</button>
+            <span>Qty: ${qty}</span>
+            <button class="btn btn-soft" data-id="${escapeHtml(item.id)}" data-action="plus" type="button">+</button>
+          </div>
+        </li>`;
+      }).join("");
+      return `<article class="menu-section">
+        <button class="btn btn-soft preorder-cat-toggle" data-action="toggle-category" data-category="${escapeHtml(group.category)}" type="button">
+          ${escapeHtml(group.category)} (${group.rows.length})
+        </button>
+        <div class="preorder-cat-body" style="display:${isOpen ? "block" : "none"};">
+          <ul class="item-list">${inner}</ul>
+        </div>
+      </article>`;
     }).join("");
   }
 
@@ -78,6 +110,11 @@ function normalizeMenuRows(rows) {
     const target = event.target instanceof HTMLElement ? event.target : null;
     const btn = target?.closest("button[data-action]");
     if (!btn) return;
+    if (btn.getAttribute("data-action") === "toggle-category") {
+      openCategory = btn.getAttribute("data-category") || "";
+      render();
+      return;
+    }
     const id = btn.getAttribute("data-id") || "";
     const action = btn.getAttribute("data-action") || "";
     const qty = Number(qtyById.get(id) || 0);
