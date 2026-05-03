@@ -1,6 +1,6 @@
 const HUB = { lat: 8.575357388981113, lon: 76.91238872393365 };
 
-(function init() {
+window.initMapPicker = function initMapPicker() {
   const params = new URLSearchParams(window.location.search);
   const returnTo = params.get("return_to") || "calendar.html";
   const plan = params.get("plan") || "elite";
@@ -8,7 +8,6 @@ const HUB = { lat: 8.575357388981113, lon: 76.91238872393365 };
   const period = params.get("period") || "weekly";
   const pickedLabelParam = params.get("picked_label") || "Pinned Location";
 
-  const back = document.getElementById("back-calendar");
   const useLocation = document.getElementById("use-location");
   const useCurrentLocation = document.getElementById("use-current-location");
   const coords = document.getElementById("coords");
@@ -25,27 +24,8 @@ const HUB = { lat: 8.575357388981113, lon: 76.91238872393365 };
   carryParams.delete("picked_label");
 
   const baseQuery = carryParams.toString();
-  if (back) back.href = `${returnTo}?${baseQuery}`;
-
-  const map = L.map("map").setView([HUB.lat, HUB.lon], 13);
-  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-    maxZoom: 19,
-    attribution: "&copy; OpenStreetMap contributors"
-  }).addTo(map);
-
   let marker = null;
   let selected = null;
-
-  function setSelection(latlng) {
-    selected = latlng;
-    if (!marker) {
-      marker = L.marker(selected).addTo(map);
-    } else {
-      marker.setLatLng(selected);
-    }
-    map.panTo(selected);
-    updateLinks();
-  }
 
   function updateLinks() {
     if (!selected) return;
@@ -56,8 +36,39 @@ const HUB = { lat: 8.575357388981113, lon: 76.91238872393365 };
     if (useLocation) useLocation.href = `${returnTo}?${baseQuery}&picked_lat=${lat}&picked_lon=${lon}&picked_label=${label}`;
   }
 
-  map.on("click", event => {
-    setSelection(event.latlng);
+  function setSelection(map, latlng) {
+    selected = { lat: latlng.lat, lng: latlng.lng };
+    if (!marker) {
+      marker = new google.maps.Marker({
+        position: selected,
+        map,
+        draggable: true
+      });
+      marker.addListener("dragend", event => {
+        setSelection(map, event.latLng.toJSON());
+      });
+    } else {
+      marker.setPosition(selected);
+    }
+    map.panTo(selected);
+    updateLinks();
+  }
+
+  if (!window.google?.maps) {
+    if (coords) coords.textContent = "Google Maps did not load. Please check API key.";
+    return;
+  }
+
+  const map = new google.maps.Map(document.getElementById("map"), {
+    center: { lat: HUB.lat, lng: HUB.lon },
+    zoom: 13,
+    mapTypeControl: false,
+    streetViewControl: false,
+    fullscreenControl: true
+  });
+
+  map.addListener("click", event => {
+    setSelection(map, event.latLng.toJSON());
   });
 
   if (useCurrentLocation) {
@@ -70,8 +81,9 @@ const HUB = { lat: 8.575357388981113, lon: 76.91238872393365 };
       navigator.geolocation.getCurrentPosition(
         position => {
           const latlng = { lat: position.coords.latitude, lng: position.coords.longitude };
-          map.setView([latlng.lat, latlng.lng], 16);
-          setSelection(latlng);
+          map.setCenter(latlng);
+          map.setZoom(16);
+          setSelection(map, latlng);
         },
         () => {
           if (coords) coords.textContent = "Unable to fetch your location. Tap the map to place a pin.";
@@ -82,4 +94,4 @@ const HUB = { lat: 8.575357388981113, lon: 76.91238872393365 };
   }
 
   if (pinLabel) pinLabel.addEventListener("input", updateLinks);
-})();
+};
