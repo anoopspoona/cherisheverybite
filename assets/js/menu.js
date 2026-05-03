@@ -91,13 +91,13 @@ function renderMenu(groups) {
         <div>
           <strong>${escapeHtml(item.name)}</strong>
           ${item.mealType ? `<div class="muted">${escapeHtml(item.mealType)}</div>` : ""}
-          ${(item.calories || item.protein || item.carbohydrates || item.fats || item.fiber) ? `<div class="muted" style="font-size:.78rem;">${[
-            item.calories ? `Cal ${escapeHtml(item.calories)}` : "",
-            item.protein ? `Protein ${escapeHtml(item.protein)}g` : "",
-            item.carbohydrates ? `Carbs ${escapeHtml(item.carbohydrates)}g` : "",
-            item.fats ? `Fat ${escapeHtml(item.fats)}g` : "",
-            item.fiber ? `Fiber ${escapeHtml(item.fiber)}g` : ""
-          ].filter(Boolean).join(" • ")}</div>` : ""}
+          ${(item.calories || item.protein || item.carbohydrates || item.fats || item.fiber) ? `<div class="nutrition-row">${[
+            item.calories ? `<span class="nutrition-pill">🔥 ${escapeHtml(item.calories)} kcal</span>` : "",
+            item.protein ? `<span class="nutrition-pill">P ${escapeHtml(item.protein)}g</span>` : "",
+            item.carbohydrates ? `<span class="nutrition-pill">C ${escapeHtml(item.carbohydrates)}g</span>` : "",
+            item.fats ? `<span class="nutrition-pill">F ${escapeHtml(item.fats)}g</span>` : "",
+            item.fiber ? `<span class="nutrition-pill">Fi ${escapeHtml(item.fiber)}g</span>` : ""
+          ].filter(Boolean).join("")}</div>` : ""}
         </div>
         <span class="price">${escapeHtml(item.price)}</span>
       </li>

@@ -183,6 +183,19 @@ body {
 .price { font-size: 0.82rem; border-radius: 999px; padding: 6px 10px; }
 .count { background: #eef8f2; color: #165b3a; }
 .price { background: #fff4f4; color: var(--red-dark); }
+.nutrition-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+.nutrition-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-size: .72rem;
+  font-weight: 600;
+  color: #1f6d47;
+  background: linear-gradient(180deg, #f4fbf7, #eaf6ef);
+  border: 1px solid rgba(31, 109, 71, .18);
+}
 
 .diet-form input {
   border: 1px solid rgba(0, 0, 0, 0.15);
