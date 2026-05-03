@@ -56,6 +56,11 @@ function groupMenu(rows) {
       mealType: row.Meal_Type || row.meal_type || "",
       price: normalizePrice(row.Price || row.price || ""),
       tag: row.Tag || row.tag || "",
+      calories: row.Calories || row.calories || "",
+      protein: row.Protein || row.protein || "",
+      carbohydrates: row.Carbohydrates || row.carbohydrates || row.Carbs || row.carbs || "",
+      fats: row.Fats || row.fats || "",
+      fiber: row.Fiber || row.fiber || "",
       imageUrl: resolveImageUrl(row.Image_URL || row.image_url || row.Image || row.image || row.url || row.URL || row.thumbnail || row.Thumbnail)
     });
   }
@@ -86,6 +91,13 @@ function renderMenu(groups) {
         <div>
           <strong>${escapeHtml(item.name)}</strong>
           ${item.mealType ? `<div class="muted">${escapeHtml(item.mealType)}</div>` : ""}
+          ${(item.calories || item.protein || item.carbohydrates || item.fats || item.fiber) ? `<div class="muted" style="font-size:.78rem;">${[
+            item.calories ? `Cal ${escapeHtml(item.calories)}` : "",
+            item.protein ? `Protein ${escapeHtml(item.protein)}g` : "",
+            item.carbohydrates ? `Carbs ${escapeHtml(item.carbohydrates)}g` : "",
+            item.fats ? `Fat ${escapeHtml(item.fats)}g` : "",
+            item.fiber ? `Fiber ${escapeHtml(item.fiber)}g` : ""
+          ].filter(Boolean).join(" • ")}</div>` : ""}
         </div>
         <span class="price">${escapeHtml(item.price)}</span>
       </li>
