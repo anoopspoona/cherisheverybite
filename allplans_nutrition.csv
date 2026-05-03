@@ -1,0 +1,409 @@
+Plan,Data.Column1,Data.Column2,Data.Column3,Data.Column4,Data.Column5,Data.Column6,Data.Column7,Calories,Protein,Carbohydrates,Fats,Fiber
+Elite-Veg Plan-Lunch,Week 1,Mon,Mesclun Quinoa Salad,Paneer grilled,Cut fruits,Roasted sweet potato,Crunchy Nut mix,982,41,75,65,14
+Elite-Veg Plan-Lunch,Week 1,Tue,Yuzu Corn Salad,Paneer grilled,Cut fruits,Steamed Edamame,Maple Togarashi Spiced Nuts,797,36,58,54,10
+Elite-Veg Plan-Lunch,Week 1,Wed,Mesclun Quinoa Salad,Paneer grilled,Cut fruits,Roasted sweet potato,Crunchy Nut mix,982,41,75,65,14
+Elite-Veg Plan-Lunch,Week 1,Thu,Ragi Jowar Chapathi,Paneer Butter Masala,Toor dal fry,Mixed Vegetable Thoran,Cucumber raita,779,32,83,38,17
+Elite-Veg Plan-Lunch,Week 1,Fri,Furikake Avocado Toast,Steamed Edamame,Cut fruits,Roasted sweet potato,Crunchy Nut mix,837,27,100,41,26
+Elite-Veg Plan-Lunch,Week 1,Sat,Ragi Jowar Chapathi,Paneer Butter Masala,Toor dal fry,Mixed Vegetable Thoran,Cucumber raita,779,32,83,38,17
+Elite-Veg Plan-Lunch,Week 2,Mon,Yuzu Corn Salad,Paneer grilled,Cut fruits,Roasted sweet potato,Crunchy Nut mix,862,35,68,57,12
+Elite-Veg Plan-Lunch,Week 2,Tue,Furikake Avocado Toast,Steamed Edamame,Cut fruits,Steamed Edamame,Maple Togarashi Spiced Nuts,772,28,90,38,24
+Elite-Veg Plan-Lunch,Week 2,Wed,Ragi Jowar Chapathi,Paneer Butter Masala,Toor dal fry,Mixed Vegetable Thoran,Cucumber raita,779,32,83,38,17
+Elite-Veg Plan-Lunch,Week 2,Thu,Yuzu Corn Salad,Paneer grilled,Cut fruits,Steamed Edamame,Maple Togarashi Spiced Nuts,797,36,58,54,10
+Elite-Veg Plan-Lunch,Week 2,Fri,Ragi Jowar Chapathi,Paneer Butter Masala,Toor dal fry,Mixed Vegetable Thoran,Cucumber raita,779,32,83,38,17
+Elite-Veg Plan-Lunch,Week 2,Sat,Mesclun Quinoa Salad,Paneer grilled,Cut fruits,Steamed Edamame,Maple Togarashi Spiced Nuts,917,42,65,62,12
+Elite-Veg Plan-Lunch,Week 3,Mon,Furikake Avocado Toast,Steamed Edamame,Cut fruits,Roasted sweet potato,Crunchy Nut mix,837,27,100,41,26
+Elite-Veg Plan-Lunch,Week 3,Tue,Ragi Jowar Chapathi,Paneer Butter Masala,Toor dal fry,Mixed Vegetable Thoran,Cucumber raita,779,32,83,38,17
+Elite-Veg Plan-Lunch,Week 3,Wed,Yuzu Corn Salad,Paneer grilled,Cut fruits,Steamed Edamame,Maple Togarashi Spiced Nuts,797,36,58,54,10
+Elite-Veg Plan-Lunch,Week 3,Thu,Ragi Jowar Chapathi,Paneer Butter Masala,Toor dal fry,Mixed Vegetable Thoran,Cucumber raita,779,32,83,38,17
+Elite-Veg Plan-Lunch,Week 3,Fri,Mesclun Quinoa Salad,Paneer grilled,Cut fruits,Roasted sweet potato,Crunchy Nut mix,982,41,75,65,14
+Elite-Veg Plan-Lunch,Week 3,Sat,Furikake Avocado Toast,Steamed Edamame,Cut fruits,Steamed Edamame,Maple Togarashi Spiced Nuts,772,28,90,38,24
+Elite-Veg Plan-Lunch,Week 4,Mon,Ragi Jowar Chapathi,Paneer Butter Masala,Toor dal fry,Mixed Vegetable Thoran,Cucumber raita,779,32,83,38,17
+Elite-Veg Plan-Lunch,Week 4,Tue,Yuzu Corn Salad,Paneer grilled,Cut fruits,Steamed Edamame,Maple Togarashi Spiced Nuts,797,36,58,54,10
+Elite-Veg Plan-Lunch,Week 4,Wed,Ragi Jowar Chapathi,Paneer Butter Masala,Toor dal fry,Mixed Vegetable Thoran,Cucumber raita,779,32,83,38,17
+Elite-Veg Plan-Lunch,Week 4,Thu,Furikake Avocado Toast,Steamed Edamame,Cut fruits,Steamed Edamame,Maple Togarashi Spiced Nuts,772,28,90,38,24
+Elite-Veg Plan-Lunch,Week 4,Fri,Mesclun Quinoa Salad,Paneer grilled,Cut fruits,Roasted sweet potato,Crunchy Nut mix,982,41,75,65,14
+Elite-Veg Plan-Lunch,Week 4,Sat,Ragi Jowar Chapathi,Paneer Butter Masala,Toor dal fry,Mixed Vegetable Thoran,Cucumber raita,779,32,83,38,17
+Elite-Veg Plan-Dinner,Week 1,Mon,Ragi Jowar Chapathi,Paneer Butter Masala,Toor dal fry,Mixed Vegetable Thoran,Cucumber raita,779,32,83,38,17
+Elite-Veg Plan-Dinner,Week 1,Tue,Furikake Avocado Toast,Paneer grilled,Shirazi salad,Roasted sweet potato,Crunchy Nut mix,1165,47,103,70,25
+Elite-Veg Plan-Dinner,Week 1,Wed,Yuzu Corn Salad,Paneer grilled,Steamed Edamame,Roasted sweet potato,Maple Togarashi Spiced Nuts,859,37,67,56,12
+Elite-Veg Plan-Dinner,Week 1,Thu,Mesclun Quinoa Salad,Paneer grilled,Steamed Edamame,Roasted sweet potato,Crunchy Nut mix,993,44,73,66,14
+Elite-Veg Plan-Dinner,Week 1,Fri,Yuzu Corn Salad,Paneer grilled,Steamed Edamame,Roasted sweet potato,Maple Togarashi Spiced Nuts,859,37,67,56,12
+Elite-Veg Plan-Dinner,Week 1,Sat,Furikake Avocado Toast,Steamed Edamame,Shirazi salad,Roasted sweet potato,Crunchy Nut mix,829,27,97,41,25
+Elite-Veg Plan-Dinner,Week 2,Mon,Mesclun Quinoa Salad,Paneer grilled,Steamed Edamame,Roasted sweet potato,Maple Togarashi Spiced Nuts,979,43,74,64,14
+Elite-Veg Plan-Dinner,Week 2,Tue,Yuzu Corn Salad,Paneer grilled,Steamed Edamame,Roasted sweet potato,Crunchy Nut mix,873,38,65,58,12
+Elite-Veg Plan-Dinner,Week 2,Wed,Furikake Avocado Toast,Paneer grilled,Shirazi salad,Steamed Edamame,Maple Togarashi Spiced Nuts,1100,48,93,67,23
+Elite-Veg Plan-Dinner,Week 2,Thu,Vegetable millet broth,Paneer grilled,Shirazi salad,Roasted sweet potato,Crunchy Nut mix,714,34,54,48,11
+Elite-Veg Plan-Dinner,Week 2,Fri,Furikake Avocado Toast,Paneer grilled,Shirazi salad,Steamed Edamame,Maple Togarashi Spiced Nuts,1100,48,93,67,23
+Elite-Veg Plan-Dinner,Week 2,Sat,Ragi Jowar Chapathi,Paneer Butter Masala,Toor dal fry,Mixed Vegetable Thoran,Cucumber raita,779,32,83,38,17
+Elite-Veg Plan-Dinner,Week 3,Mon,Yuzu Corn Salad,Paneer grilled,Steamed Edamame,Roasted sweet potato,Maple Togarashi Spiced Nuts,859,37,67,56,12
+Elite-Veg Plan-Dinner,Week 3,Tue,Mesclun Quinoa Salad,Paneer grilled,Steamed Edamame,Roasted sweet potato,Crunchy Nut mix,993,44,73,66,14
+Elite-Veg Plan-Dinner,Week 3,Wed,Ragi Jowar Chapathi,Paneer Butter Masala,Toor dal fry,Mixed Vegetable Thoran,Cucumber raita,779,32,83,38,17
+Elite-Veg Plan-Dinner,Week 3,Thu,Vegetable millet broth,Paneer grilled,Shirazi salad,Roasted sweet potato,Crunchy Nut mix,714,34,54,48,11
+Elite-Veg Plan-Dinner,Week 3,Fri,Furikake Avocado Toast,Paneer grilled,Shirazi salad,Steamed Edamame,Maple Togarashi Spiced Nuts,1100,48,93,67,23
+Elite-Veg Plan-Dinner,Week 3,Sat,Ragi Jowar Chapathi,Paneer Butter Masala,Toor dal fry,Mixed Vegetable Thoran,Cucumber raita,779,32,83,38,17
+Elite-Veg Plan-Dinner,Week 4,Mon,Vegetable millet broth,Paneer grilled,Shirazi salad,Steamed Edamame,Maple Togarashi Spiced Nuts,649,35,44,45,10
+Elite-Veg Plan-Dinner,Week 4,Tue,Mesclun Quinoa Salad,Paneer grilled,Steamed Edamame,Roasted sweet potato,Crunchy Nut mix,993,44,73,66,14
+Elite-Veg Plan-Dinner,Week 4,Wed,Yuzu Corn Salad,Paneer grilled,Steamed Edamame,Roasted sweet potato,Maple Togarashi Spiced Nuts,859,37,67,56,12
+Elite-Veg Plan-Dinner,Week 4,Thu,Ragi Jowar Chapathi,Paneer Butter Masala,Toor dal fry,Mixed Vegetable Thoran,Cucumber raita,779,32,83,38,17
+Elite-Veg Plan-Dinner,Week 4,Fri,Furikake Avocado Toast,Paneer grilled,Shirazi salad,Roasted sweet potato,Maple Togarashi Spiced Nuts,1152,46,105,68,24
+Elite-Veg Plan-Dinner,Week 4,Sat,Yuzu Corn Salad,Paneer grilled,Steamed Edamame,Roasted sweet potato,Crunchy Nut mix,873,38,65,58,12
+Elite-Non-Veg Plan-Lunch,Week 1,Mon,Pulled Chicken Caesar Salad,,Cut fruits,Steamed Edamame,Crunchy Nut mix,726,51,28,45,8
+Elite-Non-Veg Plan-Lunch,Week 1,Tue,Scrambled egg sando on multigrain bread,Herbs Marinated Chicken Breast,Cut fruits,Roasted sweet potato,Maple Togarashi Spiced Nuts,735,57,58,37,11
+Elite-Non-Veg Plan-Lunch,Week 1,Wed,Yuzu Corn Salad,Herbs Marinated Chicken Breast,Cut fruits,Roasted sweet potato,Crunchy Nut mix,696,42,62,38,12
+Elite-Non-Veg Plan-Lunch,Week 1,Thu,Ragi Jowar Chapathi,Chicken curry,Toor dal fry,Mixed Vegetable Thoran,Cucumber raita,661,42,80,24,17
+Elite-Non-Veg Plan-Lunch,Week 1,Fri,Protein Chicken Collagen Millet Kanji,Omlet,Coconut Sambol,Mixed Vegetable Thoran,Maple Togarashi Spiced Nuts,582,44,44,29,10
+Elite-Non-Veg Plan-Lunch,Week 1,Sat,Furikake Avocado Toast with Jammy Eggs,Steamed Edamame,Cut fruits,Roasted sweet potato,Maple Togarashi Spiced Nuts,612,32,61,34,16
+Elite-Non-Veg Plan-Lunch,Week 2,Mon,Pulled Chicken Caesar Salad,,Cut fruits,Steamed Edamame,Crunchy Nut mix,726,51,28,45,8
+Elite-Non-Veg Plan-Lunch,Week 2,Tue,Yuzu Corn Salad,Paneer grilled,Cut fruits,Steamed Edamame,Maple Togarashi Spiced Nuts,797,36,58,54,10
+Elite-Non-Veg Plan-Lunch,Week 2,Wed,Protein Chicken Collagen Millet Kanji,Omlet,Coconut Sambol,Mixed Vegetable Thoran,Maple Togarashi Spiced Nuts,582,44,44,29,10
+Elite-Non-Veg Plan-Lunch,Week 2,Thu,Furikake Avocado Toast with Jammy Eggs,Steamed Edamame,Cut fruits,Roasted sweet potato,Maple Togarashi Spiced Nuts,612,32,61,34,16
+Elite-Non-Veg Plan-Lunch,Week 2,Fri,Ragi Jowar Chapathi,Chicken curry,Toor dal fry,Mixed Vegetable Thoran,Cucumber raita,661,42,80,24,17
+Elite-Non-Veg Plan-Lunch,Week 2,Sat,Grilled Chicken and Avocado Sandwich,,Cut fruits,Roasted sweet potato,Maple Togarashi Spiced Nuts,628,38,57,32,12
+Elite-Non-Veg Plan-Lunch,Week 3,Mon,Protein Chicken Collagen Millet Kanji,Omlet,Coconut Sambol,Mixed Vegetable Thoran,Maple Togarashi Spiced Nuts,582,44,44,29,10
+Elite-Non-Veg Plan-Lunch,Week 3,Tue,Mesclun Quinoa Salad,Soyu egg,Cut fruits,Roasted sweet potato,Maple Togarashi Spiced Nuts,732,28,70,42,12
+Elite-Non-Veg Plan-Lunch,Week 3,Wed,Furikake Avocado Toast with Jammy Eggs,Steamed Edamame,Cut fruits,Roasted sweet potato,Crunchy Nut mix,625,33,59,36,16
+Elite-Non-Veg Plan-Lunch,Week 3,Thu,Ragi Jowar Chapathi,Chicken curry,Toor dal fry,Mixed Vegetable Thoran,Cucumber raita,661,42,80,24,17
+Elite-Non-Veg Plan-Lunch,Week 3,Fri,Yuzu Corn Salad,Herbs Marinated Chicken Breast,Cut fruits,Roasted sweet potato,Crunchy Nut mix,696,42,62,38,12
+Elite-Non-Veg Plan-Lunch,Week 3,Sat,Scrambled egg sando on multigrain bread,Steamed Edamame,Cut fruits,Roasted sweet potato,Maple Togarashi Spiced Nuts,564,30,58,27,11
+Elite-Non-Veg Plan-Lunch,Week 4,Mon,Ragi Jowar Chapathi,Chicken curry,Toor dal fry,Mixed Vegetable Thoran,Cucumber raita,661,42,80,24,17
+Elite-Non-Veg Plan-Lunch,Week 4,Tue,Protein Chicken Collagen Millet Kanji,Omlet,Coconut Sambol,Mixed Vegetable Thoran,Maple Togarashi Spiced Nuts,582,44,44,29,10
+Elite-Non-Veg Plan-Lunch,Week 4,Wed,Scrambled egg sando on multigrain bread,Herbs Marinated Chicken Breast,Cut fruits,Roasted sweet potato,Crunchy Nut mix,748,58,56,39,11
+Elite-Non-Veg Plan-Lunch,Week 4,Thu,Furikake Avocado Toast with Jammy Eggs,Steamed Edamame,Cut fruits,Roasted sweet potato,Maple Togarashi Spiced Nuts,612,32,61,34,16
+Elite-Non-Veg Plan-Lunch,Week 4,Fri,Pulled Chicken Caesar Salad,,Cut fruits,Steamed Edamame,Crunchy Nut mix,726,51,28,45,8
+Elite-Non-Veg Plan-Lunch,Week 4,Sat,Mesclun Quinoa Salad,Herbs Marinated Chicken Breast,Cut fruits,Roasted sweet potato,Maple Togarashi Spiced Nuts,803,47,72,44,14
+Elite-Non-Veg Plan-Dinner,Week 1,Mon,Ragi Jowar Chapathi,Chicken curry,Toor dal fry,Mixed Vegetable Thoran,Cucumber Raita,661,42,80,24,17
+Elite-Non-Veg Plan-Dinner,Week 1,Tue,Yuzu Corn Salad,Herbs Marinated Chicken Breast,Shirazi salad,Roasted sweet potato,Crunchy Nut mix,689,42,59,39,12
+Elite-Non-Veg Plan-Dinner,Week 1,Wed,Grilled Chicken and Avocado Sandwich,Steamed Edamame,Shirazi salad,Steamed Edamame,Maple Togarashi Spiced Nuts,603,43,44,33,12
+Elite-Non-Veg Plan-Dinner,Week 1,Thu,Scrambled egg sando on multigrain bread,Herbs Marinated Chicken Breast,Shirazi salad,Roasted sweet potato,Crunchy Nut mix,741,58,53,40,11
+Elite-Non-Veg Plan-Dinner,Week 1,Fri,Grilled Chicken and Avocado Sandwich,Paneer grilled,Shirazi salad,Roasted sweet potato,Crunchy Nut mix,1004,63,61,64,13
+Elite-Non-Veg Plan-Dinner,Week 1,Sat,Pulled Chicken Caesar Salad,,Shirazi salad,Steamed Edamame,Crunchy Nut mix,718,51,25,45,7
+Elite-Non-Veg Plan-Dinner,Week 2,Mon,Furikake Avocado Toast with Jammy Eggs,Paneer grilled,Shirazi salad,Steamed Edamame,Maple Togarashi Spiced Nuts,889,54,52,62,14
+Elite-Non-Veg Plan-Dinner,Week 2,Tue,Scrambled egg sando on multigrain bread,Herbs Marinated Chicken Breast,Shirazi salad,Roasted sweet potato,Crunchy Nut mix,741,58,53,40,11
+Elite-Non-Veg Plan-Dinner,Week 2,Wed,Grilled Chicken and Avocado Sandwich,Herbs Marinated Chicken Breast,Shirazi salad,Roasted sweet potato,Crunchy Nut mix,839,70,55,46,14
+Elite-Non-Veg Plan-Dinner,Week 2,Thu,Ragi Jowar Chapathi,Chicken curry,Toor dal fry,Mixed Vegetable Thoran,Cucumber Raita,661,42,80,24,17
+Elite-Non-Veg Plan-Dinner,Week 2,Fri,Pulled Chicken Caesar Salad,,Shirazi salad,Steamed Edamame,Maple Togarashi Spiced Nuts,705,50,26,43,7
+Elite-Non-Veg Plan-Dinner,Week 2,Sat,Ragi Chicken Collagen Broth,Steamed Edamame,Shirazi salad,Roasted sweet potato,Crunchy Nut mix,358,31,30,22,7
+Elite-Non-Veg Plan-Dinner,Week 3,Mon,Pulled Chicken Caesar Salad,,Shirazi salad,Steamed Edamame,Crunchy Nut mix,718,51,25,45,7
+Elite-Non-Veg Plan-Dinner,Week 3,Tue,Grilled Chicken and Avocado Sandwich,Soyu egg,Shirazi salad,Roasted sweet potato,Crunchy Nut mix,768,51,53,44,12
+Elite-Non-Veg Plan-Dinner,Week 3,Wed,Yuzu Corn Salad,Herbs Marinated Chicken Breast,Shirazi salad,Steamed Edamame,Maple Togarashi Spiced Nuts,624,43,49,36,10
+Elite-Non-Veg Plan-Dinner,Week 3,Thu,Vegetable millet broth,Herbs Marinated Chicken Breast,Shirazi salad,Roasted sweet potato,Crunchy Nut mix,549,41,48,29,12
+Elite-Non-Veg Plan-Dinner,Week 3,Fri,Protein Chicken Collagen Millet Kanji,Omlet,Coconut Sambol,Mixed Vegetable Thoran,Maple Togarashi Spiced Nuts,582,44,44,29,10
+Elite-Non-Veg Plan-Dinner,Week 3,Sat,Mesclun Quinoa Salad,Soyu egg,Shirazi salad,Roasted sweet potato,Crunchy Nut mix,738,29,65,45,12
+Elite-Non-Veg Plan-Dinner,Week 4,Mon,Furikake Avocado Toast with Jammy Eggs,Herbs Marinated Chicken Breast,Shirazi salad,Roasted sweet potato,Maple Togarashi Spiced Nuts,775,59,58,45,15
+Elite-Non-Veg Plan-Dinner,Week 4,Tue,Mesclun Quinoa Salad,Herbs Marinated Chicken Breast,Shirazi salad,Roasted sweet potato,Crunchy Nut mix,809,48,67,47,14
+Elite-Non-Veg Plan-Dinner,Week 4,Wed,Vegetable millet broth,Paneer grilled,Shirazi salad,Steamed Edamame,Maple Togarashi Spiced Nuts,649,35,44,45,10
+Elite-Non-Veg Plan-Dinner,Week 4,Thu,Pulled Chicken Caesar Salad,,Shirazi salad,Steamed Edamame,Crunchy Nut mix,718,51,25,45,7
+Elite-Non-Veg Plan-Dinner,Week 4,Fri,Protein Chicken Collagen Millet Kanji,Omlet,Coconut Sambol,Mixed Vegetable Thoran,Maple Togarashi Spiced Nuts,582,44,44,29,10
+Elite-Non-Veg Plan-Dinner,Week 4,Sat,Ragi Jowar Chapathi,Chicken curry,Toor dal fry,Mixed Vegetable Thoran,Cucumber Raita,661,42,80,24,17
+Basic-Veg Plan-Lunch,Week 1,Mon,Mesclun Quinoa Salad,Paneer grilled,Cut fruits,,,813,36,58,55,10
+Basic-Veg Plan-Lunch,Week 1,Tue,Yuzu Corn Salad,Paneer grilled,,,Maple Togarashi Spiced Nuts,740,32,50,52,8
+Basic-Veg Plan-Lunch,Week 1,Wed,Mesclun Quinoa Salad,Paneer grilled,Cut fruits,,,813,36,58,55,10
+Basic-Veg Plan-Lunch,Week 1,Thu,Ragi Jowar Chapathi,Paneer Butter Masala,,Mixed Vegetable Thoran,,610,23,60,33,12
+Basic-Veg Plan-Lunch,Week 1,Fri,Furikake Avocado Toast,Paneer grilled,Cut fruits,,,1004,42,89,60,21
+Basic-Veg Plan-Lunch,Week 1,Sat,Ragi Jowar Chapathi,Paneer Butter Masala,,Mixed Vegetable Thoran,,610,23,60,33,12
+Basic-Veg Plan-Lunch,Week 2,Mon,Yuzu Corn Salad,Paneer grilled,,,Crunchy Nut mix,754,33,48,54,8
+Basic-Veg Plan-Lunch,Week 2,Tue,Furikake Avocado Toast,Paneer grilled,Cut fruits,,,1004,42,89,60,21
+Basic-Veg Plan-Lunch,Week 2,Wed,Ragi Jowar Chapathi,Paneer Butter Masala,,Mixed Vegetable Thoran,,610,23,60,33,12
+Basic-Veg Plan-Lunch,Week 2,Thu,Yuzu Corn Salad,Paneer grilled,,,Maple Togarashi Spiced Nuts,740,32,50,52,8
+Basic-Veg Plan-Lunch,Week 2,Fri,Ragi Jowar Chapathi,Paneer Butter Masala,,Mixed Vegetable Thoran,,610,23,60,33,12
+Basic-Veg Plan-Lunch,Week 2,Sat,Mesclun Quinoa Salad,Paneer grilled,Cut fruits,,,813,36,58,55,10
+Basic-Veg Plan-Lunch,Week 3,Mon,Furikake Avocado Toast,Paneer grilled,Cut fruits,,,1004,42,89,60,21
+Basic-Veg Plan-Lunch,Week 3,Tue,Ragi Jowar Chapathi,Paneer Butter Masala,,Mixed Vegetable Thoran,,610,23,60,33,12
+Basic-Veg Plan-Lunch,Week 3,Wed,Yuzu Corn Salad,Paneer grilled,,,Maple Togarashi Spiced Nuts,740,32,50,52,8
+Basic-Veg Plan-Lunch,Week 3,Thu,Ragi Jowar Chapathi,Paneer Butter Masala,,Mixed Vegetable Thoran,,610,23,60,33,12
+Basic-Veg Plan-Lunch,Week 3,Fri,Mesclun Quinoa Salad,Paneer grilled,Cut fruits,,,813,36,58,55,10
+Basic-Veg Plan-Lunch,Week 3,Sat,Furikake Avocado Toast,Paneer grilled,Cut fruits,,,1004,42,89,60,21
+Basic-Veg Plan-Lunch,Week 4,Mon,Ragi Jowar Chapathi,Paneer Butter Masala,,Mixed Vegetable Thoran,,610,23,60,33,12
+Basic-Veg Plan-Lunch,Week 4,Tue,Yuzu Corn Salad,Paneer grilled,,,Maple Togarashi Spiced Nuts,740,32,50,52,8
+Basic-Veg Plan-Lunch,Week 4,Wed,Ragi Jowar Chapathi,Paneer Butter Masala,,Mixed Vegetable Thoran,,610,23,60,33,12
+Basic-Veg Plan-Lunch,Week 4,Thu,Furikake Avocado Toast,Paneer grilled,Cut fruits,,,1004,42,89,60,21
+Basic-Veg Plan-Lunch,Week 4,Fri,Mesclun Quinoa Salad,Paneer grilled,Cut fruits,,,813,36,58,55,10
+Basic-Veg Plan-Lunch,Week 4,Sat,Ragi Jowar Chapathi,Paneer Butter Masala,,Mixed Vegetable Thoran,,610,23,60,33,12
+Basic-Veg Plan-Dinner,Week 1,Mon,Ragi Jowar Chapathi,Paneer Butter Masala,,Mixed Vegetable Thoran,,610,23,60,33,12
+Basic-Veg Plan-Dinner,Week 1,Tue,Furikake Avocado Toast,Paneer grilled,,Roasted sweet potato,,1066,43,98,62,23
+Basic-Veg Plan-Dinner,Week 1,Wed,Yuzu Corn Salad,Paneer grilled,,Steamed Edamame,,704,33,47,48,8
+Basic-Veg Plan-Dinner,Week 1,Thu,Mesclun Quinoa Salad,Paneer grilled,,Roasted sweet potato,,875,37,67,58,11
+Basic-Veg Plan-Dinner,Week 1,Fri,Yuzu Corn Salad,Paneer grilled,,Steamed Edamame,,704,33,47,48,8
+Basic-Veg Plan-Dinner,Week 1,Sat,Furikake Avocado Toast,Steamed Edamame,,Roasted sweet potato,,730,23,92,33,23
+Basic-Veg Plan-Dinner,Week 2,Mon,Mesclun Quinoa Salad,Paneer grilled,,Steamed Edamame,,824,39,55,56,10
+Basic-Veg Plan-Dinner,Week 2,Tue,Yuzu Corn Salad,Paneer grilled,,Roasted sweet potato,,755,31,59,50,9
+Basic-Veg Plan-Dinner,Week 2,Wed,Furikake Avocado Toast,Paneer grilled,,,Maple Togarashi Spiced Nuts,1051,44,88,65,21
+Basic-Veg Plan-Dinner,Week 2,Thu,Vegetable millet broth,Paneer grilled,Shirazi salad,,,545,29,36,38,8
+Basic-Veg Plan-Dinner,Week 2,Fri,Furikake Avocado Toast,Steamed Edamame,,,Crunchy Nut mix,729,25,80,38,22
+Basic-Veg Plan-Dinner,Week 2,Sat,Ragi Jowar Chapathi,Paneer Butter Masala,,Mixed Vegetable Thoran,,610,23,60,33,12
+Basic-Veg Plan-Dinner,Week 3,Mon,Yuzu Corn Salad,Paneer grilled,,Steamed Edamame,,704,33,47,48,8
+Basic-Veg Plan-Dinner,Week 3,Tue,Mesclun Quinoa Salad,Paneer grilled,,Roasted sweet potato,,875,37,67,58,11
+Basic-Veg Plan-Dinner,Week 3,Wed,Ragi Jowar Chapathi,Paneer Butter Masala,,Mixed Vegetable Thoran,,610,23,60,33,12
+Basic-Veg Plan-Dinner,Week 3,Thu,Vegetable millet broth,Paneer grilled,Shirazi salad,,,545,29,36,38,8
+Basic-Veg Plan-Dinner,Week 3,Fri,Furikake Avocado Toast,Paneer grilled,,,Maple Togarashi Spiced Nuts,1051,44,88,65,21
+Basic-Veg Plan-Dinner,Week 3,Sat,Ragi Jowar Chapathi,Paneer Butter Masala,,Mixed Vegetable Thoran,,610,23,60,33,12
+Basic-Veg Plan-Dinner,Week 4,Mon,Vegetable millet broth,Paneer grilled,Shirazi salad,,,545,29,36,38,8
+Basic-Veg Plan-Dinner,Week 4,Tue,Mesclun Quinoa Salad,Paneer grilled,,Roasted sweet potato,,875,37,67,58,11
+Basic-Veg Plan-Dinner,Week 4,Wed,Yuzu Corn Salad,Paneer grilled,,Steamed Edamame,,704,33,47,48,8
+Basic-Veg Plan-Dinner,Week 4,Thu,Ragi Jowar Chapathi,Paneer Butter Masala,,Mixed Vegetable Thoran,,610,23,60,33,12
+Basic-Veg Plan-Dinner,Week 4,Fri,Furikake Avocado Toast,Steamed Edamame,,Roasted sweet potato,,730,23,92,33,23
+Basic-Veg Plan-Dinner,Week 4,Sat,Yuzu Corn Salad,Paneer grilled,,Roasted sweet potato,,755,31,59,50,9
+Basic-Non-Veg Plan-Lunch,Week 1,Mon,Pulled Chicken Caesar Salad,,,Roasted sweet potato,,671,45,31,39,6
+Basic-Non-Veg Plan-Lunch,Week 1,Tue,Scrambled egg sando on multigrain bread,Herbs Marinated Chicken Breast,Shirazi salad,,Maple Togarashi Spiced Nuts,642,55,41,35,8
+Basic-Non-Veg Plan-Lunch,Week 1,Wed,Yuzu Corn Salad,Herbs Marinated Chicken Breast,,Roasted sweet potato,,590,38,54,31,10
+Basic-Non-Veg Plan-Lunch,Week 1,Thu,Ragi Jowar Chapathi,Chicken curry,,Mixed Vegetable Thoran,,491,34,58,19,12
+Basic-Non-Veg Plan-Lunch,Week 1,Fri,Protein Chicken Collagen Millet Kanji,Omlet,,Mixed Vegetable Thoran,,466,42,36,20,7
+Basic-Non-Veg Plan-Lunch,Week 1,Sat,Furikake Avocado Toast with Jammy Eggs,Steamed Edamame,,Roasted sweet potato,,519,29,50,29,14
+Basic-Non-Veg Plan-Lunch,Week 2,Mon,Pulled Chicken Caesar Salad,,,Roasted sweet potato,,671,45,31,39,6
+Basic-Non-Veg Plan-Lunch,Week 2,Tue,Yuzu Corn Salad,Paneer grilled,,Steamed Edamame,,704,33,47,48,8
+Basic-Non-Veg Plan-Lunch,Week 2,Wed,Protein Chicken Collagen Millet Kanji,Omlet,,Mixed Vegetable Thoran,,466,42,36,20,7
+Basic-Non-Veg Plan-Lunch,Week 2,Thu,Furikake Avocado Toast with Jammy Eggs,Steamed Edamame,,Roasted sweet potato,,519,29,50,29,14
+Basic-Non-Veg Plan-Lunch,Week 2,Fri,Ragi Jowar Chapathi,Chicken curry,,Mixed Vegetable Thoran,,491,34,58,19,12
+Basic-Non-Veg Plan-Lunch,Week 2,Sat,Grilled Chicken and Avocado Sandwich,,,Roasted sweet potato,Maple Togarashi Spiced Nuts,605,38,52,32,11
+Basic-Non-Veg Plan-Lunch,Week 3,Mon,Protein Chicken Collagen Millet Kanji,Omlet,,Mixed Vegetable Thoran,,466,42,36,20,7
+Basic-Non-Veg Plan-Lunch,Week 3,Tue,Mesclun Quinoa Salad,Paneer grilled,,,Maple Togarashi Spiced Nuts,860,38,57,60,10
+Basic-Non-Veg Plan-Lunch,Week 3,Wed,Furikake Avocado Toast with Jammy Eggs,,,Roasted sweet potato,,485,26,48,28,12
+Basic-Non-Veg Plan-Lunch,Week 3,Thu,Ragi Jowar Chapathi,Chicken curry,,Mixed Vegetable Thoran,,491,34,58,19,12
+Basic-Non-Veg Plan-Lunch,Week 3,Fri,Yuzu Corn Salad,Herbs Marinated Chicken Breast,,Roasted sweet potato,,590,38,54,31,10
+Basic-Non-Veg Plan-Lunch,Week 3,Sat,Scrambled egg sando on multigrain bread,Steamed Edamame,,,Maple Togarashi Spiced Nuts,456,27,38,25,7
+Basic-Non-Veg Plan-Lunch,Week 4,Mon,Ragi Jowar Chapathi,Chicken curry,,Mixed Vegetable Thoran,,491,34,58,19,12
+Basic-Non-Veg Plan-Lunch,Week 4,Tue,Protein Chicken Collagen Millet Kanji,Omlet,,Mixed Vegetable Thoran,,466,42,36,20,7
+Basic-Non-Veg Plan-Lunch,Week 4,Wed,Scrambled egg sando on multigrain bread,Steamed Edamame,,,Crunchy Nut mix,470,29,36,27,8
+Basic-Non-Veg Plan-Lunch,Week 4,Thu,Furikake Avocado Toast with Jammy Eggs,Paneer grilled,,Roasted sweet potato,,855,49,56,58,13
+Basic-Non-Veg Plan-Lunch,Week 4,Fri,Pulled Chicken Caesar Salad,,,Roasted sweet potato,,671,45,31,39,6
+Basic-Non-Veg Plan-Lunch,Week 4,Sat,Mesclun Quinoa Salad,Soyu egg,,,Maple Togarashi Spiced Nuts,624,26,50,40,9
+Basic-Non-Veg Plan-Dinner,Week 1,Mon,Ragi Jowar Chapathi,Chicken curry,,Mixed Vegetable Thoran,,491,34,58,19,12
+Basic-Non-Veg Plan-Dinner,Week 1,Tue,Yuzu Corn Salad,Herbs Marinated Chicken Breast,,Roasted sweet potato,,590,38,54,31,10
+Basic-Non-Veg Plan-Dinner,Week 1,Wed,Grilled Chicken and Avocado Sandwich,,,Steamed Edamame,Maple Togarashi Spiced Nuts,554,39,40,31,10
+Basic-Non-Veg Plan-Dinner,Week 1,Thu,Scrambled egg sando on multigrain bread,Herbs Marinated Chicken Breast,Shirazi salad,,,572,53,36,30,7
+Basic-Non-Veg Plan-Dinner,Week 1,Fri,Grilled Chicken and Avocado Sandwich,,,Roasted sweet potato,Crunchy Nut mix,619,39,50,34,12
+Basic-Non-Veg Plan-Dinner,Week 1,Sat,Pulled Chicken Caesar Salad,,,Steamed Edamame,Crunchy Nut mix,703,50,22,45,7
+Basic-Non-Veg Plan-Dinner,Week 2,Mon,Furikake Avocado Toast with Jammy Eggs,Paneer grilled,,Roasted sweet potato,,855,49,56,58,13
+Basic-Non-Veg Plan-Dinner,Week 2,Tue,Scrambled egg sando on multigrain bread,Herbs Marinated Chicken Breast,Shirazi salad,,,572,53,36,30,7
+Basic-Non-Veg Plan-Dinner,Week 2,Wed,Grilled Chicken and Avocado Sandwich,,,Roasted sweet potato,Crunchy Nut mix,619,39,50,34,12
+Basic-Non-Veg Plan-Dinner,Week 2,Thu,Ragi Jowar Chapathi,Chicken curry,,Mixed Vegetable Thoran,,491,34,58,19,12
+Basic-Non-Veg Plan-Dinner,Week 2,Fri,Pulled Chicken Caesar Salad,,,Steamed Edamame,Maple Togarashi Spiced Nuts,689,49,24,43,6
+Basic-Non-Veg Plan-Dinner,Week 2,Sat,Ragi Chicken Collagen Broth,Soyu egg,Shirazi salad,,,289,35,11,20,2
+Basic-Non-Veg Plan-Dinner,Week 3,Mon,Pulled Chicken Caesar Salad,,,Steamed Edamame,Crunchy Nut mix,703,50,22,45,7
+Basic-Non-Veg Plan-Dinner,Week 3,Tue,Grilled Chicken and Avocado Sandwich,,,Roasted sweet potato,Crunchy Nut mix,619,39,50,34,12
+Basic-Non-Veg Plan-Dinner,Week 3,Wed,Yuzu Corn Salad,Herbs Marinated Chicken Breast,,Roasted sweet potato,,590,38,54,31,10
+Basic-Non-Veg Plan-Dinner,Week 3,Thu,Vegetable millet broth,Herbs Marinated Chicken Breast,,,Crunchy Nut mix,448,39,31,26,9
+Basic-Non-Veg Plan-Dinner,Week 3,Fri,Protein Chicken Collagen Millet Kanji,,Coconut Sambol,Mixed Vegetable Thoran,,442,34,37,18,9
+Basic-Non-Veg Plan-Dinner,Week 3,Sat,Mesclun Quinoa Salad,Soyu egg,,Roasted sweet potato,,640,26,59,37,10
+Basic-Non-Veg Plan-Dinner,Week 4,Mon,Furikake Avocado Toast with Jammy Eggs,Steamed Edamame,,Roasted sweet potato,,519,29,50,29,14
+Basic-Non-Veg Plan-Dinner,Week 4,Tue,Mesclun Quinoa Salad,Herbs Marinated Chicken Breast,,Roasted sweet potato,,710,44,61,39,12
+Basic-Non-Veg Plan-Dinner,Week 4,Wed,Ragi Chicken Collagen Broth,Soyu egg,Shirazi salad,,,289,35,11,20,2
+Basic-Non-Veg Plan-Dinner,Week 4,Thu,Pulled Chicken Caesar Salad,,,Steamed Edamame,Crunchy Nut mix,703,50,22,45,7
+Basic-Non-Veg Plan-Dinner,Week 4,Fri,Protein Chicken Collagen Millet Kanji,,Coconut Sambol,Mixed Vegetable Thoran,,442,34,37,18,9
+Basic-Non-Veg Plan-Dinner,Week 4,Sat,Ragi Jowar Chapathi,Chicken curry,,Mixed Vegetable Thoran,,491,34,58,19,12
+Weightloss-Veg Plan-Lunch,Week 1,Mon,Mesclun Quinoa Salad,Paneer grilled,,Steamed edamame,,824,39,55,56,10
+Weightloss-Veg Plan-Lunch,Week 1,Tue,Yuzu Corn Salad,Paneer grilled,,Steamed edamame,,704,33,47,48,8
+Weightloss-Veg Plan-Lunch,Week 1,Wed,Mesclun Quinoa Salad,Paneer grilled,,Steamed edamame,,824,39,55,56,10
+Weightloss-Veg Plan-Lunch,Week 1,Thu,Ragi Jowar Chapathi,Paneer Butter Masala,,Mixed Vegetable Thoran,,610,23,60,33,12
+Weightloss-Veg Plan-Lunch,Week 1,Fri,Furikake Avocado Toast,Paneer grilled,,,Shirazi salad,996,42,86,60,21
+Weightloss-Veg Plan-Lunch,Week 1,Sat,Ragi Jowar Chapathi,Paneer Butter Masala,,Mixed Vegetable Thoran,,610,23,60,33,12
+Weightloss-Veg Plan-Lunch,Week 2,Mon,Ragi Jowar Chapathi,Paneer Butter Masala,,Mixed Vegetable Thoran,,610,23,60,33,12
+Weightloss-Veg Plan-Lunch,Week 2,Tue,Furikake Avocado Toast,Paneer grilled,,,Cut Fruits,1004,42,89,60,21
+Weightloss-Veg Plan-Lunch,Week 2,Wed,Ragi Jowar Chapathi,Paneer Butter Masala,,Mixed Vegetable Thoran,,610,23,60,33,12
+Weightloss-Veg Plan-Lunch,Week 2,Thu,Yuzu Corn Salad,Paneer grilled,,Steamed edamame,,704,33,47,48,8
+Weightloss-Veg Plan-Lunch,Week 2,Fri,Ragi Jowar Chapathi,Paneer Butter Masala,,Mixed Vegetable Thoran,,610,23,60,33,12
+Weightloss-Veg Plan-Lunch,Week 2,Sat,Mesclun Quinoa Salad,Paneer grilled,,Steamed edamame,,824,39,55,56,10
+Weightloss-Veg Plan-Lunch,Week 3,Mon,Furikake Avocado Toast,Paneer grilled,,,Shirazi salad,996,42,86,60,21
+Weightloss-Veg Plan-Lunch,Week 3,Tue,Ragi Jowar Chapathi,Paneer Butter Masala,,Mixed Vegetable Thoran,,610,23,60,33,12
+Weightloss-Veg Plan-Lunch,Week 3,Wed,Yuzu Corn Salad,Paneer grilled,,Steamed edamame,,704,33,47,48,8
+Weightloss-Veg Plan-Lunch,Week 3,Thu,Ragi Jowar Chapathi,Paneer Butter Masala,,Mixed Vegetable Thoran,,610,23,60,33,12
+Weightloss-Veg Plan-Lunch,Week 3,Fri,Mesclun Quinoa Salad,Paneer grilled,,Steamed edamame,,824,39,55,56,10
+Weightloss-Veg Plan-Lunch,Week 3,Sat,Furikake Avocado Toast,Paneer grilled,,,Cut Fruits,1004,42,89,60,21
+Weightloss-Veg Plan-Lunch,Week 4,Mon,Furikake Avocado Toast,Paneer grilled,,,Shirazi salad,996,42,86,60,21
+Weightloss-Veg Plan-Lunch,Week 4,Tue,Yuzu Corn Salad,Paneer grilled,,Steamed edamame,,704,33,47,48,8
+Weightloss-Veg Plan-Lunch,Week 4,Wed,Ragi Jowar Chapathi,Paneer Butter Masala,,Mixed Vegetable Thoran,,610,23,60,33,12
+Weightloss-Veg Plan-Lunch,Week 4,Thu,Furikake Avocado Toast,Paneer grilled,,,Cut Fruits,1004,42,89,60,21
+Weightloss-Veg Plan-Lunch,Week 4,Fri,Mesclun Quinoa Salad,Paneer grilled,,Steamed edamame,,824,39,55,56,10
+Weightloss-Veg Plan-Lunch,Week 4,Sat,Ragi Jowar Chapathi,Paneer Butter Masala,,Mixed Vegetable Thoran,,610,23,60,33,12
+Weightloss-Veg Plan-Dinner,Week 1,Mon,Vegetable millet broth,Paneer grilled,Shirazi salad,,,545,29,36,38,8
+Weightloss-Veg Plan-Dinner,Week 1,Tue,Mesclun Quinoa Salad,Paneer grilled,,Steamed Edamame,,824,39,55,56,10
+Weightloss-Veg Plan-Dinner,Week 1,Wed,Yuzu Corn Salad,Paneer grilled,,Steamed Edamame,,704,33,47,48,8
+Weightloss-Veg Plan-Dinner,Week 1,Thu,Vegetable millet broth,Paneer grilled,Shirazi salad,,,545,29,36,38,8
+Weightloss-Veg Plan-Dinner,Week 1,Fri,Yuzu Corn Salad,Paneer grilled,,Steamed Edamame,,704,33,47,48,8
+Weightloss-Veg Plan-Dinner,Week 1,Sat,Vegetable millet broth,Paneer grilled,Shirazi salad,,,545,29,36,38,8
+Weightloss-Veg Plan-Dinner,Week 2,Mon,Mesclun Quinoa Salad,Paneer grilled,,Steamed Edamame,,824,39,55,56,10
+Weightloss-Veg Plan-Dinner,Week 2,Tue,Yuzu Corn Salad,Paneer grilled,,Steamed Edamame,,704,33,47,48,8
+Weightloss-Veg Plan-Dinner,Week 2,Wed,Vegetable millet broth,Paneer grilled,Shirazi salad,,,545,29,36,38,8
+Weightloss-Veg Plan-Dinner,Week 2,Thu,Mesclun Quinoa Salad,Paneer grilled,,Steamed Edamame,,824,39,55,56,10
+Weightloss-Veg Plan-Dinner,Week 2,Fri,Yuzu Corn Salad,Paneer grilled,,Steamed Edamame,,704,33,47,48,8
+Weightloss-Veg Plan-Dinner,Week 2,Sat,Vegetable millet broth,Paneer grilled,Shirazi salad,,,545,29,36,38,8
+Weightloss-Veg Plan-Dinner,Week 3,Mon,Yuzu Corn Salad,Paneer grilled,,Steamed Edamame,,704,33,47,48,8
+Weightloss-Veg Plan-Dinner,Week 3,Tue,Mesclun Quinoa Salad,Paneer grilled,,Steamed Edamame,,824,39,55,56,10
+Weightloss-Veg Plan-Dinner,Week 3,Wed,Mesclun Quinoa Salad,Paneer grilled,,Steamed Edamame,,824,39,55,56,10
+Weightloss-Veg Plan-Dinner,Week 3,Thu,Vegetable millet broth,Paneer grilled,Shirazi salad,,,545,29,36,38,8
+Weightloss-Veg Plan-Dinner,Week 3,Fri,Yuzu Corn Salad,Paneer grilled,,Steamed Edamame,,704,33,47,48,8
+Weightloss-Veg Plan-Dinner,Week 3,Sat,Vegetable millet broth,Paneer grilled,Shirazi salad,,,545,29,36,38,8
+Weightloss-Veg Plan-Dinner,Week 4,Mon,Vegetable millet broth,Paneer grilled,Shirazi salad,,,545,29,36,38,8
+Weightloss-Veg Plan-Dinner,Week 4,Tue,Mesclun Quinoa Salad,Paneer grilled,,Steamed Edamame,,824,39,55,56,10
+Weightloss-Veg Plan-Dinner,Week 4,Wed,Yuzu Corn Salad,Paneer grilled,,Steamed Edamame,,704,33,47,48,8
+Weightloss-Veg Plan-Dinner,Week 4,Thu,Vegetable millet broth,Paneer grilled,Shirazi salad,,,545,29,36,38,8
+Weightloss-Veg Plan-Dinner,Week 4,Fri,Yuzu Corn Salad,Paneer grilled,,Steamed Edamame,,704,33,47,48,8
+Weightloss-Veg Plan-Dinner,Week 4,Sat,Yuzu Corn Salad,Paneer grilled,,Steamed Edamame,,704,33,47,48,8
+Weightloss-Non-Veg Plan-Lunch,Week 1,Mon,Pulled Chicken Caesar Salad,,,,,585,44,17,36,4
+Weightloss-Non-Veg Plan-Lunch,Week 1,Tue,Mesclun Quinoa Salad,Herbs Marinated Chicken Breast,,,,625,43,47,36,9
+Weightloss-Non-Veg Plan-Lunch,Week 1,Wed,Yuzu Corn Salad,Herbs Marinated Chicken Breast,,,,505,37,39,28,7
+Weightloss-Non-Veg Plan-Lunch,Week 1,Thu,Ragi Jowar Chapathi,Chicken curry,Mixed Vegetable Thoran,,,491,34,58,19,12
+Weightloss-Non-Veg Plan-Lunch,Week 1,Fri,Protein Chicken Collagen Millet Kanji,,Coconut Sambol,Mixed vegetable thoran,,442,34,37,18,9
+Weightloss-Non-Veg Plan-Lunch,Week 1,Sat,Furikake Avocado Toast with Jammy Eggs,,Shirazi salad,,crunchy nut mix,499,28,38,33,12
+Weightloss-Non-Veg Plan-Lunch,Week 2,Mon,Pulled Chicken Caesar Salad,,,,,585,44,17,36,4
+Weightloss-Non-Veg Plan-Lunch,Week 2,Tue,Yuzu Corn Salad,Paneer grilled,,,,670,30,45,47,7
+Weightloss-Non-Veg Plan-Lunch,Week 2,Wed,Protein Chicken Collagen Millet Kanji,,Coconut Sambol,Mixed vegetable thoran,,442,34,37,18,9
+Weightloss-Non-Veg Plan-Lunch,Week 2,Thu,Furikake Avocado Toast with Jammy Eggs,,Shirazi salad,,maple togarashi spiced nuts,485,27,40,31,12
+Weightloss-Non-Veg Plan-Lunch,Week 2,Fri,Ragi Jowar Chapathi,Chicken curry,Mixed Vegetable Thoran,,,491,34,58,19,12
+Weightloss-Non-Veg Plan-Lunch,Week 2,Sat,Grilled Chicken and Avocado Sandwich,,,Roasted sweet potato,crunchy nut mix,619,39,50,34,12
+Weightloss-Non-Veg Plan-Lunch,Week 3,Mon,Protein Chicken Collagen Millet Kanji,,Coconut Sambol,Mixed vegetable thoran,,442,34,37,18,9
+Weightloss-Non-Veg Plan-Lunch,Week 3,Tue,Mesclun Quinoa Salad,Herbs Marinated Chicken Breast,,,,625,43,47,36,9
+Weightloss-Non-Veg Plan-Lunch,Week 3,Wed,Furikake Avocado Toast with Jammy Eggs,,Shirazi salad,,crunchy nut mix,499,28,38,33,12
+Weightloss-Non-Veg Plan-Lunch,Week 3,Thu,Ragi Jowar Chapathi,Chicken curry,Mixed Vegetable Thoran,,,491,34,58,19,12
+Weightloss-Non-Veg Plan-Lunch,Week 3,Fri,Yuzu Corn Salad,Herbs Marinated Chicken Breast,,,,505,37,39,28,7
+Weightloss-Non-Veg Plan-Lunch,Week 3,Sat,Protein Chicken Collagen Millet Kanji,,Coconut Sambol,Mixed vegetable thoran,,442,34,37,18,9
+Weightloss-Non-Veg Plan-Lunch,Week 4,Mon,Ragi Jowar Chapathi,Chicken curry,Mixed Vegetable Thoran,,,491,34,58,19,12
+Weightloss-Non-Veg Plan-Lunch,Week 4,Tue,Protein Chicken Collagen Millet Kanji,,Coconut Sambol,Mixed vegetable thoran,,442,34,37,18,9
+Weightloss-Non-Veg Plan-Lunch,Week 4,Wed,Yuzu Corn Salad,Paneer grilled,,,,670,30,45,47,7
+Weightloss-Non-Veg Plan-Lunch,Week 4,Thu,Furikake Avocado Toast with Jammy Eggs,,Shirazi salad,,maple togarashi spiced nuts,485,27,40,31,12
+Weightloss-Non-Veg Plan-Lunch,Week 4,Fri,Pulled Chicken Caesar Salad,,,,,585,44,17,36,4
+Weightloss-Non-Veg Plan-Lunch,Week 4,Sat,Mesclun Quinoa Salad,Herbs Marinated Chicken Breast,,,,625,43,47,36,9
+Weightloss-Non-Veg Plan-Dinner,Week 1,Mon,Ragi Chicken Collagen Broth,Steamed Edamame,Shirazi salad,,,189,26,12,12,3
+Weightloss-Non-Veg Plan-Dinner,Week 1,Tue,Yuzu Corn Salad,Herbs Marinated Chicken Breast,,,,505,37,39,28,7
+Weightloss-Non-Veg Plan-Dinner,Week 1,Wed,Vegetable millet broth,Herbs Marinated Chicken Breast,Steamed Edamame,,,399,39,31,20,8
+Weightloss-Non-Veg Plan-Dinner,Week 1,Thu,Mesclun Quinoa Salad,Herbs Marinated Chicken Breast,,,,625,43,47,36,9
+Weightloss-Non-Veg Plan-Dinner,Week 1,Fri,Yuzu Corn Salad,Herbs Marinated Chicken Breast,,,,505,37,39,28,7
+Weightloss-Non-Veg Plan-Dinner,Week 1,Sat,Pulled Chicken Caesar Salad,,,,,585,44,17,36,4
+Weightloss-Non-Veg Plan-Dinner,Week 2,Mon,Ragi Chicken Collagen Broth,Steamed Edamame,Shirazi salad,,,189,26,12,12,3
+Weightloss-Non-Veg Plan-Dinner,Week 2,Tue,Mesclun Quinoa Salad,Herbs Marinated Chicken Breast,,,,625,43,47,36,9
+Weightloss-Non-Veg Plan-Dinner,Week 2,Wed,Yuzu Corn Salad,Herbs Marinated Chicken Breast,,,,505,37,39,28,7
+Weightloss-Non-Veg Plan-Dinner,Week 2,Thu,Vegetable millet broth,Herbs Marinated Chicken Breast,Steamed Edamame,,,399,39,31,20,8
+Weightloss-Non-Veg Plan-Dinner,Week 2,Fri,Pulled Chicken Caesar Salad,,,,,585,44,17,36,4
+Weightloss-Non-Veg Plan-Dinner,Week 2,Sat,Ragi Chicken Collagen Broth,Steamed Edamame,Shirazi salad,,,189,26,12,12,3
+Weightloss-Non-Veg Plan-Dinner,Week 3,Mon,Pulled Chicken Caesar Salad,,,,,585,44,17,36,4
+Weightloss-Non-Veg Plan-Dinner,Week 3,Tue,Mesclun Quinoa Salad,Soyu egg,,,,554,24,45,34,8
+Weightloss-Non-Veg Plan-Dinner,Week 3,Wed,Yuzu Corn Salad,Herbs Marinated Chicken Breast,,,,505,37,39,28,7
+Weightloss-Non-Veg Plan-Dinner,Week 3,Thu,Vegetable millet broth,Herbs Marinated Chicken Breast,Steamed Edamame,,,399,39,31,20,8
+Weightloss-Non-Veg Plan-Dinner,Week 3,Fri,Ragi Chicken Collagen Broth,Steamed Edamame,Shirazi salad,,,189,26,12,12,3
+Weightloss-Non-Veg Plan-Dinner,Week 3,Sat,Mesclun Quinoa Salad,Soyu egg,,,,554,24,45,34,8
+Weightloss-Non-Veg Plan-Dinner,Week 4,Mon,Yuzu Corn Salad,Herbs Marinated Chicken Breast,,,,505,37,39,28,7
+Weightloss-Non-Veg Plan-Dinner,Week 4,Tue,Mesclun Quinoa Salad,Herbs Marinated Chicken Breast,,,,625,43,47,36,9
+Weightloss-Non-Veg Plan-Dinner,Week 4,Wed,Vegetable millet broth,Herbs Marinated Chicken Breast,Steamed Edamame,,,399,39,31,20,8
+Weightloss-Non-Veg Plan-Dinner,Week 4,Thu,Pulled Chicken Caesar Salad,,,,,585,44,17,36,4
+Weightloss-Non-Veg Plan-Dinner,Week 4,Fri,Ragi Chicken Collagen Broth,Steamed Edamame,Shirazi salad,,,189,26,12,12,3
+Weightloss-Non-Veg Plan-Dinner,Week 4,Sat,Pulled Chicken Caesar Salad,,,,,585,44,17,36,4
+Diabetic-Veg Plan-Lunch,Week 1,Mon,Mesclun Quinoa Salad,Paneer grilled,,,,790,36,52,55,9
+Diabetic-Veg Plan-Lunch,Week 1,Tue,Yuzu Corn Salad,Paneer grilled,,,,670,30,45,47,7
+Diabetic-Veg Plan-Lunch,Week 1,Wed,Mesclun Quinoa Salad,Paneer grilled,,,,790,36,52,55,9
+Diabetic-Veg Plan-Lunch,Week 1,Thu,Ragi Jowar Chapathi,Paneer Butter Masala,Toor dal fry,Mixed Vegetable Thoran,Cucumber raita,779,32,83,38,17
+Diabetic-Veg Plan-Lunch,Week 1,Fri,Furikake Avocado Toast,Steamed Edamame,Shirazi salad,,,660,22,79,31,21
+Diabetic-Veg Plan-Lunch,Week 1,Sat,Ragi Jowar Chapathi,Paneer Butter Masala,Toor dal fry,Mixed Vegetable Thoran,Cucumber raita,779,32,83,38,17
+Diabetic-Veg Plan-Lunch,Week 2,Mon,Yuzu Corn Salad,Paneer grilled,,,,670,30,45,47,7
+Diabetic-Veg Plan-Lunch,Week 2,Tue,Furikake Avocado Toast,Steamed Edamame,Cut fruits,,,668,22,82,31,22
+Diabetic-Veg Plan-Lunch,Week 2,Wed,Ragi Jowar Chapathi,Paneer Butter Masala,Toor dal fry,Mixed Vegetable Thoran,Cucumber raita,779,32,83,38,17
+Diabetic-Veg Plan-Lunch,Week 2,Thu,Yuzu Corn Salad,Paneer grilled,,,,670,30,45,47,7
+Diabetic-Veg Plan-Lunch,Week 2,Fri,Ragi Jowar Chapathi,Paneer Butter Masala,Toor dal fry,Mixed Vegetable Thoran,Cucumber raita,779,32,83,38,17
+Diabetic-Veg Plan-Lunch,Week 2,Sat,Mesclun Quinoa Salad,Paneer grilled,,,,790,36,52,55,9
+Diabetic-Veg Plan-Lunch,Week 3,Mon,Furikake Avocado Toast,Steamed Edamame,Shirazi salad,,,660,22,79,31,21
+Diabetic-Veg Plan-Lunch,Week 3,Tue,Ragi Jowar Chapathi,Paneer Butter Masala,Toor dal fry,Mixed Vegetable Thoran,Cucumber raita,779,32,83,38,17
+Diabetic-Veg Plan-Lunch,Week 3,Wed,Yuzu Corn Salad,Paneer grilled,,,,670,30,45,47,7
+Diabetic-Veg Plan-Lunch,Week 3,Thu,Ragi Jowar Chapathi,Paneer Butter Masala,Toor dal fry,Mixed Vegetable Thoran,Cucumber raita,779,32,83,38,17
+Diabetic-Veg Plan-Lunch,Week 3,Fri,Mesclun Quinoa Salad,Paneer grilled,,,,790,36,52,55,9
+Diabetic-Veg Plan-Lunch,Week 3,Sat,Furikake Avocado Toast,Steamed Edamame,Cut fruits,,,668,22,82,31,22
+Diabetic-Veg Plan-Lunch,Week 4,Mon,Furikake Avocado Toast,Steamed Edamame,Shirazi salad,,,660,22,79,31,21
+Diabetic-Veg Plan-Lunch,Week 4,Tue,Yuzu Corn Salad,Paneer grilled,,,,670,30,45,47,7
+Diabetic-Veg Plan-Lunch,Week 4,Wed,Ragi Jowar Chapathi,Paneer Butter Masala,Toor dal fry,Mixed Vegetable Thoran,Cucumber raita,779,32,83,38,17
+Diabetic-Veg Plan-Lunch,Week 4,Thu,Ragi Jowar Chapathi,Paneer Butter Masala,Toor dal fry,Mixed Vegetable Thoran,Cucumber raita,779,32,83,38,17
+Diabetic-Veg Plan-Lunch,Week 4,Fri,Mesclun Quinoa Salad,Paneer grilled,,,,790,36,52,55,9
+Diabetic-Veg Plan-Lunch,Week 4,Sat,Ragi Jowar Chapathi,Paneer Butter Masala,Toor dal fry,Mixed Vegetable Thoran,Cucumber raita,779,32,83,38,17
+Diabetic-Veg Plan-Dinner,Week 1,Mon,Ragi Jowar Chapathi,Paneer Butter Masala,Toor dal fry,Mixed Vegetable Thoran,Cucumber raita,779,32,83,38,17
+Diabetic-Veg Plan-Dinner,Week 1,Tue,Vegetable millet broth,Steamed Edamame,Shirazi salad,,,209,9,30,9,8
+Diabetic-Veg Plan-Dinner,Week 1,Wed,Yuzu Corn Salad,Paneer grilled,,,,670,30,45,47,7
+Diabetic-Veg Plan-Dinner,Week 1,Thu,Mesclun Quinoa Salad,Paneer grilled,,,,790,36,52,55,9
+Diabetic-Veg Plan-Dinner,Week 1,Fri,Yuzu Corn Salad,Paneer grilled,,,,670,30,45,47,7
+Diabetic-Veg Plan-Dinner,Week 1,Sat,Vegetable millet broth,Steamed Edamame,Shirazi salad,,,209,9,30,9,8
+Diabetic-Veg Plan-Dinner,Week 2,Mon,Mesclun Quinoa Salad,Paneer grilled,,,,790,36,52,55,9
+Diabetic-Veg Plan-Dinner,Week 2,Tue,Yuzu Corn Salad,Paneer grilled,,,,670,30,45,47,7
+Diabetic-Veg Plan-Dinner,Week 2,Wed,Mesclun Quinoa Salad,Paneer grilled,,,,790,36,52,55,9
+Diabetic-Veg Plan-Dinner,Week 2,Thu,Vegetable millet broth,Steamed Edamame,Shirazi salad,,,209,9,30,9,8
+Diabetic-Veg Plan-Dinner,Week 2,Fri,Yuzu Corn Salad,Paneer grilled,,,,670,30,45,47,7
+Diabetic-Veg Plan-Dinner,Week 2,Sat,Ragi Jowar Chapathi,Paneer Butter Masala,Toor dal fry,Mixed Vegetable Thoran,Cucumber raita,779,32,83,38,17
+Diabetic-Veg Plan-Dinner,Week 3,Mon,Yuzu Corn Salad,Paneer grilled,,,,670,30,45,47,7
+Diabetic-Veg Plan-Dinner,Week 3,Tue,Mesclun Quinoa Salad,Paneer grilled,,,,790,36,52,55,9
+Diabetic-Veg Plan-Dinner,Week 3,Wed,Yuzu Corn Salad,Paneer grilled,,,,670,30,45,47,7
+Diabetic-Veg Plan-Dinner,Week 3,Thu,Vegetable millet broth,Paneer grilled,Shirazi salad,,,545,29,36,38,8
+Diabetic-Veg Plan-Dinner,Week 3,Fri,Yuzu Corn Salad,Paneer grilled,,,,670,30,45,47,7
+Diabetic-Veg Plan-Dinner,Week 3,Sat,Ragi Jowar Chapathi,Paneer Butter Masala,Toor dal fry,Mixed Vegetable Thoran,Cucumber raita,779,32,83,38,17
+Diabetic-Veg Plan-Dinner,Week 4,Mon,Vegetable millet broth,Steamed Edamame,Shirazi salad,,,209,9,30,9,8
+Diabetic-Veg Plan-Dinner,Week 4,Tue,Mesclun Quinoa Salad,Paneer grilled,,,,790,36,52,55,9
+Diabetic-Veg Plan-Dinner,Week 4,Wed,Yuzu Corn Salad,Paneer grilled,,,,670,30,45,47,7
+Diabetic-Veg Plan-Dinner,Week 4,Thu,Ragi Jowar Chapathi,Paneer Butter Masala,Toor dal fry,Mixed Vegetable Thoran,Cucumber raita,779,32,83,38,17
+Diabetic-Veg Plan-Dinner,Week 4,Fri,Vegetable millet broth,Steamed Edamame,Shirazi salad,,,209,9,30,9,8
+Diabetic-Veg Plan-Dinner,Week 4,Sat,Yuzu Corn Salad,Paneer grilled,,,,670,30,45,47,7
+Diabetic-Non-Veg Plan-Lunch,Week 1,Mon,Pulled Chicken Caesar Salad,,,,,585,44,17,36,4
+Diabetic-Non-Veg Plan-Lunch,Week 1,Tue,Scrambled egg sando on multigrain bread,Herbs Marinated Chicken Breast,Cut fruits,,,579,53,39,29,7
+Diabetic-Non-Veg Plan-Lunch,Week 1,Wed,Yuzu Corn Salad,Herbs Marinated Chicken Breast,,,,505,37,39,28,7
+Diabetic-Non-Veg Plan-Lunch,Week 1,Thu,Ragi Jowar Chapathi,Chicken curry,Toor dal fry,Mixed Vegetable Thoran,Cucumber raita,661,42,80,24,17
+Diabetic-Non-Veg Plan-Lunch,Week 1,Fri,Protein Chicken Collagen Millet Kanji,Omlet,Coconut Sambol,Mixed Vegetable Thoran,Maple Togarashi Spiced Nuts,582,44,44,29,10
+Diabetic-Non-Veg Plan-Lunch,Week 1,Sat,Furikake Avocado Toast with Jammy Eggs,Steamed Edamame,Cut fruits,,,457,28,41,27,12
+Diabetic-Non-Veg Plan-Lunch,Week 2,Mon,Pulled Chicken Caesar Salad,,,,,585,44,17,36,4
+Diabetic-Non-Veg Plan-Lunch,Week 2,Tue,Yuzu Corn Salad,Paneer grilled,,,,670,30,45,47,7
+Diabetic-Non-Veg Plan-Lunch,Week 2,Wed,Protein Chicken Collagen Millet Kanji,Omlet,Coconut Sambol,Mixed Vegetable Thoran,Maple Togarashi Spiced Nuts,582,44,44,29,10
+Diabetic-Non-Veg Plan-Lunch,Week 2,Thu,Furikake Avocado Toast with Jammy Eggs,Steamed Edamame,Cut fruits,,,457,28,41,27,12
+Diabetic-Non-Veg Plan-Lunch,Week 2,Fri,Ragi Jowar Chapathi,Chicken curry,Toor dal fry,Mixed Vegetable Thoran,Cucumber raita,661,42,80,24,17
+Diabetic-Non-Veg Plan-Lunch,Week 2,Sat,Sour Dough Grilled Chicken and Avocado Sandwich,,Cut fruits,,,805,40,86,38,14
+Diabetic-Non-Veg Plan-Lunch,Week 3,Mon,Protein Chicken Collagen Millet Kanji,Omlet,Coconut Sambol,Mixed Vegetable Thoran,Maple Togarashi Spiced Nuts,582,44,44,29,10
+Diabetic-Non-Veg Plan-Lunch,Week 3,Tue,Mesclun Quinoa Salad,Herbs Marinated Chicken Breast,,,,625,43,47,36,9
+Diabetic-Non-Veg Plan-Lunch,Week 3,Wed,Furikake Avocado Toast with Jammy Eggs,Soyu egg,Shirazi salad,,,549,37,37,35,11
+Diabetic-Non-Veg Plan-Lunch,Week 3,Thu,Ragi Jowar Chapathi,Chicken curry,Toor dal fry,Mixed Vegetable Thoran,Cucumber raita,661,42,80,24,17
+Diabetic-Non-Veg Plan-Lunch,Week 3,Fri,Yuzu Corn Salad,Herbs Marinated Chicken Breast,,,,505,37,39,28,7
+Diabetic-Non-Veg Plan-Lunch,Week 3,Sat,Scrambled egg sando on multigrain bread,Herbs Marinated Chicken Breast,Cut fruits,,,579,53,39,29,7
+Diabetic-Non-Veg Plan-Lunch,Week 4,Mon,Ragi Jowar Chapathi,Chicken curry,Toor dal fry,Mixed Vegetable Thoran,Cucumber raita,661,42,80,24,17
+Diabetic-Non-Veg Plan-Lunch,Week 4,Tue,Protein Chicken Collagen Millet Kanji,Omlet,Coconut Sambol,Mixed Vegetable Thoran,Maple Togarashi Spiced Nuts,582,44,44,29,10
+Diabetic-Non-Veg Plan-Lunch,Week 4,Wed,Scrambled egg sando on multigrain bread,Soyu egg,Shirazi salad,,,501,35,34,28,6
+Diabetic-Non-Veg Plan-Lunch,Week 4,Thu,Furikake Avocado Toast with Jammy Eggs,Herbs Marinated Chicken Breast,Cut fruits,,,627,55,42,36,12
+Diabetic-Non-Veg Plan-Lunch,Week 4,Fri,Pulled Chicken Caesar Salad,,,,,585,44,17,36,4
+Diabetic-Non-Veg Plan-Lunch,Week 4,Sat,Mesclun Quinoa Salad,Herbs Marinated Chicken Breast,,,,625,43,47,36,9
+Diabetic-Non-Veg Plan-Dinner,Week 1,Mon,Ragi Jowar Chapathi,Chicken curry,Toor dal fry,Mixed Vegetable Thoran,Cucumber Raita,661,42,80,24,17
+Diabetic-Non-Veg Plan-Dinner,Week 1,Tue,Yuzu Corn Salad,Herbs Marinated Chicken Breast,,,,505,37,39,28,7
+Diabetic-Non-Veg Plan-Dinner,Week 1,Wed,Mesclun Quinoa Salad,Herbs Marinated Chicken Breast,,,,625,43,47,36,9
+Diabetic-Non-Veg Plan-Dinner,Week 1,Thu,Ragi Chicken Collagen Broth,Soyu egg,Shirazi salad,,,289,35,11,20,2
+Diabetic-Non-Veg Plan-Dinner,Week 1,Fri,Mesclun Quinoa Salad,Paneer grilled,,,,790,36,52,55,9
+Diabetic-Non-Veg Plan-Dinner,Week 1,Sat,Pulled Chicken Caesar Salad,,,,,585,44,17,36,4
+Diabetic-Non-Veg Plan-Dinner,Week 2,Mon,Ragi Chicken Collagen Broth,Paneer grilled,Shirazi salad,,,525,46,18,41,3
+Diabetic-Non-Veg Plan-Dinner,Week 2,Tue,Protein Chicken Collagen Millet Kanji,Omlet,Gooseberry chutney,Mixed Vegetable Thoran,Maple Togarashi Spiced Nuts,537,44,41,25,8
+Diabetic-Non-Veg Plan-Dinner,Week 2,Wed,Mesclun Quinoa Salad,Herbs Marinated Chicken Breast,,,,625,43,47,36,9
+Diabetic-Non-Veg Plan-Dinner,Week 2,Thu,Ragi Jowar Chapathi,Chicken curry,Toor dal fry,Mixed Vegetable Thoran,Cucumber Raita,661,42,80,24,17
+Diabetic-Non-Veg Plan-Dinner,Week 2,Fri,Pulled Chicken Caesar Salad,,,,,585,44,17,36,4
+Diabetic-Non-Veg Plan-Dinner,Week 2,Sat,Ragi Chicken Collagen Broth,Steamed Edamame,Shirazi salad,,,189,26,12,12,3
+Diabetic-Non-Veg Plan-Dinner,Week 3,Mon,Pulled Chicken Caesar Salad,,,,,585,44,17,36,4
+Diabetic-Non-Veg Plan-Dinner,Week 3,Tue,Ragi Jowar Chapathi,Chicken curry,Toor dal fry,Mixed Vegetable Thoran,Cucumber Raita,661,42,80,24,17
+Diabetic-Non-Veg Plan-Dinner,Week 3,Wed,Yuzu Corn Salad,Herbs Marinated Chicken Breast,,,,505,37,39,28,7
+Diabetic-Non-Veg Plan-Dinner,Week 3,Thu,Vegetable millet broth,Herbs Marinated Chicken Breast,Shirazi salad,,,380,36,31,19,8
+Diabetic-Non-Veg Plan-Dinner,Week 3,Fri,Protein Chicken Collagen Millet Kanji,Omlet,Gooseberry chutney,Mixed Vegetable Thoran,Maple Togarashi Spiced Nuts,537,44,41,25,8
+Diabetic-Non-Veg Plan-Dinner,Week 3,Sat,Mesclun Quinoa Salad,Herbs Marinated Chicken Breast,,,,625,43,47,36,9
+Diabetic-Non-Veg Plan-Dinner,Week 4,Mon,Mesclun Quinoa Salad,Herbs Marinated Chicken Breast,,,,625,43,47,36,9
+Diabetic-Non-Veg Plan-Dinner,Week 4,Tue,Mesclun Quinoa Salad,Herbs Marinated Chicken Breast,,,,625,43,47,36,9
+Diabetic-Non-Veg Plan-Dinner,Week 4,Wed,Vegetable millet broth,Paneer grilled,Shirazi salad,,,545,29,36,38,8
+Diabetic-Non-Veg Plan-Dinner,Week 4,Thu,Pulled Chicken Caesar Salad,,,,,585,44,17,36,4
+Diabetic-Non-Veg Plan-Dinner,Week 4,Fri,Protein Chicken Collagen Millet Kanji,Omlet,Gooseberry chutney,Mixed Vegetable Thoran,Maple Togarashi Spiced Nuts,537,44,41,25,8
+Diabetic-Non-Veg Plan-Dinner,Week 4,Sat,Ragi Jowar Chapathi,Chicken curry,Toor dal fry,Mixed Vegetable Thoran,Cucumber Raita,661,42,80,24,17
+Smoothie + Gut Booster Plan,Week 1,Mon,Mint Pineapple Spinach Smoothie,Beetroot Carrot Kanji,,,,334,13,43,14,6
+Smoothie + Gut Booster Plan,Week 1,Tue,Chia Peanut Butter Protein Smoothie,Masala Chaas,,,,484,42,44,19,9
+Smoothie + Gut Booster Plan,Week 1,Wed,CBP Protein Smoothie,Pineapple Gut Booster Tepache,,,,363,28,38,13,7
+Smoothie + Gut Booster Plan,Week 1,Thu,Chia Peanut Butter Protein Smoothie,Amla Turmeric Kanji,,,,313,30,29,11,8
+Smoothie + Gut Booster Plan,Week 1,Fri,ABC Smoothie,Beetroot Carrot Kanji,,,,120,2,27,1,5
+Smoothie + Gut Booster Plan,Week 1,Sat,Mint Pineapple Spinach Smoothie,Masala Chaas,,,,494,24,56,22,7
+Smoothie + Gut Booster Plan,Week 2,Mon,Chia Peanut Butter Protein Smoothie,Masala Chaas,,,,484,42,44,19,9
+Smoothie + Gut Booster Plan,Week 2,Tue,CBP Protein Smoothie,Pineapple Gut Booster Tepache,,,,363,28,38,13,7
+Smoothie + Gut Booster Plan,Week 2,Wed,Chia Peanut Butter Protein Smoothie,Amla Turmeric Kanji,,,,313,30,29,11,8
+Smoothie + Gut Booster Plan,Week 2,Thu,ABC Smoothie,Beetroot Carrot Kanji,,,,120,2,27,1,5
+Smoothie + Gut Booster Plan,Week 2,Fri,Mint Pineapple Spinach Smoothie,Masala Chaas,,,,494,24,56,22,7
+Smoothie + Gut Booster Plan,Week 2,Sat,Chia Peanut Butter Protein Smoothie,Pineapple Gut Booster Tepache,,,,416,31,56,11,9
+Smoothie + Gut Booster Plan,Week 3,Mon,CBP Protein Smoothie,Pineapple Gut Booster Tepache,,,,363,28,38,13,7
+Smoothie + Gut Booster Plan,Week 3,Tue,Chia Peanut Butter Protein Smoothie,Amla Turmeric Kanji,,,,313,30,29,11,8
+Smoothie + Gut Booster Plan,Week 3,Wed,ABC Smoothie,Beetroot Carrot Kanji,,,,120,2,27,1,5
+Smoothie + Gut Booster Plan,Week 3,Thu,Mint Pineapple Spinach Smoothie,Masala Chaas,,,,494,24,56,22,7
+Smoothie + Gut Booster Plan,Week 3,Fri,Chia Peanut Butter Protein Smoothie,Pineapple Gut Booster Tepache,,,,416,31,56,11,9
+Smoothie + Gut Booster Plan,Week 3,Sat,CBP Protein Smoothie,Amla Turmeric Kanji,,,,260,28,11,13,6
+Smoothie + Gut Booster Plan,Week 4,Mon,Chia Peanut Butter Protein Smoothie,Amla Turmeric Kanji,,,,313,30,29,11,8
+Smoothie + Gut Booster Plan,Week 4,Tue,ABC Smoothie,Beetroot Carrot Kanji,,,,120,2,27,1,5
+Smoothie + Gut Booster Plan,Week 4,Wed,Mint Pineapple Spinach Smoothie,Masala Chaas,,,,494,24,56,22,7
+Smoothie + Gut Booster Plan,Week 4,Thu,Chia Peanut Butter Protein Smoothie,Pineapple Gut Booster Tepache,,,,416,31,56,11,9
+Smoothie + Gut Booster Plan,Week 4,Fri,CBP Protein Smoothie,Amla Turmeric Kanji,,,,260,28,11,13,6
+Smoothie + Gut Booster Plan,Week 4,Sat,Chia Peanut Butter Protein Smoothie,Beetroot Carrot Kanji,,,,323,30,31,11,8
