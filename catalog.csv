@@ -15,12 +15,12 @@ dish,DISH052,Crunchy Nut mix-Main,Snacks,,,299,live,836.63,32.77,31.5,71.98,14.6
 addon,DISH036,Cucumber Raita,Addon,,,29,live,701.37,20.26,50.43,52.1,9.1,,Maple Togarashi Spiced Nuts
 addon,DISH056,Cut fruits,Addon,,,49,live,169.52,17.18,12.73,6.9,6.49,,Masala Chaas
 dish,DISH010,French Onion Grilled Cheese,,,,199,live,400,24.07,33,25,10,,Mesclun Quinoa Salad
-addon,DISH054,Furikake Avocado Toast,Sandwich,,,299,live,420,16.76,67.8,21.56,10.22,,Mint Pineapple Spinach Smoothie
-addon,DISH011,Furikake Avocado Toast with Jammy Eggs,Sandwich,,assets/dishes/Picture16.png,299,live,611.17,18.16,74.49,29.4,19.32,,Pineapple Gut Booster Tepache
-addon,DISH012,Greek Yogurt Granola Bowl,Snacks,,assets/dishes/Picture18.png,349,live,340,32,30,10,4,,Protein Chicken Collagen Millet Kanji
-addon,DISH058,Grilled Chicken and Avocado Sandwich,Sandwich,,,299,live,450,34.03,32,24,8,,Protein Peanut Butter Brownie
+dish,DISH054,Furikake Avocado Toast,Sandwich,,,299,live,420,16.76,67.8,21.56,10.22,,Mint Pineapple Spinach Smoothie
+dish,DISH011,Furikake Avocado Toast with Jammy Eggs,Sandwich,,assets/dishes/Picture16.png,299,live,611.17,18.16,74.49,29.4,19.32,,Pineapple Gut Booster Tepache
+dish,DISH012,Greek Yogurt Granola Bowl,Snacks,,assets/dishes/Picture18.png,349,live,340,32,30,10,4,,Protein Chicken Collagen Millet Kanji
+dish,DISH058,Grilled Chicken and Avocado Sandwich,Sandwich,,,299,live,450,34.03,32,24,8,,Protein Peanut Butter Brownie
 dish,DISH013,Herbs Marinated Chicken Breast,Addon,,,149,live,351.94,22,30,18,5,,Pulled Chicken Caesar Salad
-addon,DISH057,Herbs Marinated Chicken Breast-Main,,,,349,live,420,12,43.5,25,8,,Ragi Chicken Collagen Broth
+dish,DISH057,Herbs Marinated Chicken Breast-Main,,,,349,live,420,12,43.5,25,8,,Ragi Chicken Collagen Broth
 dish,DISH051,Lemonade Salt,Drink,,,49,live,782.42,39.25,80.57,37.89,12.68,,Sour Dough Grilled Chicken and Avocado Sandwich
 addon,DISH015,Maple Togarashi Spiced Nuts,Snacks,,assets/dishes/Picture13.png,49,hidden,824.25,23.46,160.69,10.99,14.28,,Whole Wheat Pizza Dough
 dish,DISH014,Maple Togarashi Spiced Nuts-Main,Snacks,,assets/dishes/Picture13.png,349,live,585.42,43.62,16.55,36,4,,Yuzu Corn Salad
@@ -34,7 +34,7 @@ dish,DISH049,Monkfruit Lemonade,Drink,,,69,live,306.38,30.27,27.68,10.86,8.22,,C
 dish,DISH029,Omlet,Addon,,,25,live,177.43,11.36,15.93,8.5,0.87,,Paneer butter masala
 dish,DISH034,Paneer butter masala,Addon,,,159,live,316.86,12.77,40.32,13.47,5.92,,Toor dal fry
 dish,DISH055,Paneer grilled,Addon,,,119,live,110,0.3,28.58,0.02,0.93,,Cucumber Raita
-addon,DISH048,Peanut Butter and Banana Toast,Sandwich,,,149,live,3.2,0.11,0.89,0.03,0.32,,Ragi Jowar Chapathi Chicken meal combo
+dish,DISH048,Peanut Butter and Banana Toast,Sandwich,,,149,live,3.2,0.11,0.89,0.03,0.32,,Ragi Jowar Chapathi Chicken meal combo
 dish,DISH019,Pineapple Gut Booster Tepache,Drink,,assets/dishes/Picture15.png,69,live,3.2,0.11,0.89,0.03,0.32,,Ragi Jowar Chapathi Paneer meal combo
 dish,DISH020,Protein Chicken Collagen Millet Kanji,,,assets/dishes/Picture29.png,149,live,546.34,14.41,95.03,11.39,13.3,,Ragi Quinoa Crisp bread
 dish,DISH031,Protein Chicken Collagen Millet Kanji combo,Combo,,,249,live,126.63,4.1,14.01,5,6.9,,Vegan Chocolate Chips Almond Oats Cookies
@@ -43,13 +43,13 @@ dish,DISH022,Pulled Chicken Caesar Salad,Salad,,assets/dishes/Picture1.png,299,l
 dish,DISH023,Ragi Chicken Collagen Broth,Soup,,assets/dishes/Picture3.png,149,hidden,325.53,13.73,49.73,8.69,7.42,,Mesclun Quinoa Salad mix
 dish,DISH032,Ragi Jowar Chapathi,Addon,,,16,live,206.61,0.28,8.12,19.68,0.51,,Mesclun Quinoa Salad dressing
 dish,DISH037,Ragi Jowar Chapathi Chicken meal combo,Combo,,assets/dishes/Picture30.png,249,live,320,34.34,33,9,5,,Shirazi salad
-addon,DISH038,Ragi Jowar Chapathi Paneer meal combo,Combo,,assets/dishes/Picture30.png,249,live,660,48.35,62,22,12,,Soyu egg
+dish,DISH038,Ragi Jowar Chapathi Paneer meal combo,Combo,,assets/dishes/Picture30.png,249,live,660,48.35,62,22,12,,Soyu egg
 dish,DISH039,Ragi Quinoa Crisp bread,,,,,hidden,633,32.1,84.9,43.15,14.6,,Vegetable millet broth
 dish,DISH050,Roasted sweet potato,Addon,,,49,live,204.71,30.64,3.25,11.27,1.15,,PEANUT BUTTER AND BANANA TOAST
-addon,DISH060,Scrambled egg sando on multigrain bread,Sandwich,,,149,live,45.73,0.6,2.99,3.96,1.57,,MONKFRUIT LEMONADE
+dish,DISH060,Scrambled egg sando on multigrain bread,Sandwich,,,149,live,45.73,0.6,2.99,3.96,1.57,,MONKFRUIT LEMONADE
 dish,DISH045,Shirazi salad,Addon,,assets/dishes/Picture6.png,49,live,70,8.03,2,5.52,0.2,,Roasted sweet potato
 dish,DISH061,Shirazi salad-Main,Salad,,assets/dishes/Picture6.png,149,live,56.47,1.5,4.37,4.34,3,,LEMONADE SALT
-addon,DISH024,Sour Dough Grilled Chicken and Avocado Sandwich,,,assets/dishes/Picture19.png,349,live,219.4,7,46.6,1.52,7,,Crunchy Nut mix
+dish,DISH024,Sour Dough Grilled Chicken and Avocado Sandwich,,,assets/dishes/Picture19.png,349,live,219.4,7,46.6,1.52,7,,Crunchy Nut mix
 dish,DISH046,Soyu egg,Addon,,assets/dishes/Picture21.png,49,live,215,25,6.57,13,1.76,,Furikake Avocado Toast
 addon,DISH027,Steamed Edamame,Snacks,,assets/dishes/Picture22.png,61,live,333.68,14.84,9.46,27.24,1.75,,Paneer grilled
 dish,DISH059,Steamed Edamame-Main,Snacks,,assets/dishes/Picture22.png,249,hidden,146.01,7.42,20,4.1,5.17,,Cut fruits
