@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="assets/css/main.css" />
   <link rel="stylesheet" href="assets/css/sidebar.css" />
 </head>
-<body>
+<body class="preorder-page">
   <header class="site-header">
     <div class="container nav">
       <div class="brand"><h1>Pre Order</h1></div>
@@ -20,7 +20,7 @@
   </header>
 
   <section class="section">
-    <div class="container card">
+    <div class="container card preorder-shell">
       <h2>Pre-order for a specific date</h2>
       <p class="muted">Select a delivery date within the next 3 months, then add any menu items.</p>
       <div class="controls" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;">
@@ -37,7 +37,7 @@
           <input id="preorder-phone" type="tel" placeholder="WhatsApp number" />
         </div>
       </div>
-      <p id="preorder-feedback" class="muted"></p>
+      <p id="preorder-feedback" class="muted preorder-feedback"></p>
       <div id="preorder-menu" class="menu-grid"></div>
       <p><a id="preorder-confirm" class="btn btn-primary" href="#" target="_blank" rel="noopener">Confirm Pre Order</a></p>
     </div>

@@ -200,6 +200,17 @@ body {
 .preorder-cat-body .item-list { margin-top: 6px; }
 .preorder-item { grid-template-columns: 1fr auto; align-items: center; }
 .preorder-item .action-row { grid-column: 1 / -1; }
+.preorder-page .section { padding-top: 22px; }
+.preorder-shell {
+  max-width: 1180px;
+  border-radius: 22px;
+  border: 1px solid rgba(31,109,71,.14);
+  box-shadow: 0 18px 44px rgba(12,48,30,.1);
+}
+.preorder-shell h2 { font-size: 1.55rem; color: #1f6d47; margin-bottom: 8px; }
+.preorder-feedback { min-height: 22px; font-weight: 600; }
+.preorder-item strong { font-size: 1.02rem; color: #123f2a; }
+.nutrition-icon { width: 16px; display: inline-flex; justify-content: center; }
 
 .diet-form input {
   border: 1px solid rgba(0, 0, 0, 0.15);

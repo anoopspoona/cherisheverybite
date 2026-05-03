@@ -37,7 +37,7 @@ function rowsForSelection(rows, selection) {
     const variant = normalizeKey(row.Variant_Key || row.variant_key || row.Variant_Name || row.variant_name);
     if (!variantNeedle || variantNeedle === "all") return true;
     if (variantNeedle === "standard") return variant === "standard";
-    return variant === variantNeedle;
+    return variant === variantNeedle || variant === "standard";
   });
 }
 

@@ -13,7 +13,12 @@ function normalizeMenuRows(rows) {
       name: row.name || row.Name || row.Dish_Name || row.dish_name || "",
       category: row.category || row.Category || "Menu",
       mealType: row.meal_type || row.Meal_Type || "",
-      price: normalizePrice(row.price || row.Price || row.unit_price || row.Unit_Price || "")
+      price: normalizePrice(row.price || row.Price || row.unit_price || row.Unit_Price || ""),
+      calories: row.Calories || row.calories || "",
+      protein: row.Protein || row.protein || "",
+      carbohydrates: row.Carbohydrates || row.carbohydrates || row.Carbs || row.carbs || "",
+      fats: row.Fats || row.fats || "",
+      fiber: row.Fiber || row.fiber || ""
     }))
     .filter(item => item.id && item.name);
 }
@@ -63,6 +68,13 @@ function groupByCategory(items) {
           <div>
             <strong>${escapeHtml(item.name)}</strong>
             <div class="muted">${item.mealType ? escapeHtml(item.mealType) : ""}</div>
+            ${(item.calories || item.protein || item.carbohydrates || item.fats || item.fiber) ? `<div class="nutrition-row">
+              ${item.calories ? `<span class="nutrition-pill"><span class="nutrition-icon">🔥</span>${escapeHtml(item.calories)} kcal</span>` : ""}
+              ${item.protein ? `<span class="nutrition-pill"><span class="nutrition-icon">🥚</span>${escapeHtml(item.protein)}g</span>` : ""}
+              ${item.carbohydrates ? `<span class="nutrition-pill"><span class="nutrition-icon">🍚</span>${escapeHtml(item.carbohydrates)}g</span>` : ""}
+              ${item.fats ? `<span class="nutrition-pill"><span class="nutrition-icon">🥑</span>${escapeHtml(item.fats)}g</span>` : ""}
+              ${item.fiber ? `<span class="nutrition-pill"><span class="nutrition-icon">🥗</span>${escapeHtml(item.fiber)}g</span>` : ""}
+            </div>` : ""}
           </div>
           <p class="price" style="display:inline-flex">${escapeHtml(item.price)}</p>
           <div class="action-row" style="margin-top:8px;">
