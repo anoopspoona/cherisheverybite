@@ -39,6 +39,7 @@ function groupByCategory(items) {
   const phoneInput = document.getElementById("preorder-phone");
   const feedback = document.getElementById("preorder-feedback");
   const menuWrap = document.getElementById("preorder-menu");
+  const categoryBar = document.getElementById("preorder-category-bar");
   const confirm = document.getElementById("preorder-confirm");
 
   const today = new Date();
@@ -60,6 +61,9 @@ function groupByCategory(items) {
     if (!menuWrap) return;
     const grouped = groupByCategory(items);
     if (!openCategory && grouped.length) openCategory = grouped[0].category;
+    if (categoryBar) {
+      categoryBar.innerHTML = grouped.map(group => `<button class="btn btn-soft preorder-cat-chip ${group.category === openCategory ? "is-active" : ""}" data-action="toggle-category" data-category="${escapeHtml(group.category)}" type="button">${escapeHtml(group.category)}</button>`).join("");
+    }
     menuWrap.innerHTML = grouped.map(group => {
       const isOpen = group.category === openCategory;
       const inner = group.rows.map(item => {
@@ -68,12 +72,12 @@ function groupByCategory(items) {
           <div>
             <strong>${escapeHtml(item.name)}</strong>
             <div class="muted">${item.mealType ? escapeHtml(item.mealType) : ""}</div>
-            ${(item.calories || item.protein || item.carbohydrates || item.fats || item.fiber) ? `<div class="nutrition-row">
-              ${item.calories ? `<span class="nutrition-pill"><span class="nutrition-icon">🔥</span>${escapeHtml(item.calories)} kcal</span>` : ""}
-              ${item.protein ? `<span class="nutrition-pill"><span class="nutrition-icon">🥚</span>${escapeHtml(item.protein)}g</span>` : ""}
-              ${item.carbohydrates ? `<span class="nutrition-pill"><span class="nutrition-icon">🍚</span>${escapeHtml(item.carbohydrates)}g</span>` : ""}
-              ${item.fats ? `<span class="nutrition-pill"><span class="nutrition-icon">🥑</span>${escapeHtml(item.fats)}g</span>` : ""}
-              ${item.fiber ? `<span class="nutrition-pill"><span class="nutrition-icon">🥗</span>${escapeHtml(item.fiber)}g</span>` : ""}
+            ${(item.calories || item.protein || item.carbohydrates || item.fats || item.fiber) ? `<div class="nutrition-row nutrition-row-preorder">
+              ${item.calories ? `<span class="nutrition-pill is-red"><span class="nutrition-icon">🔥</span><span>${escapeHtml(item.calories)}</span></span>` : ""}
+              ${item.protein ? `<span class="nutrition-pill is-red"><span class="nutrition-icon">💪</span><span>${escapeHtml(item.protein)}g</span></span>` : ""}
+              ${item.carbohydrates ? `<span class="nutrition-pill is-green"><span class="nutrition-icon">🌾</span><span>${escapeHtml(item.carbohydrates)}g</span></span>` : ""}
+              ${item.fats ? `<span class="nutrition-pill is-red"><span class="nutrition-icon">💧</span><span>${escapeHtml(item.fats)}g</span></span>` : ""}
+              ${item.fiber ? `<span class="nutrition-pill is-green"><span class="nutrition-icon">🌿</span><span>${escapeHtml(item.fiber)}g</span></span>` : ""}
             </div>` : ""}
           </div>
           <p class="price" style="display:inline-flex">${escapeHtml(item.price)}</p>
@@ -84,7 +88,7 @@ function groupByCategory(items) {
           </div>
         </li>`;
       }).join("");
-      return `<article class="menu-section">
+      return `<article class="menu-section" data-category-section="${escapeHtml(group.category)}">
         <button class="btn btn-soft preorder-cat-toggle" data-action="toggle-category" data-category="${escapeHtml(group.category)}" type="button">
           ${escapeHtml(group.category)} (${group.rows.length})
         </button>
@@ -134,6 +138,15 @@ function groupByCategory(items) {
     if (action === "minus") qtyById.set(id, Math.max(0, qty - 1));
     render();
     updateConfirm();
+  });
+  categoryBar?.addEventListener("click", event => {
+    const target = event.target instanceof HTMLElement ? event.target : null;
+    const btn = target?.closest("button[data-action='toggle-category']");
+    if (!btn) return;
+    openCategory = btn.getAttribute("data-category") || "";
+    render();
+    const section = menuWrap.querySelector(`[data-category-section="${CSS.escape(openCategory)}"]`);
+    section?.scrollIntoView({ behavior: "smooth", block: "start" });
   });
 
   [dateInput, nameInput, phoneInput].forEach(el => el?.addEventListener("input", updateConfirm));
