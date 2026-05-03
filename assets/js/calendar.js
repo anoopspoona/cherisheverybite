@@ -117,7 +117,8 @@ function buildUnifiedEntry(rows, selectedPlan, selectedVariant, selectedMeal, da
     const planLabel = normalizeKey(row.Plan || row.plan || "");
     const rowWeek = weekToken(row.Week || row["Data.Column1"] || row.data_column1);
     const rowDay = dayToken(row.Day || row["Data.Column2"] || row.data_column2);
-    const variantHit = !variantNeedle || planLabel.includes(variantNeedle.replace("-", ""));
+    const planHasVariantToken = /(?:^|[^a-z])(veg|nonveg|non-veg)(?:[^a-z]|$)/.test(planLabel);
+    const variantHit = !variantNeedle || !planHasVariantToken || planLabel.includes(variantNeedle.replace("-", ""));
     return planLabel.includes(planNeedle) && planLabel.includes(mealNeedle) && variantHit && rowWeek === week && rowDay === day;
   });
   if (!matched) return null;
@@ -714,7 +715,11 @@ async function loadAddonCatalog() {
         const dateObj = new Date(iso);
         const unified = buildUnifiedEntry(allPlansNutritionRows, selectedPlan, selectedVariant, selectedMeal, dateObj);
         const menuForDate = mealForDate(effectiveRows, dateObj, selectedMeal);
-        activeMap.set(iso, unified || { dish: menuForDate || dishes[idx % dishes.length], details: [], nutrition: {} });
+        if (allPlansNutritionRows.length) {
+          activeMap.set(iso, unified || { dish: "Menu updating from master sheet", details: [], nutrition: {} });
+        } else {
+          activeMap.set(iso, unified || { dish: menuForDate || dishes[idx % dishes.length], details: [], nutrition: {} });
+        }
       });
 
       Array.from(dayAddonItems.keys()).forEach(date => {

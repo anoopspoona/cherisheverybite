@@ -12,6 +12,10 @@ function calendarUrlForPlan(row = {}) {
   return `calendar.html?plan=${encodeURIComponent(planKey)}&meal=${encodeURIComponent(meal)}&period=${encodeURIComponent(period)}&variant=${encodeURIComponent(variant)}`;
 }
 
+function publicPlanLabel(row = {}) {
+  return String(row.Plan_Key || row.plan_key || row.Plan_Name || "Plan").trim();
+}
+
 function normalizePrice(price) {
   const value = String(price || "").trim();
   return value || "TBD";
@@ -129,7 +133,7 @@ function renderPlans(rows) {
 
   wrap.innerHTML = deduped.map(row => {
     const { weekly, monthly } = getPlanPriceLines(row);
-    const planLabel = String(row.Plan_Key || row.plan_key || row.Plan_Name || "Plan").trim();
+    const planLabel = publicPlanLabel(row);
     const calendarUrl = calendarUrlForPlan(row);
     return `
     <article class="plan-card">
