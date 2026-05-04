@@ -198,10 +198,13 @@ body {
 }
 .preorder-cat-toggle { width: 100%; justify-content: space-between; margin-bottom: 8px; }
 .preorder-cat-body .item-list { margin-top: 6px; }
-.menu-card.preorder-item { display: grid; grid-template-columns: 1fr; align-items: start; row-gap: 8px; }
+.menu-card.preorder-item { display: grid; grid-template-columns: 1fr; align-items: start; row-gap: 6px; padding: 8px 10px !important; }
 .menu-card.preorder-item > div { width: 100%; min-width: 0; }
-.preorder-item .price { justify-self: start; }
+.preorder-item .price { justify-self: end; }
 .preorder-item .action-row { grid-column: 1 / -1; }
+.preorder-item .dish-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.preorder-item .dish-title-wrap { min-width: 0; flex: 1; }
+.preorder-item .price { margin: 0; white-space: nowrap; }
 .preorder-page .section { padding-top: 22px; }
 .preorder-shell {
   max-width: 1180px;
@@ -237,6 +240,15 @@ body {
 .nutrition-chips .nutrition-pill { min-width: 78px; justify-content: center; flex: 0 0 auto; }
 .nutrition-chips .nutrition-pill.is-red { border-color: rgba(200,32,39,.3); color: #a11d24; background: #fff3f3; }
 .nutrition-chips .nutrition-pill.is-green { border-color: rgba(31,109,71,.3); color: #14532d; background: #eefaf2; }
+.preorder-confirm-floating {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 14px;
+  z-index: 60;
+  min-width: min(520px, calc(100vw - 24px));
+  box-shadow: 0 16px 30px rgba(200,32,39,.34);
+}
 
 .diet-form input {
   border: 1px solid rgba(0, 0, 0, 0.15);
