@@ -144,6 +144,14 @@ function buildUnifiedEntry(rows, selectedPlan, selectedVariant, selectedMeal, da
 }
 
 async function loadDishes(plan, meal, variantKey = "") {
+  if (normalizeKey(plan) === "smoothie") {
+    const rows = await fetchCSV("Smoothie-GutBoosterPlan.csv").catch(() => []);
+    const items = rows
+      .map(row => row.Dish || row.dish || row["Data.Column3"] || row["Data.Column4"] || "")
+      .map(v => String(v || "").trim())
+      .filter(Boolean);
+    if (items.length) return Array.from(new Set(items));
+  }
   const planMealsRows = await loadPlanMeals();
   const normalizedVariant = String(variantKey || "").trim().toLowerCase();
   const byPlanMeal = planMealsRows
