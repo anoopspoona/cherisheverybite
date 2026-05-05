@@ -735,11 +735,7 @@ async function loadAddonCatalog() {
         const dateObj = new Date(iso);
         const unified = buildUnifiedEntry(allPlansNutritionRows, selectedPlan, selectedVariant, selectedMeal, dateObj);
         const menuForDate = mealForDate(effectiveRows, dateObj, selectedMeal);
-        if (allPlansNutritionRows.length) {
-          activeMap.set(iso, unified || { dish: "Menu updating from master sheet", details: [], nutrition: {} });
-        } else {
-          activeMap.set(iso, unified || { dish: menuForDate || dishes[idx % dishes.length], details: [], nutrition: {} });
-        }
+        activeMap.set(iso, unified || { dish: menuForDate || dishes[idx % dishes.length], details: [], nutrition: {} });
       });
 
       Array.from(dayAddonItems.keys()).forEach(date => {
