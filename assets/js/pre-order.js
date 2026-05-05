@@ -37,25 +37,55 @@ function groupByCategory(items) {
   const dateInput = document.getElementById("preorder-date");
   const nameInput = document.getElementById("preorder-name");
   const phoneInput = document.getElementById("preorder-phone");
+  const locationSelect = document.getElementById("preorder-location");
+  const mapLinkInput = document.getElementById("preorder-map-link");
+  const pickLocationBtn = document.getElementById("preorder-pick-location");
   const feedback = document.getElementById("preorder-feedback");
   const menuWrap = document.getElementById("preorder-menu");
   const categoryBar = document.getElementById("preorder-category-bar");
   const confirm = document.getElementById("preorder-confirm");
+  const params = new URLSearchParams(window.location.search);
+  const pickedLat = params.get("picked_lat");
+  const pickedLon = params.get("picked_lon");
+  const pickedLabel = params.get("picked_label") || "Pinned Location";
+  const locationMap = new Map();
 
   const today = new Date();
+  const minDate = new Date(today.getTime() + 24 * 60 * 60 * 1000);
   const maxDate = new Date(today);
   maxDate.setMonth(maxDate.getMonth() + 3);
   const fmt = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
   if (dateInput) {
-    dateInput.min = fmt(today);
+    dateInput.min = fmt(minDate);
     dateInput.max = fmt(maxDate);
-    dateInput.value = fmt(today);
+    dateInput.value = fmt(minDate);
   }
 
   const catalogRows = await fetchCSV("catalog.csv").catch(() => []);
   const items = normalizeMenuRows(catalogRows.filter(row => String(row.record_type || row.Record_Type || "dish").toLowerCase() === "dish"));
   const qtyById = new Map();
   let openCategory = "";
+
+  async function loadLocations() {
+    if (!locationSelect) return;
+    const rows = await fetchCSV("delivery_locations.csv").catch(() => []);
+    const normalized = rows
+      .map(row => ({
+        id: row.Location_ID || row.location_id || "",
+        name: row.Location_Name || row.location_name || "",
+        mapLink: row.Map_Link || row.map_link || ""
+      }))
+      .filter(row => row.id && row.name);
+    if (!normalized.length) {
+      locationSelect.innerHTML = `<option value="">Location list unavailable</option>`;
+      return;
+    }
+    locationMap.clear();
+    normalized.forEach(row => locationMap.set(row.id, row));
+    locationSelect.innerHTML = `<option value="">Select saved location</option>${normalized
+      .map(row => `<option value="${escapeHtml(row.id)}">${escapeHtml(row.name)}</option>`)
+      .join("")}`;
+  }
 
   function render() {
     if (!menuWrap) return;
@@ -69,7 +99,8 @@ function groupByCategory(items) {
       const inner = group.rows.map(item => {
         const qty = Number(qtyById.get(item.id) || 0);
         return `<li class="menu-card preorder-item">
-          <div class="dish-title-wrap">
+          <div class="dish-head">
+            <div class="dish-title-wrap">
             <strong class="dish-title">${escapeHtml(item.name)}</strong>
             <div class="muted">${item.mealType ? escapeHtml(item.mealType) : ""}</div>
             ${(item.calories || item.protein || item.carbohydrates || item.fats || item.fiber) ? `<div class="nutrition-chips">
@@ -79,8 +110,9 @@ function groupByCategory(items) {
               ${item.fats ? `<span class="nutrition-pill is-red"><span class="nutrition-icon">💧</span><span>${escapeHtml(item.fats)}g</span></span>` : ""}
               ${item.fiber ? `<span class="nutrition-pill is-green"><span class="nutrition-icon">🌿</span><span>${escapeHtml(item.fiber)}g</span></span>` : ""}
             </div>` : ""}
+            </div>
+            <p class="price">${escapeHtml(item.price)}</p>
           </div>
-          <p class="price" style="display:inline-flex">${escapeHtml(item.price)}</p>
           <div class="action-row" style="margin-top:8px;">
             <button class="btn btn-soft" data-id="${escapeHtml(item.id)}" data-action="minus" type="button">-</button>
             <span>Qty: ${qty}</span>
@@ -104,16 +136,31 @@ function groupByCategory(items) {
     const date = dateInput?.value || "";
     const name = nameInput?.value.trim() || "";
     const phone = phoneInput?.value.trim() || "";
+    const selected = locationMap.get(locationSelect?.value || "") || null;
+    const locationName = selected?.name || (pickedLat && pickedLon ? pickedLabel : "");
+    if (mapLinkInput && !mapLinkInput.value.trim() && selected?.mapLink) mapLinkInput.value = selected.mapLink;
+    if (mapLinkInput && !mapLinkInput.value.trim() && pickedLat && pickedLon) mapLinkInput.value = `https://maps.google.com/?q=${pickedLat},${pickedLon}`;
+    const mapLink = mapLinkInput?.value.trim() || "";
     const phoneOk = /^\+?[0-9\-\s]{8,15}$/.test(phone);
-    if (!date || !name || !phoneOk || !chosen.length) {
+    const missing = [];
+    if (!date) missing.push("delivery date");
+    if (!name) missing.push("name");
+    if (!phone) missing.push("mobile number");
+    else if (!phoneOk) missing.push("valid mobile number");
+    if (!chosen.length) missing.push("at least one dish");
+    if (!locationName) missing.push("delivery location");
+    if (!mapLink) missing.push("map link");
+    if (missing.length) {
       if (confirm) confirm.href = "#";
-      if (feedback) feedback.textContent = "Select date (within 3 months), enter name/mobile, and add at least one item.";
+      if (feedback) feedback.textContent = `Please add: ${missing.join(", ")}.`;
       return;
     }
     const message = [
       "Hi Cherish Every Bite, I would like to place a pre-order.",
       `Name: ${name}`,
       `Mobile: ${phone}`,
+      `Delivery Location: ${locationName}`,
+      `Pinned Map App Link: ${mapLink}`,
       `Delivery Date: ${date}`,
       "Items:",
       ...chosen
@@ -149,9 +196,33 @@ function groupByCategory(items) {
     section?.scrollIntoView({ behavior: "smooth", block: "start" });
   });
 
-  [dateInput, nameInput, phoneInput].forEach(el => el?.addEventListener("input", updateConfirm));
-  [dateInput, nameInput, phoneInput].forEach(el => el?.addEventListener("change", updateConfirm));
+  if (pickedLat && pickedLon && mapLinkInput) mapLinkInput.value = `https://maps.google.com/?q=${pickedLat},${pickedLon}`;
+  function updatePickerLink() {
+    if (!pickLocationBtn) return;
+    const q = new URLSearchParams();
+    if (dateInput?.value) q.set("start_date", dateInput.value);
+    if (nameInput?.value) q.set("customer_name", nameInput.value);
+    if (phoneInput?.value) q.set("customer_phone", phoneInput.value);
+    if (mapLinkInput?.value) q.set("map_app_link", mapLinkInput.value);
+    pickLocationBtn.href = `map-picker.html?${q.toString()}`;
+  }
+  updatePickerLink();
 
+  [dateInput, nameInput, phoneInput, locationSelect, mapLinkInput].forEach(el => el?.addEventListener("input", () => { updateConfirm(); updatePickerLink(); }));
+  [dateInput, nameInput, phoneInput, locationSelect, mapLinkInput].forEach(el => el?.addEventListener("change", () => { updateConfirm(); updatePickerLink(); }));
+
+  if (confirm) {
+    confirm.addEventListener("click", event => {
+      if (!confirm.href || confirm.getAttribute("href") === "#") {
+        event.preventDefault();
+        return;
+      }
+      event.preventDefault();
+      window.open(confirm.href, "_blank", "noopener");
+    });
+  }
+
+  await loadLocations();
   render();
   updateConfirm();
 })();
