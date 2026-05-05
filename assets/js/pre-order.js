@@ -200,6 +200,7 @@ function groupByCategory(items) {
   function updatePickerLink() {
     if (!pickLocationBtn) return;
     const q = new URLSearchParams();
+    q.set("return_to", "pre-order.html");
     if (dateInput?.value) q.set("start_date", dateInput.value);
     if (nameInput?.value) q.set("customer_name", nameInput.value);
     if (phoneInput?.value) q.set("customer_phone", phoneInput.value);
