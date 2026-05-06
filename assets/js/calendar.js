@@ -491,6 +491,8 @@ async function loadAddonCatalog() {
           if (activeMap.has(key)) {
             const qty = getDateAddonTotal(key);
             const nutrition = activeMap.get(key)?.nutrition || {};
+            const details = (activeMap.get(key)?.details || []).filter(Boolean);
+            const dishesForCell = Array.from(new Set((details.length ? details : [activeMap.get(key)?.dish]).filter(Boolean)));
             const nutritionBits = [
               nutrition.calories ? `🔥 ${escapeHtml(String(nutrition.calories).trim())} kcal` : "",
               nutrition.protein ? `💪 ${escapeHtml(formatMacroValue(nutrition.protein))} Protein` : "",
@@ -498,14 +500,18 @@ async function loadAddonCatalog() {
             ].filter(Boolean);
             box.classList.add("active");
             if (selectedAddonDate === key) box.classList.add("selected");
-            box.setAttribute("data-action", "open-addon-panel");
-            box.setAttribute("data-date", key);
             box.innerHTML += `
-              <div class="dish">${escapeHtml(activeMap.get(key)?.dish || activeMap.get(key) || "")}</div>
+              <div class="dish-list">${dishesForCell.map(dish => `<div class="dish">${escapeHtml(dish)}</div>`).join("")}</div>
               ${nutritionBits.length ? `<div class="day-nutrition">${nutritionBits.join(" • ")}</div>` : ""}
-              ${(activeMap.get(key)?.details || []).length ? `<div class="day-popup">${escapeHtml((activeMap.get(key).details || []).join(" • "))}</div>` : ""}
+              <div class="day-popup">
+                ${nutrition.calories ? `<div>Calories: ${escapeHtml(String(nutrition.calories).trim())} kcal</div>` : ""}
+                ${nutrition.protein ? `<div>Protein: ${escapeHtml(formatMacroValue(nutrition.protein))}</div>` : ""}
+                ${nutrition.carbohydrates ? `<div>Carbohydrates: ${escapeHtml(formatMacroValue(nutrition.carbohydrates))}</div>` : ""}
+                ${nutrition.fats ? `<div>Fats: ${escapeHtml(formatMacroValue(nutrition.fats))}</div>` : ""}
+                ${nutrition.fiber ? `<div>Fiber: ${escapeHtml(formatMacroValue(nutrition.fiber))}</div>` : ""}
+              </div>
               <button class="day-addon-trigger" type="button" data-action="open-addon-panel" data-date="${key}">Add-ons</button>
-              ${qty > 0 ? `<div class="day-addon-count">${qty} add-on${qty > 1 ? "s" : ""}</div>` : `<div class="day-hint">Tap to customize</div>`}
+              ${qty > 0 ? `<div class="day-addon-count">${qty} add-on${qty > 1 ? "s" : ""}</div>` : ""}
             `;
           } else if (current.getDay() === 0) {
             box.innerHTML += `<div class="dish">Sunday</div>`;
