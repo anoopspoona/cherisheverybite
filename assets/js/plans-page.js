@@ -29,7 +29,9 @@ function rowsForSelection(rows, selection) {
 
   const withMeal = liveRows.filter(row => {
     const planName = normalizeKey(row.Plan_Name || row.plan_name);
+    const planKey = normalizeKey(row.Plan_Key || row.plan_key);
     if (!mealNeedle) return true;
+    if (planKey === "smoothie") return true;
     return planName.includes(`-${mealNeedle}`) || planName.endsWith(mealNeedle) || mealNeedle === "all";
   });
 
