@@ -1002,5 +1002,17 @@ async function loadAddonCatalog() {
     updateConfirmLink();
     updateBillSummary();
     saveDraft();
+
+    document.addEventListener("click", event => {
+      const target = event.target instanceof HTMLElement ? event.target : null;
+      if (!target) return;
+      const day = target.closest(".day.active");
+      document.querySelectorAll(".day.active.popup-open").forEach(node => { if (node !== day) node.classList.remove("popup-open"); });
+      if (day && target.closest(".day-nutrition")) {
+        day.classList.toggle("popup-open");
+      } else if (!target.closest(".day-popup")) {
+        document.querySelectorAll(".day.active.popup-open").forEach(node => node.classList.remove("popup-open"));
+      }
+    });
   })();
 })();
