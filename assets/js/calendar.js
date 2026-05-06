@@ -25,6 +25,12 @@ function formatCurrency(value) {
   return `₹${numeric.toLocaleString("en-IN")}`;
 }
 
+function formatMacroValue(value, unit = "g") {
+  const text = String(value || "").trim();
+  if (!text) return "";
+  return /\d$/.test(text) ? `${text}${unit}` : text;
+}
+
 function parseNumeric(value) {
   const numeric = Number(String(value || "").replace(/[^0-9.]/g, ""));
   return Number.isFinite(numeric) ? numeric : 0;
@@ -476,13 +482,19 @@ async function loadAddonCatalog() {
 
           if (activeMap.has(key)) {
             const qty = getDateAddonTotal(key);
+            const nutrition = activeMap.get(key)?.nutrition || {};
+            const nutritionBits = [
+              nutrition.calories ? `🔥 ${escapeHtml(String(nutrition.calories).trim())} kcal` : "",
+              nutrition.protein ? `💪 ${escapeHtml(formatMacroValue(nutrition.protein))} Protein` : "",
+              nutrition.carbohydrates ? `🌾 ${escapeHtml(formatMacroValue(nutrition.carbohydrates))} Carbs` : ""
+            ].filter(Boolean);
             box.classList.add("active");
             if (selectedAddonDate === key) box.classList.add("selected");
             box.setAttribute("data-action", "open-addon-panel");
             box.setAttribute("data-date", key);
             box.innerHTML += `
               <div class="dish">${escapeHtml(activeMap.get(key)?.dish || activeMap.get(key) || "")}</div>
-              ${activeMap.get(key)?.nutrition?.calories ? `<div class="day-nutrition">🔥 ${escapeHtml(activeMap.get(key).nutrition.calories)} kcal</div>` : ""}
+              ${nutritionBits.length ? `<div class="day-nutrition">${nutritionBits.join(" • ")}</div>` : ""}
               ${(activeMap.get(key)?.details || []).length ? `<div class="day-popup">${escapeHtml((activeMap.get(key).details || []).join(" • "))}</div>` : ""}
               <button class="day-addon-trigger" type="button" data-action="open-addon-panel" data-date="${key}">Add-ons</button>
               ${qty > 0 ? `<div class="day-addon-count">${qty} add-on${qty > 1 ? "s" : ""}</div>` : `<div class="day-hint">Tap to customize</div>`}
@@ -715,11 +727,7 @@ async function loadAddonCatalog() {
         const dateObj = new Date(iso);
         const unified = buildUnifiedEntry(allPlansNutritionRows, selectedPlan, selectedVariant, selectedMeal, dateObj);
         const menuForDate = mealForDate(effectiveRows, dateObj, selectedMeal);
-        if (allPlansNutritionRows.length) {
-          activeMap.set(iso, unified || { dish: "Menu updating from master sheet", details: [], nutrition: {} });
-        } else {
-          activeMap.set(iso, unified || { dish: menuForDate || dishes[idx % dishes.length], details: [], nutrition: {} });
-        }
+        activeMap.set(iso, unified || { dish: menuForDate || dishes[idx % dishes.length], details: [], nutrition: {} });
       });
 
       Array.from(dayAddonItems.keys()).forEach(date => {
@@ -847,8 +855,15 @@ async function loadAddonCatalog() {
     if (nameInput && !nameInput.value && currentProfile.name) nameInput.value = currentProfile.name;
     if (phoneInput && !phoneInput.value && currentProfile.phone) phoneInput.value = currentProfile.phone;
 
-    const today = new Date();
-    if (startInput) startInput.value = startDateParam || formatIso(today);
+    const minStartDate = new Date(Date.now() + 24 * 60 * 60 * 1000);
+    if (startInput) {
+      startInput.min = formatIso(minStartDate);
+      const requestedStart = startDateParam ? new Date(startDateParam) : null;
+      const safeStart = requestedStart && !Number.isNaN(requestedStart.getTime()) && requestedStart >= minStartDate
+        ? requestedStart
+        : minStartDate;
+      startInput.value = formatIso(safeStart);
+    }
 
     if (confirmBtn) {
       confirmBtn.addEventListener("click", async event => {
