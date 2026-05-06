@@ -1,4 +1,5 @@
 const PREORDER_WHATSAPP = "916282023762";
+const PREORDER_DRAFT_KEY = "ceb_preorder_draft_v1";
 
 function normalizePrice(value) {
   const text = String(value || "").trim();
@@ -65,6 +66,42 @@ function groupByCategory(items) {
   const items = normalizeMenuRows(catalogRows.filter(row => String(row.record_type || row.Record_Type || "dish").toLowerCase() === "dish"));
   const qtyById = new Map();
   let openCategory = "";
+
+  function saveDraft() {
+    try {
+      const payload = {
+        date: dateInput?.value || "",
+        name: nameInput?.value || "",
+        phone: phoneInput?.value || "",
+        locationId: locationSelect?.value || "",
+        mapLink: mapLinkInput?.value || "",
+        qty: Array.from(qtyById.entries()).filter(([, qty]) => Number(qty) > 0)
+      };
+      window.localStorage.setItem(PREORDER_DRAFT_KEY, JSON.stringify(payload));
+    } catch {
+      // ignore
+    }
+  }
+
+  function restoreDraft() {
+    try {
+      const raw = window.localStorage.getItem(PREORDER_DRAFT_KEY);
+      if (!raw) return;
+      const payload = JSON.parse(raw);
+      if (!payload || typeof payload !== "object") return;
+      if (dateInput && payload.date && payload.date >= dateInput.min) dateInput.value = payload.date;
+      if (nameInput && payload.name) nameInput.value = payload.name;
+      if (phoneInput && payload.phone) phoneInput.value = payload.phone;
+      if (mapLinkInput && payload.mapLink) mapLinkInput.value = payload.mapLink;
+      const qtyRows = Array.isArray(payload.qty) ? payload.qty : [];
+      qtyRows.forEach(([id, qty]) => {
+        if (id && Number(qty) > 0) qtyById.set(String(id), Number(qty));
+      });
+      if (locationSelect && payload.locationId) locationSelect.value = payload.locationId;
+    } catch {
+      // ignore
+    }
+  }
 
   async function loadLocations() {
     if (!locationSelect) return;
@@ -153,6 +190,7 @@ function groupByCategory(items) {
     if (missing.length) {
       if (confirm) confirm.href = "#";
       if (feedback) feedback.textContent = `Please add: ${missing.join(", ")}.`;
+      saveDraft();
       return;
     }
     const message = [
@@ -167,6 +205,7 @@ function groupByCategory(items) {
     ].join("\n");
     if (confirm) confirm.href = buildWhatsappLink(PREORDER_WHATSAPP, message);
     if (feedback) feedback.textContent = "Ready. Tap confirm to place pre-order on WhatsApp.";
+    saveDraft();
   }
 
   menuWrap?.addEventListener("click", event => {
@@ -185,6 +224,7 @@ function groupByCategory(items) {
     if (action === "minus") qtyById.set(id, Math.max(0, qty - 1));
     render();
     updateConfirm();
+    saveDraft();
   });
   categoryBar?.addEventListener("click", event => {
     const target = event.target instanceof HTMLElement ? event.target : null;
@@ -209,8 +249,8 @@ function groupByCategory(items) {
   }
   updatePickerLink();
 
-  [dateInput, nameInput, phoneInput, locationSelect, mapLinkInput].forEach(el => el?.addEventListener("input", () => { updateConfirm(); updatePickerLink(); }));
-  [dateInput, nameInput, phoneInput, locationSelect, mapLinkInput].forEach(el => el?.addEventListener("change", () => { updateConfirm(); updatePickerLink(); }));
+  [dateInput, nameInput, phoneInput, locationSelect, mapLinkInput].forEach(el => el?.addEventListener("input", () => { updateConfirm(); updatePickerLink(); saveDraft(); }));
+  [dateInput, nameInput, phoneInput, locationSelect, mapLinkInput].forEach(el => el?.addEventListener("change", () => { updateConfirm(); updatePickerLink(); saveDraft(); }));
 
   if (confirm) {
     confirm.addEventListener("click", event => {
@@ -224,6 +264,7 @@ function groupByCategory(items) {
   }
 
   await loadLocations();
+  restoreDraft();
   render();
   updateConfirm();
 })();

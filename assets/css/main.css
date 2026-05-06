@@ -243,7 +243,7 @@ body {
 .preorder-confirm-floating {
   position: fixed;
   right: 16px;
-  bottom: 14px;
+  bottom: 16px;
   z-index: 60;
   min-width: 260px;
   box-shadow: 0 16px 30px rgba(200,32,39,.34);
