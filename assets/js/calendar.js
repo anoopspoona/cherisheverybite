@@ -89,9 +89,43 @@ function haversineKm(a, b) {
 let planMealsCache = null;
 let allPlansNutritionCache = null;
 
+function derivePlanMealsFromNutrition(rows) {
+  const out = [];
+  rows.forEach(row => {
+    const label = normalizeKey(row.Plan || row.plan || "");
+    const mealType = label.includes("dinner") ? "dinner" : "lunch";
+    const planKey = ["elite", "basic", "weightloss", "diabetic", "smoothie", "customised", "salad"]
+      .find(token => label.includes(token)) || "";
+    const variantKey = label.includes("non-veg") || label.includes("nonveg")
+      ? "nonveg"
+      : (label.includes("veg") ? "veg" : "standard");
+    const week = weekToken(row.Week || row["Data.Column1"] || row.data_column1).toUpperCase();
+    const dayRaw = String(row.Day || row["Data.Column2"] || row.data_column2 || "").trim();
+    const dayMap = { mon: "Monday", tue: "Tuesday", wed: "Wednesday", thu: "Thursday", fri: "Friday", sat: "Saturday", sun: "Sunday" };
+    const day = dayMap[dayRaw.slice(0, 3).toLowerCase()] || dayRaw;
+    const components = ["Data.Column3", "Data.Column4", "Data.Column5", "Data.Column6", "Data.Column7"]
+      .map(key => row[key] || row[key.toLowerCase()] || "")
+      .map(v => String(v || "").trim())
+      .filter(Boolean);
+    components.forEach((item, idx) => {
+      out.push({
+        Plan_Key: planKey,
+        Variant_Key: variantKey,
+        Week: week,
+        Day: day,
+        Meal_Type: mealType,
+        Component: idx === 0 ? "Main" : `Item${idx + 1}`,
+        Item_Name: item
+      });
+    });
+  });
+  return out;
+}
+
 async function loadPlanMeals() {
   if (planMealsCache) return planMealsCache;
-  planMealsCache = await fetchCSV("plan_meals.csv").catch(() => []);
+  const nutritionRows = await loadAllPlansNutrition();
+  planMealsCache = derivePlanMealsFromNutrition(nutritionRows);
   return planMealsCache;
 }
 
@@ -124,7 +158,9 @@ function buildUnifiedEntry(rows, selectedPlan, selectedVariant, selectedMeal, da
     const rowWeek = weekToken(row.Week || row["Data.Column1"] || row.data_column1);
     const rowDay = dayToken(row.Day || row["Data.Column2"] || row.data_column2);
     const planHasVariantToken = /(?:^|[^a-z])(veg|nonveg|non-veg)(?:[^a-z]|$)/.test(planLabel);
-    const variantHit = !variantNeedle || !planHasVariantToken || planLabel.includes(variantNeedle.replace("-", ""));
+    const normalizedPlanLabel = planLabel.replace(/[^a-z]/g, "");
+    const normalizedVariantNeedle = variantNeedle.replace(/[^a-z]/g, "");
+    const variantHit = !normalizedVariantNeedle || !planHasVariantToken || normalizedPlanLabel.includes(normalizedVariantNeedle);
     const mealHit = planNeedle === "smoothie" ? true : planLabel.includes(mealNeedle);
     return planLabel.includes(planNeedle) && mealHit && variantHit && rowWeek === week && rowDay === day;
   });
@@ -1002,5 +1038,17 @@ async function loadAddonCatalog() {
     updateConfirmLink();
     updateBillSummary();
     saveDraft();
+
+    document.addEventListener("click", event => {
+      const target = event.target instanceof HTMLElement ? event.target : null;
+      if (!target) return;
+      const day = target.closest(".day.active");
+      document.querySelectorAll(".day.active.popup-open").forEach(node => { if (node !== day) node.classList.remove("popup-open"); });
+      if (day && target.closest(".day-nutrition")) {
+        day.classList.toggle("popup-open");
+      } else if (!target.closest(".day-popup")) {
+        document.querySelectorAll(".day.active.popup-open").forEach(node => node.classList.remove("popup-open"));
+      }
+    });
   })();
 })();

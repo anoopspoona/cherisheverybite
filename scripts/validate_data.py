@@ -6,7 +6,7 @@ Checks:
 2) Required columns exist.
 3) Key relationships:
    - menu.csv Dish_ID must exist in prices.csv Dish_ID
-   - plan_meals.csv (Plan_Key, Variant_Key) must exist in plans.csv
+   - live plans should have nutrition coverage in allplans_nutrition.csv
 4) Basic status sanity for plans/prices where applicable.
 
 Exit code: 0 on success, 1 on validation failures.
@@ -52,6 +52,9 @@ def require_columns(result: ValidationResult, file_label: str, headers: Iterable
 def normalize(value: str | None) -> str:
     return (value or "").strip()
 
+def normalize_key(value: str | None) -> str:
+    return normalize(value).lower()
+
 
 def validate() -> ValidationResult:
     result = ValidationResult(errors=[], warnings=[])
@@ -60,7 +63,6 @@ def validate() -> ValidationResult:
         "menu.csv": {"Dish_ID", "Dish_Name", "Category"},
         "prices.csv": {"Dish_ID", "Price"},
         "plans.csv": {"Plan_Key", "Variant_Key", "Plan_Name", "Status"},
-        "plan_meals.csv": {"Plan_Key", "Variant_Key", "Week", "Day", "Meal_Type", "Item_Name"},
         "customization_options.csv": {"Category", "Option_Name"},
     }
 
@@ -85,7 +87,6 @@ def validate() -> ValidationResult:
     _, menu_rows = loaded["menu.csv"]
     _, price_rows = loaded["prices.csv"]
     _, plan_rows = loaded["plans.csv"]
-    _, meal_rows = loaded["plan_meals.csv"]
 
     price_ids = {normalize(row.get("Dish_ID")) for row in price_rows if normalize(row.get("Dish_ID"))}
     missing_price_ids = sorted(
@@ -103,22 +104,32 @@ def validate() -> ValidationResult:
         )
 
     live_plan_pairs = {
-        (normalize(row.get("Plan_Key")), normalize(row.get("Variant_Key")))
+        (normalize_key(row.get("Plan_Key")), normalize_key(row.get("Variant_Key")))
         for row in plan_rows
-        if normalize(row.get("Status")).lower() == "live"
+        if normalize_key(row.get("Status")) == "live"
     }
-    meal_pairs = {
-        (normalize(row.get("Plan_Key")), normalize(row.get("Variant_Key")))
-        for row in meal_rows
-        if normalize(row.get("Plan_Key")) and normalize(row.get("Variant_Key"))
-    }
-    missing_pairs = sorted(pair for pair in meal_pairs if pair not in live_plan_pairs)
-    if missing_pairs:
-        preview = ", ".join([f"{p[0]}:{p[1]}" for p in missing_pairs[:10]])
-        suffix = " ..." if len(missing_pairs) > 10 else ""
-        result.add_error(
-            f"plan_meals.csv -> plans.csv integrity: {len(missing_pairs)} Plan_Key/Variant_Key pairs not present as live plans: {preview}{suffix}"
-        )
+    nutrition_path = ROOT / "allplans_nutrition.csv"
+    if nutrition_path.exists():
+        _, nutrition_rows = read_csv(nutrition_path)
+        nutrition_plan_labels = [normalize_key(row.get("Plan") or row.get("plan")) for row in nutrition_rows]
+        nutrition_gaps: list[tuple[str, str]] = []
+        for plan_key, variant_key in sorted(live_plan_pairs):
+            variant_tokens = {variant_key}
+            if variant_key == "nonveg":
+                variant_tokens.add("non-veg")
+            has_coverage = any(
+                plan_key in label and any(token in label for token in variant_tokens)
+                for label in nutrition_plan_labels
+            )
+            if not has_coverage:
+                nutrition_gaps.append((plan_key, variant_key))
+        if nutrition_gaps:
+            preview = ", ".join([f"{p[0]}:{p[1]}" for p in nutrition_gaps[:10]])
+            suffix = " ..." if len(nutrition_gaps) > 10 else ""
+            result.add_warning(
+                "plans.csv -> allplans_nutrition.csv coverage: "
+                f"{len(nutrition_gaps)} live Plan_Key/Variant_Key pairs look unmatched in nutrition sheet: {preview}{suffix}"
+            )
 
     valid_status = {"live", "hidden", ""}
     bad_price_status = sorted(
