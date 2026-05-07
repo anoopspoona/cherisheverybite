@@ -60,10 +60,9 @@ def validate() -> ValidationResult:
     result = ValidationResult(errors=[], warnings=[])
 
     contracts: dict[str, set[str]] = {
-        "menu.csv": {"Dish_ID", "Dish_Name", "Category"},
-        "prices.csv": {"Dish_ID", "Price"},
+        "catalog.csv": {"record_type", "id", "name", "status"},
         "plans.csv": {"Plan_Key", "Variant_Key", "Plan_Name", "Status"},
-        "customization_options.csv": {"Category", "Option_Name"},
+        "allplans_nutrition.csv": {"Plan", "Data.Column1", "Data.Column2", "Data.Column3"},
     }
 
     loaded: dict[str, tuple[list[str], list[dict[str, str]]]] = {}
@@ -84,24 +83,7 @@ def validate() -> ValidationResult:
     if result.errors:
         return result
 
-    _, menu_rows = loaded["menu.csv"]
-    _, price_rows = loaded["prices.csv"]
     _, plan_rows = loaded["plans.csv"]
-
-    price_ids = {normalize(row.get("Dish_ID")) for row in price_rows if normalize(row.get("Dish_ID"))}
-    missing_price_ids = sorted(
-        {
-            normalize(row.get("Dish_ID"))
-            for row in menu_rows
-            if normalize(row.get("Dish_ID")) and normalize(row.get("Dish_ID")) not in price_ids
-        }
-    )
-    if missing_price_ids:
-        preview = ", ".join(missing_price_ids[:10])
-        suffix = " ..." if len(missing_price_ids) > 10 else ""
-        result.add_error(
-            f"menu.csv -> prices.csv integrity: {len(missing_price_ids)} Dish_ID values missing in prices.csv: {preview}{suffix}"
-        )
 
     live_plan_pairs = {
         (normalize_key(row.get("Plan_Key")), normalize_key(row.get("Variant_Key")))
@@ -130,35 +112,6 @@ def validate() -> ValidationResult:
                 "plans.csv -> allplans_nutrition.csv coverage: "
                 f"{len(nutrition_gaps)} live Plan_Key/Variant_Key pairs look unmatched in nutrition sheet: {preview}{suffix}"
             )
-
-    valid_status = {"live", "hidden", ""}
-    bad_price_status = sorted(
-        {
-            normalize(row.get("Status"))
-            for row in price_rows
-            if normalize(row.get("Status")).lower() not in valid_status
-        }
-    )
-    if bad_price_status:
-        result.add_warning(f"prices.csv: unexpected Status values found: {', '.join(bad_price_status)}")
-
-    hero_path = ROOT / "hero_slides.csv"
-    if hero_path.exists():
-        hero_headers, hero_rows = read_csv(hero_path)
-        hero_required = {"slide_id", "title", "image_url", "status", "sort_order"}
-        require_columns(result, "hero_slides.csv", hero_headers, hero_required)
-        if not result.errors:
-            live_hero_rows = [
-                row
-                for row in hero_rows
-                if normalize(row.get("status")).lower() == "live" and normalize(row.get("image_url"))
-            ]
-            for row in live_hero_rows:
-                image_path = ROOT / normalize(row.get("image_url"))
-                if not image_path.exists():
-                    result.add_warning(
-                        f"hero_slides.csv: missing image file for slide_id={normalize(row.get('slide_id'))}: {normalize(row.get('image_url'))}"
-                    )
 
     return result
 

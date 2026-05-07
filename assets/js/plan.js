@@ -194,10 +194,10 @@ function updateCalendarLinks(planKey, variantKey) {
   const pagePlanKey = document.body?.dataset?.planKey || "";
   const planKey = pagePlanKey || params.get("plan") || "elite";
 
-  const [plans, nutritionRows, options] = await Promise.all([
+  const [plans, nutritionRows, catalogRows] = await Promise.all([
     fetchCSV("plans.csv"),
     fetchCSV("allplans_nutrition.csv"),
-    fetchCSV("customization_options.csv").catch(() => [])
+    fetchCSV("catalog.csv").catch(() => [])
   ]);
   const meals = derivePlanMealsFromNutrition(nutritionRows);
 
@@ -214,6 +214,9 @@ function updateCalendarLinks(planKey, variantKey) {
     updateCalendarLinks(planKey, variantKey);
 
     if (planKey === "customised") {
+      const options = catalogRows
+        .filter(row => String(row.record_type || row.Record_Type || "").toLowerCase() === "custom_option")
+        .map(row => ({ Category: row.category || row.Category || "Options", Option_Name: row.name || row.Name || "" }));
       renderCustomOptions(options);
       return;
     }

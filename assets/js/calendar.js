@@ -181,37 +181,17 @@ function buildUnifiedEntry(rows, selectedPlan, selectedVariant, selectedMeal, da
 }
 
 async function loadDishes(plan, meal, variantKey = "") {
-  if (normalizeKey(plan) === "smoothie") {
-    const rows = await fetchCSV("Smoothie-GutBoosterPlan.csv").catch(() => []);
-    const items = rows
-      .map(row => row.Dish || row.dish || row["Data.Column3"] || row["Data.Column4"] || "")
-      .map(v => String(v || "").trim())
-      .filter(Boolean);
-    if (items.length) return Array.from(new Set(items));
-  }
   const planMealsRows = await loadPlanMeals();
   const normalizedVariant = String(variantKey || "").trim().toLowerCase();
   const byPlanMeal = planMealsRows
     .filter(row => String(row.Plan_Key || row.plan_key || "").trim().toLowerCase() === String(plan || "").trim().toLowerCase())
     .filter(row => String(row.Meal_Type || row.meal_type || "").trim().toLowerCase() === String(meal || "").trim().toLowerCase());
-
-  if (byPlanMeal.length) {
-    const hasVariantColumn = byPlanMeal.some(row => String(row.Variant_Key || row.variant_key || "").trim());
-    const variantFiltered = hasVariantColumn && normalizedVariant && normalizedVariant !== "standard"
-      ? byPlanMeal.filter(row => String(row.Variant_Key || row.variant_key || "").trim().toLowerCase() === normalizedVariant)
-      : byPlanMeal;
-    const hasComponentColumn = variantFiltered.some(row => String(row.Component || row.component || "").trim());
-    const mainRows = hasComponentColumn
-      ? variantFiltered.filter(row => String(row.Component || row.component || "").trim().toLowerCase() === "main")
-      : variantFiltered;
-    const items = mainRows
-      .map(row => row.Item_Name || row.item_name || row.Dish || row.dish || "")
-      .filter(Boolean);
-    if (items.length) return Array.from(new Set(items));
-  }
-
-  const rows = await fetchCSV(csvFor(plan, meal));
-  return rows.map(row => row.Dish || row.dish || "").filter(Boolean);
+  const variantFiltered = normalizedVariant && normalizedVariant !== "standard"
+    ? byPlanMeal.filter(row => String(row.Variant_Key || row.variant_key || "").trim().toLowerCase() === normalizedVariant)
+    : byPlanMeal;
+  const mainRows = variantFiltered.filter(row => String(row.Component || row.component || "").trim().toLowerCase() === "main");
+  const source = mainRows.length ? mainRows : variantFiltered;
+  return Array.from(new Set(source.map(row => row.Item_Name || row.item_name || "").filter(Boolean)));
 }
 
 function getSubscriptionCycleAnchorDate() {
@@ -313,16 +293,7 @@ async function loadAddonCatalog() {
 
   if (addonRows.length) return addonRows;
 
-  const rows = await fetchCSV("addons.csv").catch(() => []);
-  return rows
-    .map(row => ({
-      id: row.Addon_ID || row.addon_id || row.id || "",
-      name: row.Addon_Name || row.addon_name || row.Name || row.name || "",
-      category: row.Category || row.category || row.Addon_Type || row.addon_type || "Add-on",
-      price: row.Price || row.price || row.Unit_Price || row.unit_price || "",
-      status: row.Status || row.status || "live"
-    }))
-    .filter(row => row.id && row.name && String(row.status).toLowerCase() === "live");
+  return [];
 }
 
 (function init() {
@@ -694,12 +665,13 @@ async function loadAddonCatalog() {
 
     async function loadLocations() {
       if (!locationSelect) return;
-      const rows = await fetchCSV("delivery_locations.csv").catch(() => []);
+      const rows = await fetchCSV("catalog.csv").catch(() => []);
       const normalized = rows
+        .filter(row => String(row.record_type || row.Record_Type || "").toLowerCase() === "location")
         .map(row => ({
-          id: row.Location_ID || row.location_id || "",
-          name: row.Location_Name || row.location_name || "",
-          mapLink: row.Map_Link || row.map_link || ""
+          id: row.id || row.ID || row.location_id || row.Location_ID || "",
+          name: row.name || row.Name || row.location_name || row.Location_Name || "",
+          mapLink: row.map_link || row.Map_Link || row.url || row.URL || ""
         }))
         .filter(row => row.id && row.name);
 
