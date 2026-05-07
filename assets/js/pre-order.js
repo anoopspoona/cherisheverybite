@@ -63,6 +63,7 @@ function groupByCategory(items) {
   }
 
   const catalogRows = await fetchCSV("catalog.csv").catch(() => []);
+  if (menuWrap) menuWrap.innerHTML = `<div class="preorder-skeleton"><div class="row"></div><div class="row"></div><div class="row"></div></div>`;
   const items = normalizeMenuRows(catalogRows.filter(row => String(row.record_type || row.Record_Type || "dish").toLowerCase() === "dish"));
   const qtyById = new Map();
   let openCategory = "";
@@ -105,12 +106,13 @@ function groupByCategory(items) {
 
   async function loadLocations() {
     if (!locationSelect) return;
-    const rows = await fetchCSV("delivery_locations.csv").catch(() => []);
+    const rows = await fetchCSV("catalog.csv").catch(() => []);
     const normalized = rows
+      .filter(row => String(row.record_type || row.Record_Type || "").toLowerCase() === "location")
       .map(row => ({
-        id: row.Location_ID || row.location_id || "",
-        name: row.Location_Name || row.location_name || "",
-        mapLink: row.Map_Link || row.map_link || ""
+        id: row.id || row.ID || row.location_id || row.Location_ID || "",
+        name: row.name || row.Name || row.location_name || row.Location_Name || "",
+        mapLink: row.map_link || row.Map_Link || row.url || row.URL || ""
       }))
       .filter(row => row.id && row.name);
     if (!normalized.length) {
@@ -136,6 +138,7 @@ function groupByCategory(items) {
       const inner = group.rows.map(item => {
         const qty = Number(qtyById.get(item.id) || 0);
         return `<li class="menu-card preorder-item">
+          <img class="preorder-thumb" src="assets/dishes/Picture1.png" alt="Dish" loading="lazy" />
           <div class="dish-head">
             <div class="dish-title-wrap">
             <strong class="dish-title">${escapeHtml(item.name)}</strong>
@@ -169,7 +172,8 @@ function groupByCategory(items) {
   }
 
   function updateConfirm() {
-    const chosen = items.filter(item => Number(qtyById.get(item.id) || 0) > 0).map(item => `${item.name} x${qtyById.get(item.id)}`);
+    const selectedItems = items.filter(item => Number(qtyById.get(item.id) || 0) > 0);
+    const chosen = selectedItems.map(item => `${item.name} x${qtyById.get(item.id)}`);
     const date = dateInput?.value || "";
     const name = nameInput?.value.trim() || "";
     const phone = phoneInput?.value.trim() || "";
@@ -187,6 +191,8 @@ function groupByCategory(items) {
     if (!chosen.length) missing.push("at least one dish");
     if (!locationName) missing.push("delivery location");
     if (!mapLink) missing.push("map link");
+    const totalCount = selectedItems.reduce((sum,item)=>sum+Number(qtyById.get(item.id)||0),0);
+    if (confirm) confirm.innerHTML = `Confirm Pre Order <span class="badge">${totalCount} item${totalCount===1?"":"s"}</span>`;
     if (missing.length) {
       if (confirm) confirm.href = "#";
       if (feedback) feedback.textContent = `Please add: ${missing.join(", ")}.`;
@@ -222,6 +228,9 @@ function groupByCategory(items) {
     const qty = Number(qtyById.get(id) || 0);
     if (action === "plus") qtyById.set(id, qty + 1);
     if (action === "minus") qtyById.set(id, Math.max(0, qty - 1));
+    btn.classList.remove("tap-bump");
+    void btn.offsetWidth;
+    btn.classList.add("tap-bump");
     render();
     updateConfirm();
     saveDraft();

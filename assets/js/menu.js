@@ -80,7 +80,7 @@ function renderMenu(groups) {
   if (!menuGrid) return;
 
   if (!groups.length) {
-    menuGrid.innerHTML = `<article class="menu-section"><h3 class="menu-title">Menu updating soon</h3><p class="muted">Upload catalog.csv (or dishes.csv / menu.csv + prices.csv) to show the latest dishes.</p></article>`;
+    menuGrid.innerHTML = `<article class="menu-section"><h3 class="menu-title">Menu updating soon</h3><p class="muted">Upload catalog.csv with live dish rows to show the latest menu.</p></article>`;
     return;
   }
 
@@ -231,27 +231,24 @@ function attachDietChartForm() {
 
 (async function init() {
   try {
-    const [catalogRows, combinedMenuRows, menuRows, priceRows, planRows, heroRows] = await Promise.all([
+    const [catalogRows, planRows, heroRows] = await Promise.all([
       fetchCSV("catalog.csv").catch(() => []),
-      fetchCSV("dishes.csv").catch(() => []),
-      fetchCSV("menu.csv").catch(() => []),
-      fetchCSV("prices.csv").catch(() => []),
       fetchCSV("plans.csv").catch(() => []),
       fetchCSV("hero_slides.csv").catch(() => [])
     ]);
 
-    const catalogDishes = catalogRows
+    let catalogDishes = catalogRows
       .filter(row => {
         const type = String(row.record_type || row.Record_Type || "").toLowerCase();
         if (!type) return true;
-        return type === "dish" || type === "addon";
+        return type === "dish";
       })
       .map(row => ({
-        Dish_ID: row.id || row.ID || row.addon_id || row.Addon_ID || "",
-        Dish_Name: row.name || row.Name || row.addon_name || row.Addon_Name || "",
-        Category: row.category || row.Category || row.addon_type || row.Addon_Type || "",
-        Meal_Type: row.meal_type || row.Meal_Type || row.addon_type || row.Addon_Type || "",
-        Image_URL: row.image_url || row.Image_URL || row.addon_image_url || row.Addon_Image_URL || row.url || row.URL || row.thumbnail || row.Thumbnail || row.source || row.Source || "",
+        Dish_ID: row.id || row.ID || row.dish_id || row.Dish_ID || "",
+        Dish_Name: row.name || row.Name || row.dish_name || row.Dish_Name || "",
+        Category: row.category || row.Category || "",
+        Meal_Type: row.meal_type || row.Meal_Type || "",
+        Image_URL: row.image_url || row.Image_URL || row.url || row.URL || row.thumbnail || row.Thumbnail || row.source || row.Source || "",
         Price: row.price || row.Price || row.unit_price || row.Unit_Price || "",
         Status: row.status || row.Status || "live",
         Calories: row.Calories || row.calories || "",
@@ -261,21 +258,14 @@ function attachDietChartForm() {
         Fiber: row.Fiber || row.fiber || ""
       }))
       .filter(row => row.Dish_ID && row.Dish_Name);
-    const priceMap = new Map(priceRows.map(priceRow => [priceRow.Dish_ID || priceRow.dish_id, priceRow]));
-    const mergedMenu = catalogDishes.length
-      ? catalogDishes
-      : combinedMenuRows.length
-      ? combinedMenuRows
-      : menuRows.map(row => {
-        const priceRow = priceMap.get(row.Dish_ID) || {};
-        return {
-          ...row,
-          Price: priceRow.Price || priceRow.price || "TBD",
-          Status: priceRow.Status || priceRow.status || "live"
-        };
-      });
-
-    renderMenu(groupMenu(mergedMenu));
+    if (!catalogDishes.length) {
+      const nutritionRows = await fetchCSV("allplans_nutrition.csv").catch(() => []);
+      const fallbackItems = nutritionRows.flatMap(row => ["Data.Column3","Data.Column4","Data.Column5","Data.Column6","Data.Column7"].map(k => String(row[k] || "").trim()).filter(Boolean));
+      catalogDishes = Array.from(new Set(fallbackItems)).map((name, idx) => ({
+        Dish_ID: `NUT-${idx + 1}`, Dish_Name: name, Category: "Plan Menu", Meal_Type: "", Image_URL: "cherish-logo.jpg", Price: "TBD", Status: "live"
+      }));
+    }
+    renderMenu(groupMenu(catalogDishes));
     renderPlans(planRows);
     renderHeroSlideshow(heroRows);
   } catch (error) {
