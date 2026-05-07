@@ -1,10 +1,10 @@
-:root { --red:#c82027; --green:#1f6d47; --text:#1f2937; --muted:#667085; --bg:#f7fbf8; }
+:root { --red:#c82027; --green:#1f6d47; --text:#1f2937; --muted:#667085; --bg:#f7fbf8; --fluid-step: clamp(0.95rem, 0.9rem + 0.3vw, 1.05rem);} 
 *{box-sizing:border-box}
-body{margin:0;font-family:Inter,Arial,sans-serif;background:linear-gradient(180deg,#fff,var(--bg));color:var(--text)}
+body{margin:0;font-family:Inter,Arial,sans-serif;background:linear-gradient(180deg,#fff,var(--bg));color:var(--text);font-size:var(--fluid-step)}
 .container{width:min(1120px,calc(100% - 28px));margin:0 auto}
 header{position:sticky;top:0;background:rgba(255,255,255,.95);border-bottom:1px solid rgba(0,0,0,.08);backdrop-filter:blur(8px)}
-.nav{min-height:74px;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
-.btn{border-radius:999px;text-decoration:none;padding:10px 16px;min-height:42px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;border:1px solid transparent}
+.nav{min-height:62px;display:flex;justify-content:flex-start;align-items:center;gap:8px;flex-wrap:nowrap;overflow-x:auto;padding:8px 0}
+.btn{border-radius:999px;text-decoration:none;padding:12px 16px;min-height:44px;min-width:44px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;border:1px solid transparent}
 .btn-soft{background:#eef8f2;color:#165b3a;border-color:rgba(31,109,71,.2)}
 .btn-green{background:var(--green);color:#fff}
 .controls{margin:22px 0;background:#fff;border:1px solid rgba(0,0,0,.09);border-radius:16px;padding:16px;display:grid;gap:12px;grid-template-columns:repeat(4,minmax(0,1fr))}
@@ -14,27 +14,27 @@ header{position:sticky;top:0;background:rgba(255,255,255,.95);border-bottom:1px 
 .calendar-grid{display:grid;grid-template-columns:1fr;gap:14px;margin-bottom:28px}
 .month-card{background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:14px;padding:12px}
 .month-card h3{margin:0 0 10px;color:var(--green)}
-.days{display:grid;grid-template-columns:repeat(7,minmax(120px,1fr));gap:8px;overflow-x:auto;padding-bottom:6px}
-.day{min-height:190px;border-radius:12px;padding:8px;background:#f7faf8;border:1px solid #e5ece8;font-size:.78rem;transition:border-color .15s ease,box-shadow .15s ease,transform .15s ease}
+.days{display:grid;grid-template-columns:repeat(7,minmax(156px,1fr));gap:10px;overflow-x:auto;padding:6px 24px 8px 2px;scroll-snap-type:x mandatory;position:relative}.days::after{content:"";position:sticky;right:0;width:26px;display:block;background:linear-gradient(90deg,rgba(247,251,248,0),rgba(247,251,248,.96));pointer-events:none}
+.day{min-height:180px;border-radius:12px;padding:10px;background:#f7faf8;border:1px solid #e5ece8;font-size:.8rem;transition:border-color .15s ease,box-shadow .15s ease,transform .15s ease;scroll-snap-align:start}
 .day.empty{background:transparent;border-color:transparent}
 .day .num{font-weight:700;font-size:.78rem}
 .day.active{background:#fff;border-color:#d6e7dc}
 .day.active:hover{border-color:#8fb99f;box-shadow:0 6px 14px rgba(15,60,35,.08);transform:translateY(-1px)}
 .day.active.selected{border-color:#1f6d47;box-shadow:0 0 0 2px rgba(31,109,71,.16)}
 .day-list,.dish-list{margin-top:6px;display:grid;gap:4px;max-height:90px;overflow:auto;padding-right:2px}
-.day .dish{color:#1f2937;line-height:1.25;font-weight:600;font-size:.72rem}
-.day-nutrition{margin-top:6px;font-size:.68rem;color:#166534;font-weight:700;line-height:1.35}
-.day-popup{display:none;position:absolute;left:8px;right:8px;top:34px;background:#0f172a;color:#fff;border-radius:10px;padding:8px;font-size:.68rem;line-height:1.35;z-index:2;box-shadow:0 8px 20px rgba(0,0,0,.25)}
+.day .dish{color:#1f2937;line-height:1.3;font-weight:700;font-size:.78rem}
+.day-nutrition{margin-top:6px;font-size:.72rem;color:#166534;font-weight:700;line-height:1.35;display:flex;gap:4px;flex-wrap:wrap}.day-nutrition span:nth-child(1){color:#9f1239}.day-nutrition span:nth-child(2){color:#14532d}.day-nutrition span:nth-child(3){color:#0f766e}
+.day-popup{display:none;position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:min(92vw,360px);background:#0f172a;color:#fff;border-radius:14px;padding:14px;font-size:.78rem;line-height:1.45;z-index:140;box-shadow:0 18px 36px rgba(0,0,0,.35)}
 .day.active{position:relative}
-.day.active:hover .day-popup,.day.active:focus-within .day-popup{display:block}
+.day.active:hover .day-popup,.day.active:focus-within .day-popup,.day.active.popup-open .day-popup{display:block}
 .day-addon-count{margin-top:8px;display:inline-flex;padding:3px 8px;border-radius:999px;background:#eef8f2;color:#165b3a;font-size:.72rem;font-weight:700}
 .day-addon-trigger{margin-top:8px;border:1px solid rgba(31,109,71,.22);background:#f0faf4;color:#14532d;border-radius:999px;padding:4px 10px;font-size:.72rem;font-weight:700;cursor:pointer}
 .legend{font-size:.88rem;color:var(--muted)}
 @media(max-width:980px){.controls{grid-template-columns:repeat(2,minmax(0,1fr))}.calendar-grid{grid-template-columns:1fr}}
 @media(max-width:720px){
   .container{width:min(1120px,calc(100% - 20px))}
-  .nav{justify-content:center}
-  .nav .btn{flex:1 1 calc(50% - 8px);min-width:140px}
+  .nav{min-height:54px;gap:6px}
+  .nav .btn{font-size:.86rem;padding:10px 12px;white-space:nowrap}
   .controls{grid-template-columns:1fr}
   .month-card{padding:10px}
   .days{grid-template-columns:repeat(7,minmax(130px,1fr));gap:7px}
@@ -63,3 +63,5 @@ header{position:sticky;top:0;background:rgba(255,255,255,.95);border-bottom:1px 
 .day-addon-panel{position:fixed;top:0;right:0;height:100dvh;width:min(480px,92vw);background:#fff;z-index:100;border-left:1px solid rgba(0,0,0,.1);box-shadow:-16px 0 34px rgba(0,0,0,.2);padding:18px;overflow:auto;transform:translateX(100%);transition:transform .22s ease}
 .day-addon-panel.is-open{transform:translateX(0)}
 .day-addon-head-row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+
+.calendar-loading{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:10px 0 24px}.calendar-loading .sk{height:110px;border-radius:12px;background:linear-gradient(90deg,#edf2ef,#f8fbf9,#edf2ef);background-size:200% 100%;animation:sh 1.2s ease-in-out infinite}@keyframes sh{0%{background-position:200% 0}100%{background-position:-200% 0}}
