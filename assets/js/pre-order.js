@@ -106,12 +106,13 @@ function groupByCategory(items) {
 
   async function loadLocations() {
     if (!locationSelect) return;
-    const rows = await fetchCSV("delivery_locations.csv").catch(() => []);
+    const rows = await fetchCSV("catalog.csv").catch(() => []);
     const normalized = rows
+      .filter(row => String(row.record_type || row.Record_Type || "").toLowerCase() === "location")
       .map(row => ({
-        id: row.Location_ID || row.location_id || "",
-        name: row.Location_Name || row.location_name || "",
-        mapLink: row.Map_Link || row.map_link || ""
+        id: row.id || row.ID || row.location_id || row.Location_ID || "",
+        name: row.name || row.Name || row.location_name || row.Location_Name || "",
+        mapLink: row.map_link || row.Map_Link || row.url || row.URL || ""
       }))
       .filter(row => row.id && row.name);
     if (!normalized.length) {
