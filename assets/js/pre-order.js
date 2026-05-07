@@ -9,8 +9,8 @@ function normalizePrice(value) {
 function normalizeMenuRows(rows) {
   return rows
     .filter(row => String(row.Status || row.status || "live").toLowerCase() === "live")
-    .map(row => ({
-      id: row.id || row.ID || row.Dish_ID || row.dish_id || "",
+    .map((row, idx) => ({
+      id: row.id || row.ID || row.Dish_ID || row.dish_id || `CAT-${idx + 1}`,
       name: row.name || row.Name || row.Dish_Name || row.dish_name || "",
       category: row.category || row.Category || "Menu",
       mealType: row.meal_type || row.Meal_Type || "",
@@ -21,7 +21,7 @@ function normalizeMenuRows(rows) {
       fats: row.Fats || row.fats || "",
       fiber: row.Fiber || row.fiber || ""
     }))
-    .filter(item => item.id && item.name);
+    .filter(item => item.name);
 }
 
 function groupByCategory(items) {

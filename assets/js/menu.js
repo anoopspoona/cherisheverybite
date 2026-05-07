@@ -96,13 +96,13 @@ function renderMenu(groups) {
         <div>
           <strong>${escapeHtml(item.name)}</strong>
           ${item.mealType ? `<div class="muted">${escapeHtml(item.mealType)}</div>` : ""}
-          ${(item.calories || item.protein || item.carbohydrates || item.fats || item.fiber) ? `<div class="nutrition-row">${[
-            item.calories ? `<span class="nutrition-pill">🔥 ${escapeHtml(item.calories)} kcal</span>` : "",
-            item.protein ? `<span class="nutrition-pill">P ${escapeHtml(item.protein)}g</span>` : "",
-            item.carbohydrates ? `<span class="nutrition-pill">C ${escapeHtml(item.carbohydrates)}g</span>` : "",
-            item.fats ? `<span class="nutrition-pill">F ${escapeHtml(item.fats)}g</span>` : "",
-            item.fiber ? `<span class="nutrition-pill">Fi ${escapeHtml(item.fiber)}g</span>` : ""
-          ].filter(Boolean).join("")}</div>` : ""}
+          <div class="nutrition-row">${[
+            item.calories ? `<span class="nutrition-pill">🔥 ${escapeHtml(item.calories)} kcal</span>` : `<span class="nutrition-pill">🔥 N/A</span>`,
+            item.protein ? `<span class="nutrition-pill">P ${escapeHtml(item.protein)}g</span>` : `<span class="nutrition-pill">P N/A</span>`,
+            item.carbohydrates ? `<span class="nutrition-pill">C ${escapeHtml(item.carbohydrates)}g</span>` : `<span class="nutrition-pill">C N/A</span>`,
+            item.fats ? `<span class="nutrition-pill">F ${escapeHtml(item.fats)}g</span>` : `<span class="nutrition-pill">F N/A</span>`,
+            item.fiber ? `<span class="nutrition-pill">Fi ${escapeHtml(item.fiber)}g</span>` : `<span class="nutrition-pill">Fi N/A</span>`
+          ].join("")}</div>
         </div>
         <span class="price">${escapeHtml(item.price)}</span>
       </li>
@@ -150,13 +150,21 @@ function renderPlans(rows) {
 }
 
 function normalizeSlides(rows) {
+  const cleanImagePath = value => {
+    const raw = String(value || "").replace(/\s+/g, "").trim();
+    if (!raw) return "";
+    if (/^(https?:)?\/\//i.test(raw)) return raw;
+    if (raw.startsWith("assets/")) return raw;
+    if (/\.(png|jpe?g|webp|gif|avif|svg)$/i.test(raw)) return `assets/hero/${raw.replace(/^\/+/, "")}`;
+    return raw;
+  };
   return rows
     .filter(row => String(row.status || row.Status || "live").toLowerCase() === "live")
     .map(row => ({
       id: row.slide_id || row.Slide_ID || "",
       title: row.title || row.Title || "Featured Dish",
       subtitle: row.subtitle || row.Subtitle || "",
-      imageUrl: row.image_url || row.Image_URL || "",
+      imageUrl: cleanImagePath(row.image_url || row.Image_URL || ""),
       ctaLabel: row.cta_label || row.CTA_Label || "",
       ctaHref: row.cta_href || row.CTA_Href || "",
       altText: row.alt_text || row.Alt_Text || row.title || "Featured dish",
@@ -244,8 +252,8 @@ Promise.resolve([])
         if (!type) return true;
         return type === "dish";
       })
-      .map(row => ({
-        Dish_ID: row.id || row.ID || row.dish_id || row.Dish_ID || "",
+      .map((row, idx) => ({
+        Dish_ID: row.id || row.ID || row.dish_id || row.Dish_ID || `CAT-${idx + 1}`,
         Dish_Name: row.name || row.Name || row.dish_name || row.Dish_Name || "",
         Category: row.category || row.Category || "",
         Meal_Type: row.meal_type || row.Meal_Type || "",
@@ -258,7 +266,7 @@ Promise.resolve([])
         Fats: row.Fats || row.fats || "",
         Fiber: row.Fiber || row.fiber || ""
       }))
-      .filter(row => row.Dish_ID && row.Dish_Name);
+      .filter(row => row.Dish_Name);
     if (!catalogDishes.length) {
       const nutritionRows = await fetchCSV("allplans_nutrition.csv").catch(() => []);
       const fallbackItems = nutritionRows.flatMap(row => ["Data.Column3","Data.Column4","Data.Column5","Data.Column6","Data.Column7"].map(k => String(row[k] || "").trim()).filter(Boolean));
