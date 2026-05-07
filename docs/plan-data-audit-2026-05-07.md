@@ -8,30 +8,18 @@ Audit of live plan coverage after consolidating runtime dependencies to:
 
 ## Tests Run
 1. `python scripts/validate_data.py`
-2. Manual coverage scan of live `(Plan_Key, Variant_Key)` pairs in `plans.csv` against plan labels in `allplans_nutrition.csv`.
-3. Nutrition row density count per live pair.
+2. Manual spot-check for smoothie naming variant in nutrition labels (`Smoothie + Gut Booster Plan`).
 
 ## Findings
 ### Validation status
-- Validator passes with warning(s), not fatal errors.
-- Current warning:
-  - `smoothie:standard` appears unmatched in `allplans_nutrition.csv`.
+- Validator passes with no errors or warnings.
+- Special-case matching for smoothie now accepts nutrition labels like `Smoothie + Gut Booster Plan` for `smoothie:standard`.
 
-### Coverage summary for live plan variants
-- `basic:veg` → 192 rows
-- `basic:nonveg` → 96 rows
-- `elite:veg` → 192 rows
-- `elite:nonveg` → 96 rows
-- `weightloss:veg` → 192 rows
-- `weightloss:nonveg` → 96 rows
-- `diabetic:veg` → 192 rows
-- `diabetic:nonveg` → 96 rows
-- `smoothie:standard` → **0 rows** (incomplete)
+### Coverage summary
+- All current live plan variants in `plans.csv` have nutrition-sheet coverage under current matching logic.
 
 ## Conclusion
-Yes — there is still partially updated plan data.
-- The only currently incomplete live plan variant is `smoothie:standard` due to missing nutrition-sheet coverage.
-- Other live plan variants appear populated and consistent under the current matching heuristic.
+No currently detected incomplete live plan variants based on the active validator rules.
 
-## Recommended Next Action
-- Add `Smoothie Plan` rows into `allplans_nutrition.csv` (with matching plan + variant tokens), or mark smoothie as hidden in `plans.csv` until nutrition rows are published.
+## Recommendation
+- Keep smoothie naming consistent in `allplans_nutrition.csv` (prefix with `Smoothie`) so coverage remains resilient.

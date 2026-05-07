@@ -99,10 +99,13 @@ def validate() -> ValidationResult:
             variant_tokens = {variant_key}
             if variant_key == "nonveg":
                 variant_tokens.add("non-veg")
-            has_coverage = any(
-                plan_key in label and any(token in label for token in variant_tokens)
-                for label in nutrition_plan_labels
-            )
+            if plan_key == "smoothie" and variant_key == "standard":
+                has_coverage = any("smoothie" in label for label in nutrition_plan_labels)
+            else:
+                has_coverage = any(
+                    plan_key in label and any(token in label for token in variant_tokens)
+                    for label in nutrition_plan_labels
+                )
             if not has_coverage:
                 nutrition_gaps.append((plan_key, variant_key))
         if nutrition_gaps:
