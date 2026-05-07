@@ -15,6 +15,7 @@
   --space-4: 16px;
   --space-5: 24px;
   --space-6: 32px;
+  --fluid-body: clamp(0.96rem, 0.92rem + 0.3vw, 1.06rem);
 }
 
 * { box-sizing: border-box; }
@@ -25,6 +26,7 @@ body {
   color: var(--text);
   background: linear-gradient(180deg, #fff 0%, var(--bg) 100%);
   text-rendering: optimizeLegibility;
+  font-size: var(--fluid-body);
   -webkit-font-smoothing: antialiased;
 }
 
@@ -48,7 +50,7 @@ body {
 }
 
 .nav {
-  min-height: 80px;
+  min-height: 64px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -94,6 +96,23 @@ body {
   overflow: hidden;
   position: relative;
 }
+.hero-premium{
+  position:relative;
+  border-radius:22px;
+  overflow:hidden;
+  box-shadow:0 24px 45px rgba(0,0,0,.24);
+  border:1px solid rgba(255,255,255,.18);
+}
+.hero-premium-viewport{position:relative;min-height:320px;background:#06261b;}
+.hero-premium-slide{position:absolute;inset:0;opacity:0;transition:opacity .55s ease;}
+.hero-premium-slide img{width:100%;height:100%;object-fit:cover;display:block;}
+.hero-premium-slide.is-active{opacity:1;z-index:2;}
+.hero-premium-overlay{position:absolute;left:0;right:0;bottom:0;padding:22px;background:linear-gradient(180deg,transparent,rgba(0,0,0,.72));color:#fff}
+.hero-premium-overlay h3{margin:0;font-size:1.45rem}
+.hero-premium-overlay p{margin:8px 0 0;color:rgba(255,255,255,.92)}
+.hero-premium-dots{position:absolute;left:50%;transform:translateX(-50%);bottom:12px;display:flex;gap:8px;z-index:5}
+.hero-premium-dot{width:10px;height:10px;border-radius:50%;border:0;background:rgba(255,255,255,.45);cursor:pointer}
+.hero-premium-dot.is-active{background:#fff;transform:scale(1.15)}
 
 .hero-strip-track {
   display: flex;
@@ -198,10 +217,11 @@ body {
 }
 .preorder-cat-toggle { width: 100%; justify-content: space-between; margin-bottom: 8px; }
 .preorder-cat-body .item-list { margin-top: 6px; }
-.menu-card.preorder-item { display: grid; grid-template-columns: 1fr; align-items: start; row-gap: 6px; padding: 8px 10px !important; }
+.menu-card.preorder-item { display: grid; grid-template-columns: 84px 1fr; align-items: start; column-gap: 12px; row-gap: 6px; padding: 10px 12px !important; }
+.preorder-thumb{width:84px;height:84px;border-radius:12px;object-fit:cover;border:1px solid rgba(0,0,0,.08);} 
 .menu-card.preorder-item > div { width: 100%; min-width: 0; }
 .preorder-item .price { justify-self: end; }
-.preorder-item .action-row { grid-column: 1 / -1; }
+.preorder-item .action-row { grid-column: 2; display:flex;align-items:center;gap:10px;}
 .preorder-item .dish-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
 .preorder-item .dish-title-wrap { min-width: 0; flex: 1; }
 .preorder-item .price { margin: 0; white-space: nowrap; }
@@ -241,6 +261,8 @@ body {
 .nutrition-chips .nutrition-pill.is-red { border-color: rgba(200,32,39,.3); color: #a11d24; background: #fff3f3; }
 .nutrition-chips .nutrition-pill.is-green { border-color: rgba(31,109,71,.3); color: #14532d; background: #eefaf2; }
 .preorder-confirm-floating {
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,.35);
   position: fixed;
   right: 16px;
   bottom: 16px;
@@ -272,14 +294,20 @@ body {
   .container { width: min(1120px, calc(100% - 20px)); }
   .nav { justify-content: center; }
   .nav-actions { width: 100%; }
-  .nav-actions .btn { flex: 1 1 calc(50% - 8px); min-width: 140px; }
+  .nav-actions .btn { flex: 1 1 auto; min-width: 44px; }
   .plan-card .btn { width: 100%; }
   .item-list li { grid-template-columns: 24px 56px 1fr; padding: 8px; }
   .item-list li .price { grid-column: 2 / 4; justify-self: start; }
   .hero-strip-item { width: 50vw; height: 36vw; }
+  .hero-premium-viewport{min-height:220px}
+  .hero-premium-overlay h3{font-size:1.1rem}
 }
 
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; animation: none !important; }
   html { scroll-behavior: auto; }
 }
+
+.preorder-confirm-floating .badge{margin-left:8px;background:rgba(255,255,255,.2);padding:4px 10px;border-radius:999px;font-size:.78rem;}
+.tap-bump{animation:bump .25s ease;}@keyframes bump{0%{transform:scale(1)}50%{transform:scale(1.08)}100%{transform:scale(1)}}
+.preorder-skeleton{display:grid;gap:10px}.preorder-skeleton .row{height:84px;border-radius:12px;background:linear-gradient(90deg,#edf2ef,#f8fbf9,#edf2ef);background-size:200% 100%;animation:sh 1.2s ease-in-out infinite}
