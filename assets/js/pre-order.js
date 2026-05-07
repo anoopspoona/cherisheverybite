@@ -15,8 +15,8 @@ function normalizeMenuRows(rows) {
       category: row.category || row.Category || "Menu",
       mealType: row.meal_type || row.Meal_Type || "",
       price: normalizePrice(row.price || row.Price || row.unit_price || row.Unit_Price || ""),
-      calories: row.Calories || row.calories || "",
-      protein: row.Protein || row.protein || "",
+      calories: row.Calories || row.calories || row.kcal || "",
+      protein: row.Protein || row.protein || row.protein_g || "",
       carbohydrates: row.Carbohydrates || row.carbohydrates || row.Carbs || row.carbs || "",
       fats: row.Fats || row.fats || "",
       fiber: row.Fiber || row.fiber || ""
@@ -65,6 +65,10 @@ function groupByCategory(items) {
   const catalogRows = await fetchCSV("catalog.csv").catch(() => []);
   if (menuWrap) menuWrap.innerHTML = `<div class="preorder-skeleton"><div class="row"></div><div class="row"></div><div class="row"></div></div>`;
   const items = normalizeMenuRows(catalogRows.filter(row => String(row.record_type || row.Record_Type || "dish").toLowerCase() === "dish"));
+  if (!items.length) {
+    const nutritionRows = await fetchCSV("allplans_nutrition.csv").catch(() => []);
+    window.__NUT_FALLBACK__ = nutritionRows.flatMap(row => ["Data.Column3","Data.Column4","Data.Column5","Data.Column6","Data.Column7"].map(k => String(row[k] || "").trim()).filter(Boolean));
+  }
   const qtyById = new Map();
   let openCategory = "";
 
@@ -116,7 +120,7 @@ function groupByCategory(items) {
       }))
       .filter(row => row.id && row.name);
     if (!normalized.length) {
-      locationSelect.innerHTML = `<option value="">Location list unavailable</option>`;
+      locationSelect.innerHTML = `<option value="pinned-only">Use pinned map link</option>`;
       return;
     }
     locationMap.clear();
@@ -128,7 +132,8 @@ function groupByCategory(items) {
 
   function render() {
     if (!menuWrap) return;
-    const grouped = groupByCategory(items);
+    const sourceItems = items.length ? items : normalizeMenuRows((window.__NUT_FALLBACK__ || []).map((name, idx) => ({ id: `NUT-${idx+1}`, name, category: "Plan Menu", price: "TBD", status: "live" })));
+    const grouped = groupByCategory(sourceItems);
     if (!openCategory && grouped.length) openCategory = grouped[0].category;
     if (categoryBar) {
       categoryBar.innerHTML = grouped.map(group => `<button class="btn btn-soft preorder-cat-chip ${group.category === openCategory ? "is-active" : ""}" data-action="toggle-category" data-category="${escapeHtml(group.category)}" type="button">${escapeHtml(group.category)}</button>`).join("");

@@ -18,7 +18,8 @@ function publicPlanLabel(row = {}) {
 
 function normalizePrice(price) {
   const value = String(price || "").trim();
-  return value || "TBD";
+  if (!value) return "TBD";
+  return /^[₹$]/.test(value) ? value : `₹${value}`;
 }
 
 function resolveImageUrl(value) {
@@ -251,8 +252,8 @@ Promise.resolve([])
         Image_URL: row.image_url || row.Image_URL || row.url || row.URL || row.thumbnail || row.Thumbnail || row.source || row.Source || "",
         Price: row.price || row.Price || row.unit_price || row.Unit_Price || "",
         Status: row.status || row.Status || "live",
-        Calories: row.Calories || row.calories || "",
-        Protein: row.Protein || row.protein || "",
+        Calories: row.Calories || row.calories || row.kcal || "",
+        Protein: row.Protein || row.protein || row.protein_g || "",
         Carbohydrates: row.Carbohydrates || row.carbohydrates || row.Carbs || row.carbs || "",
         Fats: row.Fats || row.fats || "",
         Fiber: row.Fiber || row.fiber || ""
