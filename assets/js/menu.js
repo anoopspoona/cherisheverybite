@@ -159,7 +159,7 @@ function normalizeSlides(rows) {
     return raw;
   };
   return rows
-    .filter(row => String(row.status || row.Status || "live").toLowerCase() === "live")
+    .filter(row => String(row.status || row.Status || "live").trim().toLowerCase() === "live")
     .map(row => ({
       id: row.slide_id || row.Slide_ID || "",
       title: row.title || row.Title || "Featured Dish",
