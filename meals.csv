@@ -1,9 +1,0 @@
-meal_id,name,category,price,status,veg_nonveg,diabetic_friendly,calories,protein_g,tags
-M001,Ragi collagen chicken soup,Soups,TBD,live,nonveg,true,190,18,"high-protein,low-carb"
-M002,Vegetable broth,Soups,TBD,hidden,veg,true,110,4,"light,detox"
-M003,Corn and yuzu salad,Salads,TBD,live,veg,false,240,7,"fresh,fiber-rich"
-M004,Mesclun quinoa salad,Salads,TBD,live,veg,true,290,10,"quinoa,balanced"
-M005,Herbs marinated chicken breast,Protein Add On,TBD,live,nonveg,true,210,28,"addon,lean-protein"
-M006,Greek yogurt granola,Bites,TBD,live,veg,false,260,9,"probiotic,snack"
-M007,ABC Smoothie,Drinks,TBD,live,veg,false,210,5,"smoothie"
-M008,Protein Peanut Butter Brownie,Desserts,TBD,live,veg,false,290,10,"protein,dessert"
