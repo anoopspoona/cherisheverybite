@@ -1,25 +1,34 @@
-# Plan Data Audit — May 7, 2026 (Post-consolidation)
+# Data Audit — May 7, 2026
 
 ## Scope
-Audit of live plan coverage after consolidating runtime dependencies to:
+Audit performed on canonical runtime files:
 - `catalog.csv`
 - `plans.csv`
 - `allplans_nutrition.csv`
 
-## Tests Run
+## Tests executed
 1. `python scripts/validate_data.py`
-2. Manual spot-check for smoothie naming variant in nutrition labels (`Smoothie + Gut Booster Plan`).
+2. Catalog completeness scan for live rows (`id`, `name`, and type-specific required fields).
+3. Live plan-variant coverage scan against `allplans_nutrition.csv` labels.
 
-## Findings
-### Validation status
-- Validator passes with no errors or warnings.
-- Special-case matching for smoothie now accepts nutrition labels like `Smoothie + Gut Booster Plan` for `smoothie:standard`.
+## Results
+### Validator
+- `scripts/validate_data.py` passes.
 
-### Coverage summary
-- All current live plan variants in `plans.csv` have nutrition-sheet coverage under current matching logic.
+### Plan/nutrition coverage
+- Live plan pairs in `plans.csv`: 9
+- Missing coverage in `allplans_nutrition.csv`: 0
+- Smoothie special naming (`Smoothie + Gut Booster Plan`) is matched successfully.
+
+### Catalog incomplete / partially updated items
+The following **live** rows have missing required details:
+- `DISH008` (`addon`) — missing `category`
+- `DISH010` (`dish`) — missing `category`
+- `DISH020` (`dish`) — missing `category`
+- `DISH024` (`dish`) — missing `category`
+- `DISH057` (`dish`) — missing `category`
+- `DISH047` (`dish`) — missing `price`
 
 ## Conclusion
-No currently detected incomplete live plan variants based on the active validator rules.
-
-## Recommendation
-- Keep smoothie naming consistent in `allplans_nutrition.csv` (prefix with `Smoothie`) so coverage remains resilient.
+- Plan/nutrition data coverage is complete under current matching rules.
+- Catalog still has partially updated live items (6 rows) that should be completed for consistency.
