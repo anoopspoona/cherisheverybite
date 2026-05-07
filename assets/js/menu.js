@@ -237,7 +237,7 @@ function attachDietChartForm() {
 Promise.resolve([])
     ]);
 
-    const catalogDishes = catalogRows
+    let catalogDishes = catalogRows
       .filter(row => {
         const type = String(row.record_type || row.Record_Type || "").toLowerCase();
         if (!type) return true;
@@ -258,6 +258,13 @@ Promise.resolve([])
         Fiber: row.Fiber || row.fiber || ""
       }))
       .filter(row => row.Dish_ID && row.Dish_Name);
+    if (!catalogDishes.length) {
+      const nutritionRows = await fetchCSV("allplans_nutrition.csv").catch(() => []);
+      const fallbackItems = nutritionRows.flatMap(row => ["Data.Column3","Data.Column4","Data.Column5","Data.Column6","Data.Column7"].map(k => String(row[k] || "").trim()).filter(Boolean));
+      catalogDishes = Array.from(new Set(fallbackItems)).map((name, idx) => ({
+        Dish_ID: `NUT-${idx + 1}`, Dish_Name: name, Category: "Plan Menu", Meal_Type: "", Image_URL: "cherish-logo.jpg", Price: "TBD", Status: "live"
+      }));
+    }
     renderMenu(groupMenu(catalogDishes));
     renderPlans(planRows);
     renderHeroSlideshow(heroRows);
