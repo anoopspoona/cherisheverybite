@@ -96,6 +96,23 @@ body {
   overflow: hidden;
   position: relative;
 }
+.hero-premium{
+  position:relative;
+  border-radius:22px;
+  overflow:hidden;
+  box-shadow:0 24px 45px rgba(0,0,0,.24);
+  border:1px solid rgba(255,255,255,.18);
+}
+.hero-premium-viewport{position:relative;min-height:320px;background:#06261b;}
+.hero-premium-slide{position:absolute;inset:0;opacity:0;transition:opacity .55s ease;}
+.hero-premium-slide img{width:100%;height:100%;object-fit:cover;display:block;}
+.hero-premium-slide.is-active{opacity:1;z-index:2;}
+.hero-premium-overlay{position:absolute;left:0;right:0;bottom:0;padding:22px;background:linear-gradient(180deg,transparent,rgba(0,0,0,.72));color:#fff}
+.hero-premium-overlay h3{margin:0;font-size:1.45rem}
+.hero-premium-overlay p{margin:8px 0 0;color:rgba(255,255,255,.92)}
+.hero-premium-dots{position:absolute;left:50%;transform:translateX(-50%);bottom:12px;display:flex;gap:8px;z-index:5}
+.hero-premium-dot{width:10px;height:10px;border-radius:50%;border:0;background:rgba(255,255,255,.45);cursor:pointer}
+.hero-premium-dot.is-active{background:#fff;transform:scale(1.15)}
 
 .hero-strip-track {
   display: flex;
@@ -282,6 +299,8 @@ body {
   .item-list li { grid-template-columns: 24px 56px 1fr; padding: 8px; }
   .item-list li .price { grid-column: 2 / 4; justify-self: start; }
   .hero-strip-item { width: 50vw; height: 36vw; }
+  .hero-premium-viewport{min-height:220px}
+  .hero-premium-overlay h3{font-size:1.1rem}
 }
 
 @media (prefers-reduced-motion: reduce) {

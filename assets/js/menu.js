@@ -151,7 +151,10 @@ function renderPlans(rows) {
 
 function normalizeSlides(rows) {
   const cleanImagePath = value => {
-    const raw = String(value || "").replace(/\s+/g, "").trim();
+    const raw = String(value || "")
+      .replace(/[\r\n\t]+/g, "")
+      .replace(/\s*\/\s*/g, "/")
+      .trim();
     if (!raw) return "";
     if (/^(https?:)?\/\//i.test(raw)) return raw;
     if (raw.startsWith("assets/")) return raw;
@@ -183,29 +186,57 @@ function renderHeroSlideshow(rows) {
     imageUrl: "cherish-logo.jpg",
     altText: "Cherish Every Bite featured dish"
   }];
-
   wrap.innerHTML = "";
-  const track = document.createElement("div");
-  track.className = "hero-strip-track";
+  const shell = document.createElement("div");
+  shell.className = "hero-premium";
+  const viewport = document.createElement("div");
+  viewport.className = "hero-premium-viewport";
+  const dots = document.createElement("div");
+  dots.className = "hero-premium-dots";
 
-  const loopItems = [...imageSlides, ...imageSlides];
-  loopItems.forEach((slide, index) => {
-    const image = document.createElement("img");
-    image.className = "hero-strip-item";
-    image.loading = index < 6 ? "eager" : "lazy";
-    image.src = slide.imageUrl;
-    image.alt = slide.altText || "Featured dish";
-    image.setAttribute("data-fallback", "cherish-logo.jpg");
-    image.addEventListener("error", () => {
-      const fallback = image.getAttribute("data-fallback") || "cherish-logo.jpg";
-      if (image.getAttribute("src") !== fallback) {
-        image.setAttribute("src", fallback);
-      }
-    });
-    track.appendChild(image);
+  imageSlides.forEach((slide, index) => {
+    const item = document.createElement("article");
+    item.className = `hero-premium-slide${index === 0 ? " is-active" : ""}`;
+    item.innerHTML = `
+      <img src="${escapeHtml(slide.imageUrl)}" alt="${escapeHtml(slide.altText || "Featured dish")}" loading="${index < 2 ? "eager" : "lazy"}" />
+      <div class="hero-premium-overlay">
+        <h3>${escapeHtml(slide.title || "Featured Dish")}</h3>
+        ${slide.subtitle ? `<p>${escapeHtml(slide.subtitle)}</p>` : ""}
+      </div>
+    `;
+    viewport.appendChild(item);
+    const dot = document.createElement("button");
+    dot.className = `hero-premium-dot${index === 0 ? " is-active" : ""}`;
+    dot.type = "button";
+    dot.setAttribute("aria-label", `Show slide ${index + 1}`);
+    dot.addEventListener("click", () => activate(index));
+    dots.appendChild(dot);
   });
 
-  wrap.appendChild(track);
+  shell.appendChild(viewport);
+  shell.appendChild(dots);
+  wrap.appendChild(shell);
+
+  const slideEls = Array.from(viewport.querySelectorAll(".hero-premium-slide"));
+  const dotEls = Array.from(dots.querySelectorAll(".hero-premium-dot"));
+  let active = 0;
+  let timer = null;
+  function activate(next) {
+    active = (next + slideEls.length) % slideEls.length;
+    slideEls.forEach((el, i) => el.classList.toggle("is-active", i === active));
+    dotEls.forEach((el, i) => el.classList.toggle("is-active", i === active));
+  }
+  function start() {
+    if (slideEls.length < 2) return;
+    timer = window.setInterval(() => activate(active + 1), 4200);
+  }
+  function stop() {
+    if (timer) window.clearInterval(timer);
+    timer = null;
+  }
+  shell.addEventListener("mouseenter", stop);
+  shell.addEventListener("mouseleave", start);
+  start();
 }
 
 function attachDietChartForm() {
