@@ -27,7 +27,7 @@ function resolveImageUrl(value) {
     .replace(/[\r\n\t]+/g, "")
     .replace(/\s*\/\s*/g, "/")
     .trim();
-  if (!raw) return "cherish-logo.jpg";
+  if (!raw) return "";
   if (/^(https?:)?\/\//i.test(raw)) return raw;
   if (raw.startsWith("assets/")) return raw;
   if (/\.(png|jpe?g|webp|gif|avif|svg)$/i.test(raw) && !raw.includes("/")) {
@@ -96,7 +96,7 @@ function renderMenu(groups) {
     const rows = group.items.map((item, index) => `
       <li>
         <span>${index + 1}</span>
-        <img class="dish-thumb" src="${escapeHtml(item.imageUrl)}" alt="${escapeHtml(item.name)}" loading="lazy" onerror="this.src='cherish-logo.jpg'" />
+        ${item.imageUrl ? `<img class="dish-thumb" src="${escapeHtml(item.imageUrl)}" alt="${escapeHtml(item.name)}" loading="lazy" onerror="this.remove()" />` : ""}
         <div>
           <strong>${escapeHtml(item.name)}</strong>
           ${item.mealType ? `<div class="muted">${escapeHtml(item.mealType)}</div>` : ""}
@@ -251,7 +251,7 @@ function renderHeroSlideshow(rows, catalogRows = []) {
   }
   function start() {
     if (slideEls.length < 2) return;
-    timer = window.setInterval(() => activate(active + 1), 4200);
+    timer = window.setInterval(() => activate(active + 1), 7600);
   }
   function stop() {
     if (timer) window.clearInterval(timer);

@@ -11,7 +11,7 @@ function resolveImageUrl(value) {
     .replace(/[\r\n\t]+/g, "")
     .replace(/\s*\/\s*/g, "/")
     .trim();
-  if (!raw) return "cherish-logo.jpg";
+  if (!raw) return "";
   if (/^(https?:)?\/\//i.test(raw)) return raw;
   if (raw.startsWith("assets/")) return raw;
   if (/\.(png|jpe?g|webp|gif|avif|svg)$/i.test(raw) && !raw.includes("/")) {
@@ -159,7 +159,7 @@ function groupByCategory(items) {
       const inner = group.rows.map(item => {
         const qty = Number(qtyById.get(item.id) || 0);
         return `<li class="menu-card preorder-item">
-          <img class="preorder-thumb" src="${escapeHtml(item.imageUrl || 'cherish-logo.jpg')}" alt="${escapeHtml(item.name)}" loading="lazy" onerror="this.src='cherish-logo.jpg'" />
+          ${item.imageUrl ? `<img class="preorder-thumb" src="${escapeHtml(item.imageUrl)}" alt="${escapeHtml(item.name)}" loading="lazy" onerror="this.remove()" />` : ""}
           <div class="dish-head">
             <div class="dish-title-wrap">
             <strong class="dish-title">${escapeHtml(item.name)}</strong>
