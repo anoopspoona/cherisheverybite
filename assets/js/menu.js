@@ -300,7 +300,7 @@ function attachDietChartForm() {
     const [catalogRows, planRows, heroRows] = await Promise.all([
       fetchCSV("catalog.csv").catch(() => []),
       fetchCSV("plans.csv").catch(() => []),
-      fetchCSV("hero_slides.csv").catch(() => [])
+Promise.resolve([])
     ]);
 
     let catalogDishes = catalogRows
