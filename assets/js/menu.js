@@ -23,11 +23,15 @@ function normalizePrice(price) {
 }
 
 function resolveImageUrl(value) {
-  const raw = String(value || "").trim();
+  const raw = String(value || "")
+    .replace(/[\r\n\t]+/g, "")
+    .replace(/\s*\/\s*/g, "/")
+    .trim();
   if (!raw) return "cherish-logo.jpg";
   if (/^(https?:)?\/\//i.test(raw)) return raw;
   if (raw.startsWith("assets/")) return raw;
   if (/\.(png|jpe?g|webp|gif|avif|svg)$/i.test(raw) && !raw.includes("/")) {
+    if (/shop photo/i.test(raw)) return `assets/hero/${raw}`;
     return `assets/dishes/${raw}`;
   }
   return raw.replace(/^\.\//, "");
@@ -177,54 +181,73 @@ function normalizeSlides(rows) {
     .sort((a, b) => a.sortOrder - b.sortOrder);
 }
 
-function renderHeroSlideshow(rows) {
+function renderHeroSlideshow(rows, catalogRows = []) {
   const wrap = document.getElementById("hero-slideshow");
   if (!wrap) return;
 
-  const slides = normalizeSlides(rows);
-  const imageSlides = slides.length ? slides : [{
-    imageUrl: "cherish-logo.jpg",
-    altText: "Cherish Every Bite featured dish"
-  }];
+  const catalogSlides = catalogRows
+    .filter(row => String(row.record_type || row.Record_Type || "dish").toLowerCase() === "dish")
+    .filter(row => String(row.status || row.Status || "live").trim().toLowerCase() === "live")
+    .map((row, idx) => ({
+      id: row.id || row.ID || `dish-${idx + 1}`,
+      title: row.name || row.Name || "Featured Dish",
+      subtitle: row.category || row.Category || "Chef Special",
+      imageUrl: resolveImageUrl(row.image_url || row.Image_URL || row.thumbnail_url || row.Thumbnail_URL || row.thumbnail || row.Thumbnail || row.image || row.Image || row.url || row.URL || ""),
+      altText: row.name || row.Name || "Featured dish"
+    }))
+    .filter(slide => slide.imageUrl);
+  const slides = catalogSlides.length ? catalogSlides : normalizeSlides(rows);
+  const imageSlides = slides.length ? slides : [{ imageUrl: "cherish-logo.jpg", altText: "Cherish Every Bite featured dish", title: "Featured Dish", subtitle: "" }];
   wrap.innerHTML = "";
   const shell = document.createElement("div");
-  shell.className = "hero-premium";
+  shell.className = "hero-experiment";
   const viewport = document.createElement("div");
-  viewport.className = "hero-premium-viewport";
-  const dots = document.createElement("div");
-  dots.className = "hero-premium-dots";
+  viewport.className = "hero-experiment-viewport";
+  const track = document.createElement("div");
+  track.className = "hero-experiment-track";
+  const prev = document.createElement("button");
+  prev.className = "hero-exp-nav prev";
+  prev.type = "button";
+  prev.textContent = "‹";
+  const next = document.createElement("button");
+  next.className = "hero-exp-nav next";
+  next.type = "button";
+  next.textContent = "›";
 
   imageSlides.forEach((slide, index) => {
     const item = document.createElement("article");
-    item.className = `hero-premium-slide${index === 0 ? " is-active" : ""}`;
+    item.className = `hero-exp-card${index === 0 ? " is-active" : ""}`;
     item.innerHTML = `
       <img src="${escapeHtml(slide.imageUrl)}" alt="${escapeHtml(slide.altText || "Featured dish")}" loading="${index < 2 ? "eager" : "lazy"}" />
-      <div class="hero-premium-overlay">
+      <div class="hero-exp-overlay">
         <h3>${escapeHtml(slide.title || "Featured Dish")}</h3>
         ${slide.subtitle ? `<p>${escapeHtml(slide.subtitle)}</p>` : ""}
       </div>
     `;
-    viewport.appendChild(item);
-    const dot = document.createElement("button");
-    dot.className = `hero-premium-dot${index === 0 ? " is-active" : ""}`;
-    dot.type = "button";
-    dot.setAttribute("aria-label", `Show slide ${index + 1}`);
-    dot.addEventListener("click", () => activate(index));
-    dots.appendChild(dot);
+    track.appendChild(item);
   });
 
+  viewport.appendChild(track);
+  shell.appendChild(prev);
   shell.appendChild(viewport);
-  shell.appendChild(dots);
+  shell.appendChild(next);
   wrap.appendChild(shell);
 
-  const slideEls = Array.from(viewport.querySelectorAll(".hero-premium-slide"));
-  const dotEls = Array.from(dots.querySelectorAll(".hero-premium-dot"));
+  const slideEls = Array.from(track.querySelectorAll(".hero-exp-card"));
   let active = 0;
   let timer = null;
   function activate(next) {
     active = (next + slideEls.length) % slideEls.length;
-    slideEls.forEach((el, i) => el.classList.toggle("is-active", i === active));
-    dotEls.forEach((el, i) => el.classList.toggle("is-active", i === active));
+    slideEls.forEach((el, i) => {
+      const offset = i - active;
+      el.style.setProperty("--offset", String(offset));
+      const distance = Math.min(Math.abs(offset), 2);
+      const scale = 1 - distance * 0.14;
+      const opacity = 1 - distance * 0.35;
+      el.style.opacity = String(Math.max(0.15, opacity));
+      el.style.transform = `translate(-50%,-50%) translateX(${offset * 52}%) scale(${scale}) rotateY(${offset * -14}deg)`;
+      el.classList.toggle("is-active", i === active);
+    });
   }
   function start() {
     if (slideEls.length < 2) return;
@@ -234,8 +257,11 @@ function renderHeroSlideshow(rows) {
     if (timer) window.clearInterval(timer);
     timer = null;
   }
+  prev.addEventListener("click", () => activate(active - 1));
+  next.addEventListener("click", () => activate(active + 1));
   shell.addEventListener("mouseenter", stop);
   shell.addEventListener("mouseleave", start);
+  activate(0);
   start();
 }
 
@@ -288,7 +314,7 @@ Promise.resolve([])
         Dish_Name: row.name || row.Name || row.dish_name || row.Dish_Name || "",
         Category: row.category || row.Category || "",
         Meal_Type: row.meal_type || row.Meal_Type || "",
-        Image_URL: row.image_url || row.Image_URL || row.url || row.URL || row.thumbnail || row.Thumbnail || row.source || row.Source || "",
+        Image_URL: row.image_url || row.Image_URL || row.thumbnail_url || row.Thumbnail_URL || row.thumbnail || row.Thumbnail || row.image || row.Image || row.url || row.URL || row.source || row.Source || "",
         Price: row.price || row.Price || row.unit_price || row.Unit_Price || "",
         Status: row.status || row.Status || "live",
         Calories: row.Calories || row.calories || row.kcal || "",
@@ -307,7 +333,7 @@ Promise.resolve([])
     }
     renderMenu(groupMenu(catalogDishes));
     renderPlans(planRows);
-    renderHeroSlideshow(heroRows);
+    renderHeroSlideshow(heroRows, catalogRows);
   } catch (error) {
     renderMenu([]);
   }

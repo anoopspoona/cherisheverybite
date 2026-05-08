@@ -113,6 +113,20 @@ body {
 .hero-premium-dots{position:absolute;left:50%;transform:translateX(-50%);bottom:12px;display:flex;gap:8px;z-index:5}
 .hero-premium-dot{width:10px;height:10px;border-radius:50%;border:0;background:rgba(255,255,255,.45);cursor:pointer}
 .hero-premium-dot.is-active{background:#fff;transform:scale(1.15)}
+.hero-experiment{
+  position:relative;display:grid;grid-template-columns:48px 1fr 48px;align-items:center;gap:10px;
+}
+.hero-experiment-viewport{overflow:hidden;min-height:340px}
+.hero-experiment-track{position:relative;height:340px;perspective:1000px}
+.hero-exp-card{
+  --offset:0;
+  position:absolute;left:50%;top:50%;width:min(66vw,820px);height:300px;transform-style:preserve-3d;
+  transform:translate(-50%,-50%);opacity:.4;transition:transform .55s ease,opacity .55s ease;pointer-events:none;
+}
+.hero-exp-card.is-active{pointer-events:auto;z-index:3}
+.hero-exp-card img{width:100%;height:100%;object-fit:cover;border-radius:22px;box-shadow:0 24px 40px rgba(0,0,0,.28)}
+.hero-exp-overlay{position:absolute;left:0;right:0;bottom:0;padding:20px;border-radius:0 0 22px 22px;background:linear-gradient(180deg,transparent,rgba(0,0,0,.75));color:#fff}
+.hero-exp-nav{width:44px;height:44px;border-radius:50%;border:1px solid rgba(255,255,255,.4);background:rgba(6,26,18,.72);color:#fff;font-size:2rem;line-height:1;cursor:pointer}
 
 .hero-strip-track {
   display: flex;
@@ -301,6 +315,10 @@ body {
   .hero-strip-item { width: 50vw; height: 36vw; }
   .hero-premium-viewport{min-height:220px}
   .hero-premium-overlay h3{font-size:1.1rem}
+  .hero-experiment{grid-template-columns:1fr}
+  .hero-exp-nav{display:none}
+  .hero-experiment-viewport,.hero-experiment-track{min-height:240px;height:240px}
+  .hero-exp-card{width:88vw;height:220px}
 }
 
 @media (prefers-reduced-motion: reduce) {
