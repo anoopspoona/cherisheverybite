@@ -23,11 +23,15 @@ function normalizePrice(price) {
 }
 
 function resolveImageUrl(value) {
-  const raw = String(value || "").trim();
+  const raw = String(value || "")
+    .replace(/[\r\n\t]+/g, "")
+    .replace(/\s*\/\s*/g, "/")
+    .trim();
   if (!raw) return "cherish-logo.jpg";
   if (/^(https?:)?\/\//i.test(raw)) return raw;
   if (raw.startsWith("assets/")) return raw;
   if (/\.(png|jpe?g|webp|gif|avif|svg)$/i.test(raw) && !raw.includes("/")) {
+    if (/shop photo/i.test(raw)) return `assets/hero/${raw}`;
     return `assets/dishes/${raw}`;
   }
   return raw.replace(/^\.\//, "");

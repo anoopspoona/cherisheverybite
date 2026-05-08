@@ -6,6 +6,21 @@ function normalizePrice(value) {
   return text ? (/^[₹$]/.test(text) ? text : `₹${text}`) : "TBD";
 }
 
+function resolveImageUrl(value) {
+  const raw = String(value || "")
+    .replace(/[\r\n\t]+/g, "")
+    .replace(/\s*\/\s*/g, "/")
+    .trim();
+  if (!raw) return "cherish-logo.jpg";
+  if (/^(https?:)?\/\//i.test(raw)) return raw;
+  if (raw.startsWith("assets/")) return raw;
+  if (/\.(png|jpe?g|webp|gif|avif|svg)$/i.test(raw) && !raw.includes("/")) {
+    if (/shop photo/i.test(raw)) return `assets/hero/${raw}`;
+    return `assets/dishes/${raw}`;
+  }
+  return raw.replace(/^\.\//, "");
+}
+
 function normalizeMenuRows(rows) {
   return rows
     .filter(row => String(row.Status || row.status || "live").toLowerCase() === "live")
@@ -19,7 +34,8 @@ function normalizeMenuRows(rows) {
       protein: row.Protein || row.protein || row.protein_g || "",
       carbohydrates: row.Carbohydrates || row.carbohydrates || row.Carbs || row.carbs || "",
       fats: row.Fats || row.fats || "",
-      fiber: row.Fiber || row.fiber || ""
+      fiber: row.Fiber || row.fiber || "",
+      imageUrl: resolveImageUrl(row.image_url || row.Image_URL || row.url || row.URL || row.thumbnail || row.Thumbnail || "")
     }))
     .filter(item => item.name);
 }
@@ -143,7 +159,7 @@ function groupByCategory(items) {
       const inner = group.rows.map(item => {
         const qty = Number(qtyById.get(item.id) || 0);
         return `<li class="menu-card preorder-item">
-          <img class="preorder-thumb" src="assets/dishes/Picture1.png" alt="Dish" loading="lazy" />
+          <img class="preorder-thumb" src="${escapeHtml(item.imageUrl || 'cherish-logo.jpg')}" alt="${escapeHtml(item.name)}" loading="lazy" onerror="this.src='cherish-logo.jpg'" />
           <div class="dish-head">
             <div class="dish-title-wrap">
             <strong class="dish-title">${escapeHtml(item.name)}</strong>
