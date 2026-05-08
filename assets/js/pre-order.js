@@ -159,7 +159,7 @@ function groupByCategory(items) {
       const inner = group.rows.map(item => {
         const qty = Number(qtyById.get(item.id) || 0);
         return `<li class="menu-card preorder-item">
-          ${item.imageUrl ? `<img class="preorder-thumb" src="${escapeHtml(item.imageUrl)}" alt="${escapeHtml(item.name)}" loading="lazy" onerror="this.remove()" />` : ""}
+          <img class="preorder-thumb" src="${escapeHtml(item.imageUrl || 'cherish-logo.jpg')}" alt="${escapeHtml(item.name)}" loading="lazy" onerror="this.src='cherish-logo.jpg'" />
           <div class="dish-head">
             <div class="dish-title-wrap">
             <strong class="dish-title">${escapeHtml(item.name)}</strong>

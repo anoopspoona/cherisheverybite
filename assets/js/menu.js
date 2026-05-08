@@ -96,7 +96,7 @@ function renderMenu(groups) {
     const rows = group.items.map((item, index) => `
       <li>
         <span>${index + 1}</span>
-        ${item.imageUrl ? `<img class="dish-thumb" src="${escapeHtml(item.imageUrl)}" alt="${escapeHtml(item.name)}" loading="lazy" onerror="this.remove()" />` : ""}
+        <img class="dish-thumb" src="${escapeHtml(item.imageUrl || "cherish-logo.jpg")}" alt="${escapeHtml(item.name)}" loading="lazy" onerror="this.src='cherish-logo.jpg'" />
         <div>
           <strong>${escapeHtml(item.name)}</strong>
           ${item.mealType ? `<div class="muted">${escapeHtml(item.mealType)}</div>` : ""}
