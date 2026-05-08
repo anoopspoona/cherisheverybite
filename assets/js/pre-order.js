@@ -6,22 +6,38 @@ function normalizePrice(value) {
   return text ? (/^[₹$]/.test(text) ? text : `₹${text}`) : "TBD";
 }
 
+function resolveImageUrl(value) {
+  const raw = String(value || "")
+    .replace(/[\r\n\t]+/g, "")
+    .replace(/\s*\/\s*/g, "/")
+    .trim();
+  if (!raw) return "";
+  if (/^(https?:)?\/\//i.test(raw)) return raw;
+  if (raw.startsWith("assets/")) return raw;
+  if (/\.(png|jpe?g|webp|gif|avif|svg)$/i.test(raw) && !raw.includes("/")) {
+    if (/shop photo/i.test(raw)) return `assets/hero/${raw}`;
+    return `assets/dishes/${raw}`;
+  }
+  return raw.replace(/^\.\//, "");
+}
+
 function normalizeMenuRows(rows) {
   return rows
     .filter(row => String(row.Status || row.status || "live").toLowerCase() === "live")
-    .map(row => ({
-      id: row.id || row.ID || row.Dish_ID || row.dish_id || "",
+    .map((row, idx) => ({
+      id: row.id || row.ID || row.Dish_ID || row.dish_id || `CAT-${idx + 1}`,
       name: row.name || row.Name || row.Dish_Name || row.dish_name || "",
       category: row.category || row.Category || "Menu",
       mealType: row.meal_type || row.Meal_Type || "",
       price: normalizePrice(row.price || row.Price || row.unit_price || row.Unit_Price || ""),
-      calories: row.Calories || row.calories || "",
-      protein: row.Protein || row.protein || "",
+      calories: row.Calories || row.calories || row.kcal || "",
+      protein: row.Protein || row.protein || row.protein_g || "",
       carbohydrates: row.Carbohydrates || row.carbohydrates || row.Carbs || row.carbs || "",
       fats: row.Fats || row.fats || "",
-      fiber: row.Fiber || row.fiber || ""
+      fiber: row.Fiber || row.fiber || "",
+      imageUrl: resolveImageUrl(row.image_url || row.Image_URL || row.thumbnail_url || row.Thumbnail_URL || row.thumbnail || row.Thumbnail || row.image || row.Image || row.url || row.URL || "")
     }))
-    .filter(item => item.id && item.name);
+    .filter(item => item.name);
 }
 
 function groupByCategory(items) {
@@ -63,7 +79,12 @@ function groupByCategory(items) {
   }
 
   const catalogRows = await fetchCSV("catalog.csv").catch(() => []);
+  if (menuWrap) menuWrap.innerHTML = `<div class="preorder-skeleton"><div class="row"></div><div class="row"></div><div class="row"></div></div>`;
   const items = normalizeMenuRows(catalogRows.filter(row => String(row.record_type || row.Record_Type || "dish").toLowerCase() === "dish"));
+  if (!items.length) {
+    const nutritionRows = await fetchCSV("allplans_nutrition.csv").catch(() => []);
+    window.__NUT_FALLBACK__ = nutritionRows.flatMap(row => ["Data.Column3","Data.Column4","Data.Column5","Data.Column6","Data.Column7"].map(k => String(row[k] || "").trim()).filter(Boolean));
+  }
   const qtyById = new Map();
   let openCategory = "";
 
@@ -105,16 +126,17 @@ function groupByCategory(items) {
 
   async function loadLocations() {
     if (!locationSelect) return;
-    const rows = await fetchCSV("delivery_locations.csv").catch(() => []);
+    const rows = await fetchCSV("catalog.csv").catch(() => []);
     const normalized = rows
+      .filter(row => String(row.record_type || row.Record_Type || "").toLowerCase() === "location")
       .map(row => ({
-        id: row.Location_ID || row.location_id || "",
-        name: row.Location_Name || row.location_name || "",
-        mapLink: row.Map_Link || row.map_link || ""
+        id: row.id || row.ID || row.location_id || row.Location_ID || "",
+        name: row.name || row.Name || row.location_name || row.Location_Name || "",
+        mapLink: row.map_link || row.Map_Link || row.url || row.URL || ""
       }))
       .filter(row => row.id && row.name);
     if (!normalized.length) {
-      locationSelect.innerHTML = `<option value="">Location list unavailable</option>`;
+      locationSelect.innerHTML = `<option value="pinned-only">Use pinned map link</option>`;
       return;
     }
     locationMap.clear();
@@ -126,7 +148,8 @@ function groupByCategory(items) {
 
   function render() {
     if (!menuWrap) return;
-    const grouped = groupByCategory(items);
+    const sourceItems = items.length ? items : normalizeMenuRows((window.__NUT_FALLBACK__ || []).map((name, idx) => ({ id: `NUT-${idx+1}`, name, category: "Plan Menu", price: "TBD", status: "live" })));
+    const grouped = groupByCategory(sourceItems);
     if (!openCategory && grouped.length) openCategory = grouped[0].category;
     if (categoryBar) {
       categoryBar.innerHTML = grouped.map(group => `<button class="btn btn-soft preorder-cat-chip ${group.category === openCategory ? "is-active" : ""}" data-action="toggle-category" data-category="${escapeHtml(group.category)}" type="button">${escapeHtml(group.category)}</button>`).join("");
@@ -136,6 +159,7 @@ function groupByCategory(items) {
       const inner = group.rows.map(item => {
         const qty = Number(qtyById.get(item.id) || 0);
         return `<li class="menu-card preorder-item">
+          <img class="preorder-thumb" src="${escapeHtml(item.imageUrl || 'cherish-logo.jpg')}" alt="${escapeHtml(item.name)}" loading="lazy" onerror="this.src='cherish-logo.jpg'" />
           <div class="dish-head">
             <div class="dish-title-wrap">
             <strong class="dish-title">${escapeHtml(item.name)}</strong>
@@ -169,7 +193,8 @@ function groupByCategory(items) {
   }
 
   function updateConfirm() {
-    const chosen = items.filter(item => Number(qtyById.get(item.id) || 0) > 0).map(item => `${item.name} x${qtyById.get(item.id)}`);
+    const selectedItems = items.filter(item => Number(qtyById.get(item.id) || 0) > 0);
+    const chosen = selectedItems.map(item => `${item.name} x${qtyById.get(item.id)}`);
     const date = dateInput?.value || "";
     const name = nameInput?.value.trim() || "";
     const phone = phoneInput?.value.trim() || "";
@@ -187,6 +212,8 @@ function groupByCategory(items) {
     if (!chosen.length) missing.push("at least one dish");
     if (!locationName) missing.push("delivery location");
     if (!mapLink) missing.push("map link");
+    const totalCount = selectedItems.reduce((sum,item)=>sum+Number(qtyById.get(item.id)||0),0);
+    if (confirm) confirm.innerHTML = `Confirm Pre Order <span class="badge">${totalCount} item${totalCount===1?"":"s"}</span>`;
     if (missing.length) {
       if (confirm) confirm.href = "#";
       if (feedback) feedback.textContent = `Please add: ${missing.join(", ")}.`;
@@ -222,6 +249,9 @@ function groupByCategory(items) {
     const qty = Number(qtyById.get(id) || 0);
     if (action === "plus") qtyById.set(id, qty + 1);
     if (action === "minus") qtyById.set(id, Math.max(0, qty - 1));
+    btn.classList.remove("tap-bump");
+    void btn.offsetWidth;
+    btn.classList.add("tap-bump");
     render();
     updateConfirm();
     saveDraft();

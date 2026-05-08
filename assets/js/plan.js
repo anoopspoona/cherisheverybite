@@ -50,6 +50,45 @@ function sortWeekValue(week) {
   return match ? Number(match[1]) : 999;
 }
 
+function normalizeKey(value) {
+  return String(value || "").trim().toLowerCase();
+}
+
+function derivePlanMealsFromNutrition(rows) {
+  const out = [];
+  rows.forEach(row => {
+    const label = normalizeKey(row.Plan || row.plan || "");
+    const planKey = ["elite", "basic", "weightloss", "diabetic", "smoothie", "customised", "salad"]
+      .find(token => label.includes(token)) || "";
+    const variantKey = label.includes("non-veg") || label.includes("nonveg")
+      ? "nonveg"
+      : (label.includes("veg") ? "veg" : "standard");
+    const mealType = label.includes("dinner") ? "Dinner" : "Lunch";
+    const weekMatch = String(row["Data.Column1"] || row.Week || "").match(/(\d+)/);
+    const week = weekMatch ? `W${weekMatch[1]}` : "";
+    const dayShort = String(row["Data.Column2"] || row.Day || "").trim().slice(0, 3).toLowerCase();
+    const dayMap = { mon: "Monday", tue: "Tuesday", wed: "Wednesday", thu: "Thursday", fri: "Friday", sat: "Saturday", sun: "Sunday" };
+    const day = dayMap[dayShort] || "";
+    const cols = ["Data.Column3", "Data.Column4", "Data.Column5", "Data.Column6", "Data.Column7"]
+      .map(key => row[key] || row[key.toLowerCase()] || "")
+      .map(v => String(v || "").trim())
+      .filter(Boolean);
+    cols.forEach((item, idx) => {
+      out.push({
+        Plan_Key: planKey,
+        Variant_Key: variantKey,
+        Week: week,
+        Day: day,
+        Day_Order: String(["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"].indexOf(day) + 1),
+        Meal_Type: mealType,
+        Item_Name: item,
+        Component: idx === 0 ? "Main" : `Item${idx + 1}`
+      });
+    });
+  });
+  return out;
+}
+
 function renderVariantOptions(rows) {
   const select = document.getElementById("variant-select");
   if (!select) return;
@@ -155,11 +194,12 @@ function updateCalendarLinks(planKey, variantKey) {
   const pagePlanKey = document.body?.dataset?.planKey || "";
   const planKey = pagePlanKey || params.get("plan") || "elite";
 
-  const [plans, meals, options] = await Promise.all([
+  const [plans, nutritionRows, catalogRows] = await Promise.all([
     fetchCSV("plans.csv"),
-    fetchCSV("plan_meals.csv"),
-    fetchCSV("customization_options.csv").catch(() => [])
+    fetchCSV("allplans_nutrition.csv"),
+    fetchCSV("catalog.csv").catch(() => [])
   ]);
+  const meals = derivePlanMealsFromNutrition(nutritionRows);
 
   const planRows = plans.filter(row => row.Plan_Key === planKey && String(row.Status || "").toLowerCase() === "live");
   renderPlanMeta(planRows);
@@ -174,6 +214,9 @@ function updateCalendarLinks(planKey, variantKey) {
     updateCalendarLinks(planKey, variantKey);
 
     if (planKey === "customised") {
+      const options = catalogRows
+        .filter(row => String(row.record_type || row.Record_Type || "").toLowerCase() === "custom_option")
+        .map(row => ({ Category: row.category || row.Category || "Options", Option_Name: row.name || row.Name || "" }));
       renderCustomOptions(options);
       return;
     }

@@ -30,6 +30,7 @@ function formatMacroValue(value, unit = "g") {
   if (!text) return "";
   return /\d$/.test(text) ? `${text}${unit}` : text;
 }
+function macroIcon(label){ if(label==="calories") return "🔥"; if(label==="protein") return "💪"; if(label==="carbohydrates") return "🌾"; return "•"; }
 
 function parseNumeric(value) {
   const numeric = Number(String(value || "").replace(/[^0-9.]/g, ""));
@@ -89,9 +90,43 @@ function haversineKm(a, b) {
 let planMealsCache = null;
 let allPlansNutritionCache = null;
 
+function derivePlanMealsFromNutrition(rows) {
+  const out = [];
+  rows.forEach(row => {
+    const label = normalizeKey(row.Plan || row.plan || "");
+    const mealType = label.includes("dinner") ? "dinner" : "lunch";
+    const planKey = ["elite", "basic", "weightloss", "diabetic", "smoothie", "customised", "salad"]
+      .find(token => label.includes(token)) || "";
+    const variantKey = label.includes("non-veg") || label.includes("nonveg")
+      ? "nonveg"
+      : (label.includes("veg") ? "veg" : "standard");
+    const week = weekToken(row.Week || row["Data.Column1"] || row.data_column1).toUpperCase();
+    const dayRaw = String(row.Day || row["Data.Column2"] || row.data_column2 || "").trim();
+    const dayMap = { mon: "Monday", tue: "Tuesday", wed: "Wednesday", thu: "Thursday", fri: "Friday", sat: "Saturday", sun: "Sunday" };
+    const day = dayMap[dayRaw.slice(0, 3).toLowerCase()] || dayRaw;
+    const components = ["Data.Column3", "Data.Column4", "Data.Column5", "Data.Column6", "Data.Column7"]
+      .map(key => row[key] || row[key.toLowerCase()] || "")
+      .map(v => String(v || "").trim())
+      .filter(Boolean);
+    components.forEach((item, idx) => {
+      out.push({
+        Plan_Key: planKey,
+        Variant_Key: variantKey,
+        Week: week,
+        Day: day,
+        Meal_Type: mealType,
+        Component: idx === 0 ? "Main" : `Item${idx + 1}`,
+        Item_Name: item
+      });
+    });
+  });
+  return out;
+}
+
 async function loadPlanMeals() {
   if (planMealsCache) return planMealsCache;
-  planMealsCache = await fetchCSV("plan_meals.csv").catch(() => []);
+  const nutritionRows = await loadAllPlansNutrition();
+  planMealsCache = derivePlanMealsFromNutrition(nutritionRows);
   return planMealsCache;
 }
 
@@ -124,7 +159,9 @@ function buildUnifiedEntry(rows, selectedPlan, selectedVariant, selectedMeal, da
     const rowWeek = weekToken(row.Week || row["Data.Column1"] || row.data_column1);
     const rowDay = dayToken(row.Day || row["Data.Column2"] || row.data_column2);
     const planHasVariantToken = /(?:^|[^a-z])(veg|nonveg|non-veg)(?:[^a-z]|$)/.test(planLabel);
-    const variantHit = !variantNeedle || !planHasVariantToken || planLabel.includes(variantNeedle.replace("-", ""));
+    const normalizedPlanLabel = planLabel.replace(/[^a-z]/g, "");
+    const normalizedVariantNeedle = variantNeedle.replace(/[^a-z]/g, "");
+    const variantHit = !normalizedVariantNeedle || !planHasVariantToken || normalizedPlanLabel.includes(normalizedVariantNeedle);
     const mealHit = planNeedle === "smoothie" ? true : planLabel.includes(mealNeedle);
     return planLabel.includes(planNeedle) && mealHit && variantHit && rowWeek === week && rowDay === day;
   });
@@ -145,37 +182,17 @@ function buildUnifiedEntry(rows, selectedPlan, selectedVariant, selectedMeal, da
 }
 
 async function loadDishes(plan, meal, variantKey = "") {
-  if (normalizeKey(plan) === "smoothie") {
-    const rows = await fetchCSV("Smoothie-GutBoosterPlan.csv").catch(() => []);
-    const items = rows
-      .map(row => row.Dish || row.dish || row["Data.Column3"] || row["Data.Column4"] || "")
-      .map(v => String(v || "").trim())
-      .filter(Boolean);
-    if (items.length) return Array.from(new Set(items));
-  }
   const planMealsRows = await loadPlanMeals();
   const normalizedVariant = String(variantKey || "").trim().toLowerCase();
   const byPlanMeal = planMealsRows
     .filter(row => String(row.Plan_Key || row.plan_key || "").trim().toLowerCase() === String(plan || "").trim().toLowerCase())
     .filter(row => String(row.Meal_Type || row.meal_type || "").trim().toLowerCase() === String(meal || "").trim().toLowerCase());
-
-  if (byPlanMeal.length) {
-    const hasVariantColumn = byPlanMeal.some(row => String(row.Variant_Key || row.variant_key || "").trim());
-    const variantFiltered = hasVariantColumn && normalizedVariant && normalizedVariant !== "standard"
-      ? byPlanMeal.filter(row => String(row.Variant_Key || row.variant_key || "").trim().toLowerCase() === normalizedVariant)
-      : byPlanMeal;
-    const hasComponentColumn = variantFiltered.some(row => String(row.Component || row.component || "").trim());
-    const mainRows = hasComponentColumn
-      ? variantFiltered.filter(row => String(row.Component || row.component || "").trim().toLowerCase() === "main")
-      : variantFiltered;
-    const items = mainRows
-      .map(row => row.Item_Name || row.item_name || row.Dish || row.dish || "")
-      .filter(Boolean);
-    if (items.length) return Array.from(new Set(items));
-  }
-
-  const rows = await fetchCSV(csvFor(plan, meal));
-  return rows.map(row => row.Dish || row.dish || "").filter(Boolean);
+  const variantFiltered = normalizedVariant && normalizedVariant !== "standard"
+    ? byPlanMeal.filter(row => String(row.Variant_Key || row.variant_key || "").trim().toLowerCase() === normalizedVariant)
+    : byPlanMeal;
+  const mainRows = variantFiltered.filter(row => String(row.Component || row.component || "").trim().toLowerCase() === "main");
+  const source = mainRows.length ? mainRows : variantFiltered;
+  return Array.from(new Set(source.map(row => row.Item_Name || row.item_name || "").filter(Boolean)));
 }
 
 function getSubscriptionCycleAnchorDate() {
@@ -277,16 +294,7 @@ async function loadAddonCatalog() {
 
   if (addonRows.length) return addonRows;
 
-  const rows = await fetchCSV("addons.csv").catch(() => []);
-  return rows
-    .map(row => ({
-      id: row.Addon_ID || row.addon_id || row.id || "",
-      name: row.Addon_Name || row.addon_name || row.Name || row.name || "",
-      category: row.Category || row.category || row.Addon_Type || row.addon_type || "Add-on",
-      price: row.Price || row.price || row.Unit_Price || row.unit_price || "",
-      status: row.Status || row.status || "live"
-    }))
-    .filter(row => row.id && row.name && String(row.status).toLowerCase() === "live");
+  return [];
 }
 
 (function init() {
@@ -310,6 +318,9 @@ async function loadAddonCatalog() {
     const mealSelect = document.getElementById("meal-select");
     const planSelect = document.getElementById("plan-select");
     const variantSelect = document.getElementById("variant-select");
+    const settingsToggle = document.getElementById("meal-settings-toggle");
+    const settingsPanel = document.getElementById("meal-settings-panel");
+    const settingsSummaryText = document.getElementById("meal-settings-summary-text");
     const title = document.getElementById("title");
     const confirmBtn = document.getElementById("confirm-subscription");
     const feedback = document.getElementById("confirm-feedback");
@@ -494,17 +505,22 @@ async function loadAddonCatalog() {
             const nutrition = activeMap.get(key)?.nutrition || {};
             const details = (activeMap.get(key)?.details || []).filter(Boolean);
             const dishesForCell = Array.from(new Set((details.length ? details : [activeMap.get(key)?.dish]).filter(Boolean)));
+            const mainDish = dishesForCell[0] || "Meal";
+            const caloriesNum = Number(String(nutrition.calories || "").replace(/[^0-9.]/g, ""));
             const nutritionBits = [
-              nutrition.calories ? `🔥 ${escapeHtml(String(nutrition.calories).trim())} kcal` : "",
-              nutrition.protein ? `💪 ${escapeHtml(formatMacroValue(nutrition.protein))} Protein` : "",
-              nutrition.carbohydrates ? `🌾 ${escapeHtml(formatMacroValue(nutrition.carbohydrates))} Carbs` : ""
+              nutrition.calories ? `<span class="macro-pill ${caloriesNum > 600 ? "hot" : ""}">${macroIcon("calories")} ${escapeHtml(String(nutrition.calories).trim())}</span>` : "",
+              nutrition.protein ? `<span class="macro-pill">${macroIcon("protein")} ${escapeHtml(formatMacroValue(nutrition.protein))}</span>` : "",
+              nutrition.carbohydrates ? `<span class="macro-pill">${macroIcon("carbohydrates")} ${escapeHtml(formatMacroValue(nutrition.carbohydrates))}</span>` : ""
             ].filter(Boolean);
             box.classList.add("active");
             if (selectedAddonDate === key) box.classList.add("selected");
             box.innerHTML += `
-              <div class="dish-list">${dishesForCell.map(dish => `<div class="dish">${escapeHtml(dish)}</div>`).join("")}</div>
-              ${nutritionBits.length ? `<div class="day-nutrition">${nutritionBits.join(" • ")}</div>` : ""}
+              <div class="main-dish">${escapeHtml(mainDish)}</div>
+              <button class="details-link" type="button">View Details</button>
+              ${nutritionBits.length ? `<div class="day-nutrition">${nutritionBits.join("")}</div>` : ""}
               <div class="day-popup">
+                <div><strong>${escapeHtml(mainDish)}</strong></div>
+                ${dishesForCell.length > 1 ? `<div>Ingredients: ${dishesForCell.slice(1).map(escapeHtml).join(", ")}</div>` : ""}
                 ${nutrition.calories ? `<div>Calories: ${escapeHtml(String(nutrition.calories).trim())} kcal</div>` : ""}
                 ${nutrition.protein ? `<div>Protein: ${escapeHtml(formatMacroValue(nutrition.protein))}</div>` : ""}
                 ${nutrition.carbohydrates ? `<div>Carbohydrates: ${escapeHtml(formatMacroValue(nutrition.carbohydrates))}</div>` : ""}
@@ -515,6 +531,7 @@ async function loadAddonCatalog() {
               ${qty > 0 ? `<div class="day-addon-count">${qty} add-on${qty > 1 ? "s" : ""}</div>` : ""}
             `;
           } else if (current.getDay() === 0) {
+            box.classList.add("sunday");
             box.innerHTML += `<div class="dish">Sunday</div>`;
           }
           days.appendChild(box);
@@ -584,6 +601,14 @@ async function loadAddonCatalog() {
       }
     }
 
+    function refreshSettingsSummary() {
+      if (!settingsSummaryText) return;
+      settingsSummaryText.textContent = `${formatLabel(mealSelect?.value || "lunch")} • ${formatVariantLabel(variantSelect?.value || "veg")} • ${formatLabel(periodSelect?.value || "weekly")}`;
+    }
+    settingsToggle?.addEventListener("click", () => {
+      if (settingsPanel?.hasAttribute("hidden")) settingsPanel.removeAttribute("hidden");
+      else settingsPanel?.setAttribute("hidden", "");
+    });
     function applyDraft() {
       const draft = getDraft();
       if (!draft) return;
@@ -658,12 +683,13 @@ async function loadAddonCatalog() {
 
     async function loadLocations() {
       if (!locationSelect) return;
-      const rows = await fetchCSV("delivery_locations.csv").catch(() => []);
+      const rows = await fetchCSV("catalog.csv").catch(() => []);
       const normalized = rows
+        .filter(row => String(row.record_type || row.Record_Type || "").toLowerCase() === "location")
         .map(row => ({
-          id: row.Location_ID || row.location_id || "",
-          name: row.Location_Name || row.location_name || "",
-          mapLink: row.Map_Link || row.map_link || ""
+          id: row.id || row.ID || row.location_id || row.Location_ID || "",
+          name: row.name || row.Name || row.location_name || row.Location_Name || "",
+          mapLink: row.map_link || row.Map_Link || row.url || row.URL || ""
         }))
         .filter(row => row.id && row.name);
 
@@ -848,6 +874,7 @@ async function loadAddonCatalog() {
       confirmBtn.href = buildWhatsappLink(WHATSAPP_NUMBER, message);
       setFeedback("success", "Ready. Tap confirm to continue on WhatsApp.");
       saveDraft();
+    refreshSettingsSummary();
     }
 
     if (mealSelect) mealSelect.value = meal;
@@ -996,11 +1023,25 @@ async function loadAddonCatalog() {
     await loadLocations();
     addonCatalog = await loadAddonCatalog();
     applyDraft();
+    settingsPanel?.setAttribute("hidden", "");
+    refreshSettingsSummary();
     syncVariantOptions();
     updatePickerLink();
     await refresh();
     updateConfirmLink();
     updateBillSummary();
     saveDraft();
+
+    document.addEventListener("click", event => {
+      const target = event.target instanceof HTMLElement ? event.target : null;
+      if (!target) return;
+      const day = target.closest(".day.active");
+      document.querySelectorAll(".day.active.popup-open").forEach(node => { if (node !== day) node.classList.remove("popup-open"); });
+      if (day && (target.closest(".day-nutrition") || target.closest(".details-link"))) {
+        day.classList.toggle("popup-open");
+      } else if (!target.closest(".day-popup")) {
+        document.querySelectorAll(".day.active.popup-open").forEach(node => node.classList.remove("popup-open"));
+      }
+    });
   })();
 })();
