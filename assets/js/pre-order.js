@@ -35,7 +35,7 @@ function normalizeMenuRows(rows) {
       carbohydrates: row.Carbohydrates || row.carbohydrates || row.Carbs || row.carbs || "",
       fats: row.Fats || row.fats || "",
       fiber: row.Fiber || row.fiber || "",
-      imageUrl: resolveImageUrl(row.image_url || row.Image_URL || row.url || row.URL || row.thumbnail || row.Thumbnail || "")
+      imageUrl: resolveImageUrl(row.image_url || row.Image_URL || row.thumbnail_url || row.Thumbnail_URL || row.thumbnail || row.Thumbnail || row.image || row.Image || row.url || row.URL || "")
     }))
     .filter(item => item.name);
 }

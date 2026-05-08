@@ -292,7 +292,7 @@ function attachDietChartForm() {
         Dish_Name: row.name || row.Name || row.dish_name || row.Dish_Name || "",
         Category: row.category || row.Category || "",
         Meal_Type: row.meal_type || row.Meal_Type || "",
-        Image_URL: row.image_url || row.Image_URL || row.url || row.URL || row.thumbnail || row.Thumbnail || row.source || row.Source || "",
+        Image_URL: row.image_url || row.Image_URL || row.thumbnail_url || row.Thumbnail_URL || row.thumbnail || row.Thumbnail || row.image || row.Image || row.url || row.URL || row.source || row.Source || "",
         Price: row.price || row.Price || row.unit_price || row.Unit_Price || "",
         Status: row.status || row.Status || "live",
         Calories: row.Calories || row.calories || row.kcal || "",
