@@ -196,7 +196,12 @@ function renderHeroSlideshow(rows, catalogRows = []) {
       altText: row.name || row.Name || "Featured dish"
     }))
     .filter(slide => slide.imageUrl);
-  const slides = catalogSlides.length ? catalogSlides : normalizeSlides(rows);
+  const hasCatalogDishRows = catalogRows.some(row => String(row.record_type || row.Record_Type || "dish").toLowerCase() === "dish");
+  if (hasCatalogDishRows && !catalogSlides.length) {
+    wrap.innerHTML = "";
+    return;
+  }
+  const slides = hasCatalogDishRows ? catalogSlides : normalizeSlides(rows);
   const imageSlides = slides.length ? slides : [{ imageUrl: "cherish-logo.jpg", altText: "Cherish Every Bite featured dish", title: "Featured Dish", subtitle: "" }];
   wrap.innerHTML = "";
   const shell = document.createElement("div");
