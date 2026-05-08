@@ -1,2 +1,0 @@
-renewal_id,order_req_id,due_date,reminder_1_sent,reminder_2_sent,final_reminder_sent,renewal_status
-REN-20260517-001,OREQ-20260417-0001,2026-05-17,false,false,false,due
