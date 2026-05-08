@@ -30,6 +30,7 @@ function formatMacroValue(value, unit = "g") {
   if (!text) return "";
   return /\d$/.test(text) ? `${text}${unit}` : text;
 }
+function macroIcon(label){ if(label==="calories") return "🔥"; if(label==="protein") return "💪"; if(label==="carbohydrates") return "🌾"; return "•"; }
 
 function parseNumeric(value) {
   const numeric = Number(String(value || "").replace(/[^0-9.]/g, ""));
@@ -317,6 +318,9 @@ async function loadAddonCatalog() {
     const mealSelect = document.getElementById("meal-select");
     const planSelect = document.getElementById("plan-select");
     const variantSelect = document.getElementById("variant-select");
+    const settingsToggle = document.getElementById("meal-settings-toggle");
+    const settingsPanel = document.getElementById("meal-settings-panel");
+    const settingsSummaryText = document.getElementById("meal-settings-summary-text");
     const title = document.getElementById("title");
     const confirmBtn = document.getElementById("confirm-subscription");
     const feedback = document.getElementById("confirm-feedback");
@@ -501,17 +505,22 @@ async function loadAddonCatalog() {
             const nutrition = activeMap.get(key)?.nutrition || {};
             const details = (activeMap.get(key)?.details || []).filter(Boolean);
             const dishesForCell = Array.from(new Set((details.length ? details : [activeMap.get(key)?.dish]).filter(Boolean)));
+            const mainDish = dishesForCell[0] || "Meal";
+            const caloriesNum = Number(String(nutrition.calories || "").replace(/[^0-9.]/g, ""));
             const nutritionBits = [
-              nutrition.calories ? `🔥 ${escapeHtml(String(nutrition.calories).trim())} kcal` : "",
-              nutrition.protein ? `💪 ${escapeHtml(formatMacroValue(nutrition.protein))} Protein` : "",
-              nutrition.carbohydrates ? `🌾 ${escapeHtml(formatMacroValue(nutrition.carbohydrates))} Carbs` : ""
+              nutrition.calories ? `<span class="macro-pill ${caloriesNum > 600 ? "hot" : ""}">${macroIcon("calories")} ${escapeHtml(String(nutrition.calories).trim())}</span>` : "",
+              nutrition.protein ? `<span class="macro-pill">${macroIcon("protein")} ${escapeHtml(formatMacroValue(nutrition.protein))}</span>` : "",
+              nutrition.carbohydrates ? `<span class="macro-pill">${macroIcon("carbohydrates")} ${escapeHtml(formatMacroValue(nutrition.carbohydrates))}</span>` : ""
             ].filter(Boolean);
             box.classList.add("active");
             if (selectedAddonDate === key) box.classList.add("selected");
             box.innerHTML += `
-              <div class="dish-list">${dishesForCell.map(dish => `<div class="dish">${escapeHtml(dish)}</div>`).join("")}</div>
-              ${nutritionBits.length ? `<div class="day-nutrition">${nutritionBits.join(" • ")}</div>` : ""}
+              <div class="main-dish">${escapeHtml(mainDish)}</div>
+              <button class="details-link" type="button">View Details</button>
+              ${nutritionBits.length ? `<div class="day-nutrition">${nutritionBits.join("")}</div>` : ""}
               <div class="day-popup">
+                <div><strong>${escapeHtml(mainDish)}</strong></div>
+                ${dishesForCell.length > 1 ? `<div>Ingredients: ${dishesForCell.slice(1).map(escapeHtml).join(", ")}</div>` : ""}
                 ${nutrition.calories ? `<div>Calories: ${escapeHtml(String(nutrition.calories).trim())} kcal</div>` : ""}
                 ${nutrition.protein ? `<div>Protein: ${escapeHtml(formatMacroValue(nutrition.protein))}</div>` : ""}
                 ${nutrition.carbohydrates ? `<div>Carbohydrates: ${escapeHtml(formatMacroValue(nutrition.carbohydrates))}</div>` : ""}
@@ -522,6 +531,7 @@ async function loadAddonCatalog() {
               ${qty > 0 ? `<div class="day-addon-count">${qty} add-on${qty > 1 ? "s" : ""}</div>` : ""}
             `;
           } else if (current.getDay() === 0) {
+            box.classList.add("sunday");
             box.innerHTML += `<div class="dish">Sunday</div>`;
           }
           days.appendChild(box);
@@ -591,6 +601,14 @@ async function loadAddonCatalog() {
       }
     }
 
+    function refreshSettingsSummary() {
+      if (!settingsSummaryText) return;
+      settingsSummaryText.textContent = `${formatLabel(mealSelect?.value || "lunch")} • ${formatVariantLabel(variantSelect?.value || "veg")} • ${formatLabel(periodSelect?.value || "weekly")}`;
+    }
+    settingsToggle?.addEventListener("click", () => {
+      if (settingsPanel?.hasAttribute("hidden")) settingsPanel.removeAttribute("hidden");
+      else settingsPanel?.setAttribute("hidden", "");
+    });
     function applyDraft() {
       const draft = getDraft();
       if (!draft) return;
@@ -856,6 +874,7 @@ async function loadAddonCatalog() {
       confirmBtn.href = buildWhatsappLink(WHATSAPP_NUMBER, message);
       setFeedback("success", "Ready. Tap confirm to continue on WhatsApp.");
       saveDraft();
+    refreshSettingsSummary();
     }
 
     if (mealSelect) mealSelect.value = meal;
@@ -1004,6 +1023,8 @@ async function loadAddonCatalog() {
     await loadLocations();
     addonCatalog = await loadAddonCatalog();
     applyDraft();
+    settingsPanel?.setAttribute("hidden", "");
+    refreshSettingsSummary();
     syncVariantOptions();
     updatePickerLink();
     await refresh();
@@ -1016,7 +1037,7 @@ async function loadAddonCatalog() {
       if (!target) return;
       const day = target.closest(".day.active");
       document.querySelectorAll(".day.active.popup-open").forEach(node => { if (node !== day) node.classList.remove("popup-open"); });
-      if (day && target.closest(".day-nutrition")) {
+      if (day && (target.closest(".day-nutrition") || target.closest(".details-link"))) {
         day.classList.toggle("popup-open");
       } else if (!target.closest(".day-popup")) {
         document.querySelectorAll(".day.active.popup-open").forEach(node => node.classList.remove("popup-open"));

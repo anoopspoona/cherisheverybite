@@ -21,7 +21,12 @@
     <h1 id="title">Subscription Calendar</h1>
     <p class="legend">Choose start date and meal, then select a saved location or pin one on the map. Active days skip Sundays automatically.</p>
 
-    <section class="controls">
+    <section class="meal-settings">
+      <div class="meal-settings-summary">
+        <span id="meal-settings-summary-text">Lunch • Veg • Weekly</span>
+        <button id="meal-settings-toggle" class="btn btn-soft" type="button">Edit</button>
+      </div>
+      <section id="meal-settings-panel" class="controls" hidden>
       <div>
         <label for="start-date">Start Date</label>
         <input type="date" id="start-date" />
@@ -76,6 +81,7 @@
         <label for="customer-notes">Notes</label>
         <input type="text" id="customer-notes" placeholder="Any preferences / comments" />
       </div>
+      </section>
     </section>
 
     <section class="day-card" style="margin:12px 0;padding:16px;">
@@ -85,7 +91,7 @@
     </section>
 
     <p>
-      <a id="confirm-subscription" class="btn btn-green" href="#" target="_blank" rel="noopener">Confirm Subscription</a>
+      <a id="confirm-subscription" class="btn btn-green confirm-floating" href="#" target="_blank" rel="noopener">Confirm Subscription</a>
       <a id="back-to-subscription" class="btn btn-soft" href="plans.html">Back to Subscription</a>
     </p>
     <p id="confirm-feedback" class="legend"></p>
