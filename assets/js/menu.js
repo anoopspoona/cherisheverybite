@@ -18,15 +18,20 @@ function publicPlanLabel(row = {}) {
 
 function normalizePrice(price) {
   const value = String(price || "").trim();
-  return value || "TBD";
+  if (!value) return "TBD";
+  return /^[₹$]/.test(value) ? value : `₹${value}`;
 }
 
 function resolveImageUrl(value) {
-  const raw = String(value || "").trim();
-  if (!raw) return "cherish-logo.jpg";
+  const raw = String(value || "")
+    .replace(/[\r\n\t]+/g, "")
+    .replace(/\s*\/\s*/g, "/")
+    .trim();
+  if (!raw) return "";
   if (/^(https?:)?\/\//i.test(raw)) return raw;
   if (raw.startsWith("assets/")) return raw;
   if (/\.(png|jpe?g|webp|gif|avif|svg)$/i.test(raw) && !raw.includes("/")) {
+    if (/shop photo/i.test(raw)) return `assets/hero/${raw}`;
     return `assets/dishes/${raw}`;
   }
   return raw.replace(/^\.\//, "");
@@ -80,7 +85,7 @@ function renderMenu(groups) {
   if (!menuGrid) return;
 
   if (!groups.length) {
-    menuGrid.innerHTML = `<article class="menu-section"><h3 class="menu-title">Menu updating soon</h3><p class="muted">Upload catalog.csv (or dishes.csv / menu.csv + prices.csv) to show the latest dishes.</p></article>`;
+    menuGrid.innerHTML = `<article class="menu-section"><h3 class="menu-title">Menu updating soon</h3><p class="muted">Upload catalog.csv with live dish rows to show the latest menu.</p></article>`;
     return;
   }
 
@@ -91,17 +96,17 @@ function renderMenu(groups) {
     const rows = group.items.map((item, index) => `
       <li>
         <span>${index + 1}</span>
-        <img class="dish-thumb" src="${escapeHtml(item.imageUrl)}" alt="${escapeHtml(item.name)}" loading="lazy" onerror="this.src='cherish-logo.jpg'" />
+        ${item.imageUrl ? `<img class="dish-thumb" src="${escapeHtml(item.imageUrl)}" alt="${escapeHtml(item.name)}" loading="lazy" onerror="this.remove()" />` : ""}
         <div>
           <strong>${escapeHtml(item.name)}</strong>
           ${item.mealType ? `<div class="muted">${escapeHtml(item.mealType)}</div>` : ""}
-          ${(item.calories || item.protein || item.carbohydrates || item.fats || item.fiber) ? `<div class="nutrition-row">${[
-            item.calories ? `<span class="nutrition-pill">🔥 ${escapeHtml(item.calories)} kcal</span>` : "",
-            item.protein ? `<span class="nutrition-pill">P ${escapeHtml(item.protein)}g</span>` : "",
-            item.carbohydrates ? `<span class="nutrition-pill">C ${escapeHtml(item.carbohydrates)}g</span>` : "",
-            item.fats ? `<span class="nutrition-pill">F ${escapeHtml(item.fats)}g</span>` : "",
-            item.fiber ? `<span class="nutrition-pill">Fi ${escapeHtml(item.fiber)}g</span>` : ""
-          ].filter(Boolean).join("")}</div>` : ""}
+          <div class="nutrition-row">${[
+            item.calories ? `<span class="nutrition-pill">🔥 ${escapeHtml(item.calories)} kcal</span>` : `<span class="nutrition-pill">🔥 N/A</span>`,
+            item.protein ? `<span class="nutrition-pill">P ${escapeHtml(item.protein)}g</span>` : `<span class="nutrition-pill">P N/A</span>`,
+            item.carbohydrates ? `<span class="nutrition-pill">C ${escapeHtml(item.carbohydrates)}g</span>` : `<span class="nutrition-pill">C N/A</span>`,
+            item.fats ? `<span class="nutrition-pill">F ${escapeHtml(item.fats)}g</span>` : `<span class="nutrition-pill">F N/A</span>`,
+            item.fiber ? `<span class="nutrition-pill">Fi ${escapeHtml(item.fiber)}g</span>` : `<span class="nutrition-pill">Fi N/A</span>`
+          ].join("")}</div>
         </div>
         <span class="price">${escapeHtml(item.price)}</span>
       </li>
@@ -149,13 +154,24 @@ function renderPlans(rows) {
 }
 
 function normalizeSlides(rows) {
+  const cleanImagePath = value => {
+    const raw = String(value || "")
+      .replace(/[\r\n\t]+/g, "")
+      .replace(/\s*\/\s*/g, "/")
+      .trim();
+    if (!raw) return "";
+    if (/^(https?:)?\/\//i.test(raw)) return raw;
+    if (raw.startsWith("assets/")) return raw;
+    if (/\.(png|jpe?g|webp|gif|avif|svg)$/i.test(raw)) return `assets/hero/${raw.replace(/^\/+/, "")}`;
+    return raw;
+  };
   return rows
-    .filter(row => String(row.status || row.Status || "live").toLowerCase() === "live")
+    .filter(row => String(row.status || row.Status || "live").trim().toLowerCase() === "live")
     .map(row => ({
       id: row.slide_id || row.Slide_ID || "",
       title: row.title || row.Title || "Featured Dish",
       subtitle: row.subtitle || row.Subtitle || "",
-      imageUrl: row.image_url || row.Image_URL || "",
+      imageUrl: cleanImagePath(row.image_url || row.Image_URL || ""),
       ctaLabel: row.cta_label || row.CTA_Label || "",
       ctaHref: row.cta_href || row.CTA_Href || "",
       altText: row.alt_text || row.Alt_Text || row.title || "Featured dish",
@@ -165,38 +181,88 @@ function normalizeSlides(rows) {
     .sort((a, b) => a.sortOrder - b.sortOrder);
 }
 
-function renderHeroSlideshow(rows) {
+function renderHeroSlideshow(rows, catalogRows = []) {
   const wrap = document.getElementById("hero-slideshow");
   if (!wrap) return;
 
-  const slides = normalizeSlides(rows);
-  const imageSlides = slides.length ? slides : [{
-    imageUrl: "cherish-logo.jpg",
-    altText: "Cherish Every Bite featured dish"
-  }];
-
+  const catalogSlides = catalogRows
+    .filter(row => String(row.record_type || row.Record_Type || "dish").toLowerCase() === "dish")
+    .filter(row => String(row.status || row.Status || "live").trim().toLowerCase() === "live")
+    .map((row, idx) => ({
+      id: row.id || row.ID || `dish-${idx + 1}`,
+      title: row.name || row.Name || "Featured Dish",
+      subtitle: row.category || row.Category || "Chef Special",
+      imageUrl: resolveImageUrl(row.image_url || row.Image_URL || row.thumbnail_url || row.Thumbnail_URL || row.thumbnail || row.Thumbnail || row.image || row.Image || row.url || row.URL || ""),
+      altText: row.name || row.Name || "Featured dish"
+    }))
+    .filter(slide => slide.imageUrl);
+  const slides = catalogSlides.length ? catalogSlides : normalizeSlides(rows);
+  const imageSlides = slides.length ? slides : [{ imageUrl: "cherish-logo.jpg", altText: "Cherish Every Bite featured dish", title: "Featured Dish", subtitle: "" }];
   wrap.innerHTML = "";
+  const shell = document.createElement("div");
+  shell.className = "hero-experiment";
+  const viewport = document.createElement("div");
+  viewport.className = "hero-experiment-viewport";
   const track = document.createElement("div");
-  track.className = "hero-strip-track";
+  track.className = "hero-experiment-track";
+  const prev = document.createElement("button");
+  prev.className = "hero-exp-nav prev";
+  prev.type = "button";
+  prev.textContent = "‹";
+  const next = document.createElement("button");
+  next.className = "hero-exp-nav next";
+  next.type = "button";
+  next.textContent = "›";
 
-  const loopItems = [...imageSlides, ...imageSlides];
-  loopItems.forEach((slide, index) => {
-    const image = document.createElement("img");
-    image.className = "hero-strip-item";
-    image.loading = index < 6 ? "eager" : "lazy";
-    image.src = slide.imageUrl;
-    image.alt = slide.altText || "Featured dish";
-    image.setAttribute("data-fallback", "cherish-logo.jpg");
-    image.addEventListener("error", () => {
-      const fallback = image.getAttribute("data-fallback") || "cherish-logo.jpg";
-      if (image.getAttribute("src") !== fallback) {
-        image.setAttribute("src", fallback);
-      }
-    });
-    track.appendChild(image);
+  imageSlides.forEach((slide, index) => {
+    const item = document.createElement("article");
+    item.className = `hero-exp-card${index === 0 ? " is-active" : ""}`;
+    item.innerHTML = `
+      <img src="${escapeHtml(slide.imageUrl)}" alt="${escapeHtml(slide.altText || "Featured dish")}" loading="${index < 2 ? "eager" : "lazy"}" />
+      <div class="hero-exp-overlay">
+        <h3>${escapeHtml(slide.title || "Featured Dish")}</h3>
+        ${slide.subtitle ? `<p>${escapeHtml(slide.subtitle)}</p>` : ""}
+      </div>
+    `;
+    track.appendChild(item);
   });
 
-  wrap.appendChild(track);
+  viewport.appendChild(track);
+  shell.appendChild(prev);
+  shell.appendChild(viewport);
+  shell.appendChild(next);
+  wrap.appendChild(shell);
+
+  const slideEls = Array.from(track.querySelectorAll(".hero-exp-card"));
+  let active = 0;
+  let timer = null;
+  function activate(next) {
+    active = (next + slideEls.length) % slideEls.length;
+    slideEls.forEach((el, i) => {
+      const offset = i - active;
+      el.style.setProperty("--offset", String(offset));
+      const distance = Math.min(Math.abs(offset), 2);
+      const scale = 1 - distance * 0.14;
+      const opacity = 1 - distance * 0.35;
+      el.style.opacity = String(Math.max(0.15, opacity));
+      el.style.transform = `translate(-50%,-50%) translateX(${offset * 52}%) scale(${scale}) rotateY(${offset * -14}deg)`;
+      el.classList.toggle("is-active", i === active);
+    });
+  }
+  function start() {
+    if (slideEls.length < 2) return;
+    timer = window.setInterval(() => activate(active + 1), 7600);
+  }
+  function stop() {
+    if (timer) window.clearInterval(timer);
+    timer = null;
+  }
+  prev.addEventListener("click", () => activate(active - 1));
+  next.addEventListener("click", () => activate(active + 1));
+  shell.addEventListener("mouseenter", stop);
+  shell.addEventListener("mouseleave", start);
+  activate(0);
+  start();
 }
 
 function attachDietChartForm() {
@@ -231,53 +297,43 @@ function attachDietChartForm() {
 
 (async function init() {
   try {
-    const [catalogRows, combinedMenuRows, menuRows, priceRows, planRows, heroRows] = await Promise.all([
+    const [catalogRows, planRows, heroRows] = await Promise.all([
       fetchCSV("catalog.csv").catch(() => []),
-      fetchCSV("dishes.csv").catch(() => []),
-      fetchCSV("menu.csv").catch(() => []),
-      fetchCSV("prices.csv").catch(() => []),
       fetchCSV("plans.csv").catch(() => []),
       fetchCSV("hero_slides.csv").catch(() => [])
     ]);
 
-    const catalogDishes = catalogRows
+    let catalogDishes = catalogRows
       .filter(row => {
         const type = String(row.record_type || row.Record_Type || "").toLowerCase();
         if (!type) return true;
-        return type === "dish" || type === "addon";
+        return type === "dish";
       })
-      .map(row => ({
-        Dish_ID: row.id || row.ID || row.addon_id || row.Addon_ID || "",
-        Dish_Name: row.name || row.Name || row.addon_name || row.Addon_Name || "",
-        Category: row.category || row.Category || row.addon_type || row.Addon_Type || "",
-        Meal_Type: row.meal_type || row.Meal_Type || row.addon_type || row.Addon_Type || "",
-        Image_URL: row.image_url || row.Image_URL || row.addon_image_url || row.Addon_Image_URL || row.url || row.URL || row.thumbnail || row.Thumbnail || row.source || row.Source || "",
+      .map((row, idx) => ({
+        Dish_ID: row.id || row.ID || row.dish_id || row.Dish_ID || `CAT-${idx + 1}`,
+        Dish_Name: row.name || row.Name || row.dish_name || row.Dish_Name || "",
+        Category: row.category || row.Category || "",
+        Meal_Type: row.meal_type || row.Meal_Type || "",
+        Image_URL: row.image_url || row.Image_URL || row.thumbnail_url || row.Thumbnail_URL || row.thumbnail || row.Thumbnail || row.image || row.Image || row.url || row.URL || row.source || row.Source || "",
         Price: row.price || row.Price || row.unit_price || row.Unit_Price || "",
         Status: row.status || row.Status || "live",
-        Calories: row.Calories || row.calories || "",
-        Protein: row.Protein || row.protein || "",
+        Calories: row.Calories || row.calories || row.kcal || "",
+        Protein: row.Protein || row.protein || row.protein_g || "",
         Carbohydrates: row.Carbohydrates || row.carbohydrates || row.Carbs || row.carbs || "",
         Fats: row.Fats || row.fats || "",
         Fiber: row.Fiber || row.fiber || ""
       }))
-      .filter(row => row.Dish_ID && row.Dish_Name);
-    const priceMap = new Map(priceRows.map(priceRow => [priceRow.Dish_ID || priceRow.dish_id, priceRow]));
-    const mergedMenu = catalogDishes.length
-      ? catalogDishes
-      : combinedMenuRows.length
-      ? combinedMenuRows
-      : menuRows.map(row => {
-        const priceRow = priceMap.get(row.Dish_ID) || {};
-        return {
-          ...row,
-          Price: priceRow.Price || priceRow.price || "TBD",
-          Status: priceRow.Status || priceRow.status || "live"
-        };
-      });
-
-    renderMenu(groupMenu(mergedMenu));
+      .filter(row => row.Dish_Name);
+    if (!catalogDishes.length) {
+      const nutritionRows = await fetchCSV("allplans_nutrition.csv").catch(() => []);
+      const fallbackItems = nutritionRows.flatMap(row => ["Data.Column3","Data.Column4","Data.Column5","Data.Column6","Data.Column7"].map(k => String(row[k] || "").trim()).filter(Boolean));
+      catalogDishes = Array.from(new Set(fallbackItems)).map((name, idx) => ({
+        Dish_ID: `NUT-${idx + 1}`, Dish_Name: name, Category: "Plan Menu", Meal_Type: "", Image_URL: "cherish-logo.jpg", Price: "TBD", Status: "live"
+      }));
+    }
+    renderMenu(groupMenu(catalogDishes));
     renderPlans(planRows);
-    renderHeroSlideshow(heroRows);
+    renderHeroSlideshow(heroRows, catalogRows);
   } catch (error) {
     renderMenu([]);
   }
