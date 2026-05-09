@@ -338,6 +338,9 @@ async function loadAddonCatalog() {
     const subscriptionPriceEl = document.getElementById("subscription-price");
     const addonsPriceEl = document.getElementById("addons-price");
     const billTotalEl = document.getElementById("bill-total");
+    const subscriptionQtyInput = document.getElementById("subscription-qty");
+    const subscriptionQtyMinus = document.getElementById("subscription-qty-minus");
+    const subscriptionQtyPlus = document.getElementById("subscription-qty-plus");
 
     const locationMap = new Map();
     const dayAddonItems = new Map();
@@ -345,6 +348,19 @@ async function loadAddonCatalog() {
     let addonCatalog = [];
     let currentSelection = null;
     let planCatalog = [];
+    let currentQuantity = 1;
+
+    function normalizeQuantity(value) {
+      const parsed = Number.parseInt(String(value || "1"), 10);
+      if (Number.isNaN(parsed)) return 1;
+      return Math.min(5, Math.max(1, parsed));
+    }
+
+    function setSubscriptionQuantity(value) {
+      currentQuantity = normalizeQuantity(value);
+      if (subscriptionQtyInput) subscriptionQtyInput.value = String(currentQuantity);
+      updateBillSummary();
+    }
 
     const currentUserEmail = window.localStorage.getItem(CURRENT_USER_KEY) || "";
     const knownUsers = (() => {
@@ -405,10 +421,12 @@ async function loadAddonCatalog() {
       const selectedVariant = variantSelect?.value || variant;
       const planPrice = findPlanPrice(planCatalog, selectedPlan, selectedMeal, selectedVariant, selectedPeriod);
       const addonTotal = getAddonAmountTotal();
-      const total = Number(planPrice.amount || 0) + addonTotal;
+      const effectivePlanPrice = Number(planPrice.amount || 0) * currentQuantity;
+      const total = effectivePlanPrice + addonTotal;
 
       if (subscriptionPriceEl) {
-        subscriptionPriceEl.textContent = `Plan price: ${planPrice.label} (${formatLabel(selectedPeriod)})`;
+        const labelPrice = effectivePlanPrice > 0 ? `₹${effectivePlanPrice.toLocaleString("en-IN")}` : "Price on request";
+        subscriptionPriceEl.textContent = `Plan price: ${labelPrice} (${formatLabel(selectedPeriod)} x ${currentQuantity})`;
       }
       if (addonsPriceEl) addonsPriceEl.textContent = `Add-on total: ₹${addonTotal.toLocaleString("en-IN")}`;
       if (billTotalEl) {
@@ -516,11 +534,11 @@ async function loadAddonCatalog() {
             if (selectedAddonDate === key) box.classList.add("selected");
             box.innerHTML += `
               <div class="main-dish">${escapeHtml(mainDish)}</div>
-              <button class="details-link" type="button">View Details</button>
+              <button class="details-link" type="button">More in this combo</button>
               ${nutritionBits.length ? `<div class="day-nutrition">${nutritionBits.join("")}</div>` : ""}
               <div class="day-popup">
                 <div><strong>${escapeHtml(mainDish)}</strong></div>
-                ${dishesForCell.length > 1 ? `<div>Ingredients: ${dishesForCell.slice(1).map(escapeHtml).join(", ")}</div>` : ""}
+                ${dishesForCell.length > 1 ? `<div>More in this combo: ${dishesForCell.slice(1).map(escapeHtml).join(", ")}</div>` : ""}
                 ${nutrition.calories ? `<div>Calories: ${escapeHtml(String(nutrition.calories).trim())} kcal</div>` : ""}
                 ${nutrition.protein ? `<div>Protein: ${escapeHtml(formatMacroValue(nutrition.protein))}</div>` : ""}
                 ${nutrition.carbohydrates ? `<div>Carbohydrates: ${escapeHtml(formatMacroValue(nutrition.carbohydrates))}</div>` : ""}
@@ -650,6 +668,7 @@ async function loadAddonCatalog() {
         currentSelection?.period || "weekly"
       );
       const addonTotal = getAddonAmountTotal();
+      const effectivePlanPrice = Number(planPrice.amount || 0) * currentQuantity;
 
       return {
         savedAt: new Date().toISOString(),
@@ -670,9 +689,11 @@ async function loadAddonCatalog() {
         addons: [],
         dailyAddons,
         pricing: {
-          planPrice: planPrice.amount,
+          unitPlanPrice: planPrice.amount,
+          planPrice: effectivePlanPrice,
           addonPrice: addonTotal,
-          total: Number(planPrice.amount || 0) + addonTotal
+          quantity: currentQuantity,
+          total: effectivePlanPrice + addonTotal
         }
       };
     }
@@ -858,6 +879,7 @@ async function loadAddonCatalog() {
         `Food Preference: ${formatVariantLabel(currentSelection.variant)}`,
         `Meal Slot: ${currentSelection.meal}`,
         `Period: ${currentSelection.period}`,
+        `Number of Subscriptions: ${orderPayload.pricing?.quantity || 1}`,
         `Active Days: ${currentSelection.activeDays}`,
         `Start Date: ${currentSelection.start}`,
         `End Date: ${currentSelection.end}`,
@@ -879,6 +901,19 @@ async function loadAddonCatalog() {
 
     if (mealSelect) mealSelect.value = meal;
     if (variantSelect) variantSelect.value = variant;
+    setSubscriptionQuantity(subscriptionQtyInput?.value || 1);
+    subscriptionQtyInput?.addEventListener("input", event => {
+      setSubscriptionQuantity(event.target?.value || 1);
+      setConfirmLink();
+    });
+    subscriptionQtyMinus?.addEventListener("click", () => {
+      setSubscriptionQuantity(currentQuantity - 1);
+      setConfirmLink();
+    });
+    subscriptionQtyPlus?.addEventListener("click", () => {
+      setSubscriptionQuantity(currentQuantity + 1);
+      setConfirmLink();
+    });
 
 
     if (pickedLat && pickedLon && mapLinkInput) {
