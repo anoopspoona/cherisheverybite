@@ -27,7 +27,7 @@ header{position:sticky;top:0;background:rgba(255,255,255,.95);border-bottom:1px 
 .day-nutrition{margin-top:auto;font-size:12px;color:#166534;font-weight:700;line-height:1.35;display:flex;gap:8px;flex-wrap:nowrap;align-items:center}
 .macro-pill{display:inline-flex;align-items:center;gap:4px}
 .macro-pill.hot{color:#ea580c}
-.day-popup{display:none;position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:min(92vw,360px);background:#0f172a;color:#fff;border-radius:14px;padding:14px;font-size:.78rem;line-height:1.45;z-index:140;box-shadow:0 18px 36px rgba(0,0,0,.35)}
+.day-popup{display:none;position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:min(92vw,360px);background:#0f172a;color:#fff;border-radius:14px;padding:14px;font-size:.78rem;line-height:1.45;z-index:140;box-shadow:0 18px 36px rgba(0,0,0,.35);pointer-events:none}
 .day.active{position:relative}
 .day.active:hover .day-popup,.day.active:focus-within .day-popup,.day.active.popup-open .day-popup{display:block}
 .day .details-link{margin-top:8px;display:none;font-size:.74rem;color:#166534;font-weight:700;text-decoration:underline;background:none;border:0;padding:0}
@@ -56,7 +56,15 @@ header{position:sticky;top:0;background:rgba(255,255,255,.95);border-bottom:1px 
   .day{min-height:186px;padding:7px}
   .day .dish{font-size:.74rem}
   .day .details-link{display:inline}
-  #confirm-subscription,#back-to-subscription{width:100%;margin-bottom:8px}
+  #confirm-subscription,#back-to-subscription{margin-bottom:8px}
+  #confirm-subscription{
+    width:auto;
+    max-width:220px;
+    white-space:nowrap;
+    font-size:.84rem;
+    padding:10px 14px;
+  }
+  #back-to-subscription{width:100%}
   .confirm-bar{position:sticky;bottom:10px;background:rgba(255,255,255,.95);padding:10px;border-radius:12px;border:1px solid rgba(0,0,0,.08);z-index:75}
   .subscription-qty-wrap{width:100%}
   .subscription-qty-controls{justify-content:flex-start}
