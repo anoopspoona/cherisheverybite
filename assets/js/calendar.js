@@ -534,11 +534,11 @@ async function loadAddonCatalog() {
             if (selectedAddonDate === key) box.classList.add("selected");
             box.innerHTML += `
               <div class="main-dish">${escapeHtml(mainDish)}</div>
-              <button class="details-link" type="button">View Details</button>
+              <button class="details-link" type="button">More in this combo</button>
               ${nutritionBits.length ? `<div class="day-nutrition">${nutritionBits.join("")}</div>` : ""}
               <div class="day-popup">
                 <div><strong>${escapeHtml(mainDish)}</strong></div>
-                ${dishesForCell.length > 1 ? `<div>Ingredients: ${dishesForCell.slice(1).map(escapeHtml).join(", ")}</div>` : ""}
+                ${dishesForCell.length > 1 ? `<div>More in this combo: ${dishesForCell.slice(1).map(escapeHtml).join(", ")}</div>` : ""}
                 ${nutrition.calories ? `<div>Calories: ${escapeHtml(String(nutrition.calories).trim())} kcal</div>` : ""}
                 ${nutrition.protein ? `<div>Protein: ${escapeHtml(formatMacroValue(nutrition.protein))}</div>` : ""}
                 ${nutrition.carbohydrates ? `<div>Carbohydrates: ${escapeHtml(formatMacroValue(nutrition.carbohydrates))}</div>` : ""}
