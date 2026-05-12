@@ -42,9 +42,14 @@
           <label>Cycle Start Date
             <input id="cycle-anchor-date" type="date" />
           </label>
+          <label>Delivery Distance Limit (km)
+            <input id="delivery-limit-km" type="number" min="1" max="50" step="0.5" />
+          </label>
         </div>
         <div class="action-row">
           <button id="cycle-save" class="btn btn-primary" type="button">Save Cycle Start</button>
+          <button id="delivery-limit-save" class="btn btn-primary" type="button">Save Delivery Limit</button>
+          <button id="delivery-limit-reset" class="btn btn-soft" type="button">Reset Delivery Limit</button>
           <button id="cycle-reset" class="btn btn-soft" type="button">Reset to Default</button>
         </div>
       </section>

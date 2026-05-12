@@ -3,6 +3,8 @@ const PRICE_PATH = "prices.csv";
 const CATALOG_PATH = "catalog.csv";
 const SUBSCRIPTION_CYCLE_ANCHOR_KEY = "ceb_subscription_cycle_anchor_v1";
 const DEFAULT_SUBSCRIPTION_CYCLE_ANCHOR = "2026-05-01";
+const DELIVERY_LIMIT_KEY = "ceb_delivery_limit_km_v1";
+const DEFAULT_DELIVERY_LIMIT_KM = 7;
 const runtime = window.cebRuntime || {};
 let preservedCatalogNonDishRows = [];
 let hasCatalogSchema = false;
@@ -176,6 +178,14 @@ function loadCycleAnchorSetting() {
   input.value = /^\d{4}-\d{2}-\d{2}$/.test(stored) ? stored : DEFAULT_SUBSCRIPTION_CYCLE_ANCHOR;
 }
 
+function loadDeliveryLimitSetting() {
+  const input = document.getElementById("delivery-limit-km");
+  if (!input) return;
+  const raw = String(window.localStorage.getItem(DELIVERY_LIMIT_KEY) || "").trim();
+  const parsed = Number(raw);
+  input.value = Number.isFinite(parsed) && parsed > 0 ? String(parsed) : String(DEFAULT_DELIVERY_LIMIT_KM);
+}
+
 async function getCurrentAdminIdentifier() {
   if (window.cebAuth?.enabled) {
     const user = await window.cebAuth.getCurrentUser();
@@ -261,6 +271,7 @@ async function enforceAdminAccess() {
   renderMenuTable(stateRows);
   await loadCalendarEditor();
   loadCycleAnchorSetting();
+  loadDeliveryLimitSetting();
   await enforceAdminAccess();
 
   document.getElementById("admin-google-login")?.addEventListener("click", async () => {
@@ -343,5 +354,22 @@ async function enforceAdminAccess() {
     window.localStorage.removeItem(SUBSCRIPTION_CYCLE_ANCHOR_KEY);
     loadCycleAnchorSetting();
     setFeedback(`Cycle start date reset to default (${DEFAULT_SUBSCRIPTION_CYCLE_ANCHOR}).`);
+  });
+
+  document.getElementById("delivery-limit-save")?.addEventListener("click", () => {
+    const input = document.getElementById("delivery-limit-km");
+    const parsed = Number(input?.value || "");
+    if (!Number.isFinite(parsed) || parsed <= 0 || parsed > 50) {
+      setFeedback("Enter a valid delivery distance limit between 1 and 50 km.");
+      return;
+    }
+    window.localStorage.setItem(DELIVERY_LIMIT_KEY, String(parsed));
+    setFeedback(`Saved delivery distance limit: ${parsed} km.`);
+  });
+
+  document.getElementById("delivery-limit-reset")?.addEventListener("click", () => {
+    window.localStorage.removeItem(DELIVERY_LIMIT_KEY);
+    loadDeliveryLimitSetting();
+    setFeedback(`Delivery distance limit reset to default (${DEFAULT_DELIVERY_LIMIT_KM} km).`);
   });
 })();
