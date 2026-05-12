@@ -1,6 +1,11 @@
 const WHATSAPP_NUMBER = "916282023762";
 const HUB_COORDS = { lat: 8.575357388981113, lon: 76.91238872393365 };
-const DELIVERY_LIMIT_KM = 7;
+const DELIVERY_LIMIT_KEY = "ceb_delivery_limit_km_v1";
+const DELIVERY_LIMIT_KM = (() => {
+  const raw = String(window.localStorage.getItem(DELIVERY_LIMIT_KEY) || "").trim();
+  const parsed = Number(raw);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : 7;
+})();
 const DRAFT_KEY = "ceb_calendar_draft_v1";
 const ORDER_KEY = "ceb_saved_orders_v1";
 const USERS_KEY = "ceb_users_v1";
@@ -328,6 +333,7 @@ async function loadAddonCatalog() {
     const phoneInput = document.getElementById("customer-phone");
     const locationSelect = document.getElementById("delivery-location");
     const mapLinkInput = document.getElementById("map-app-link");
+    const distanceHintEl = document.getElementById("distance-hint");
     const pickLocationBtn = document.getElementById("pick-location-btn");
     const notesInput = document.getElementById("customer-notes");
     const dayAddonPanel = document.getElementById("day-addon-panel");
@@ -452,6 +458,25 @@ async function loadAddonCatalog() {
         start_date: startInput?.value || ""
       });
       pickLocationBtn.href = `map-picker.html?${pickerParams.toString()}`;
+    }
+
+    function updateDistanceHint() {
+      if (!distanceHintEl) return;
+      const selected = locationMap.get(locationSelect?.value || "") || null;
+      const mapLink = mapLinkInput?.value.trim() || selected?.mapLink || "";
+      const coords = extractLatLng(mapLink);
+      if (!coords) {
+        distanceHintEl.textContent = "Distance from hub: Add a map link with coordinates";
+        distanceHintEl.classList.remove("success", "error");
+        return;
+      }
+      const distanceKm = haversineKm(HUB_COORDS, coords);
+      const withinRange = distanceKm <= DELIVERY_LIMIT_KM;
+      distanceHintEl.textContent = withinRange
+        ? `Distance from hub: ${distanceKm.toFixed(2)} km ✅ (within ${DELIVERY_LIMIT_KM} km limit)`
+        : `Distance from hub: ${distanceKm.toFixed(2)} km ⚠️ (outside ${DELIVERY_LIMIT_KM} km limit)`;
+      distanceHintEl.classList.toggle("success", withinRange);
+      distanceHintEl.classList.toggle("error", !withinRange);
     }
 
     function renderDayAddonPanel() {
@@ -928,6 +953,7 @@ async function loadAddonCatalog() {
     if (nameInput && !customerNameParam && currentUser?.name) nameInput.value = currentUser.name;
     if (nameInput && !nameInput.value && currentProfile.name) nameInput.value = currentProfile.name;
     if (phoneInput && !phoneInput.value && currentProfile.phone) phoneInput.value = currentProfile.phone;
+    updateDistanceHint();
 
     const minStartDate = new Date(Date.now() + 24 * 60 * 60 * 1000);
     if (startInput) {
@@ -978,6 +1004,7 @@ async function loadAddonCatalog() {
       locationSelect.addEventListener("change", () => {
         const selected = locationMap.get(locationSelect.value || "");
         if (selected?.mapLink) mapLinkInput.value = selected.mapLink;
+        updateDistanceHint();
         updateConfirmLink();
         updateBillSummary();
         updatePickerLink();
@@ -988,12 +1015,14 @@ async function loadAddonCatalog() {
     [nameInput, phoneInput, notesInput, locationSelect, mapLinkInput].forEach(el => {
       if (!el) return;
       el.addEventListener("input", () => {
+        if (el === locationSelect || el === mapLinkInput) updateDistanceHint();
         updateConfirmLink();
         updateBillSummary();
         updatePickerLink();
         saveDraft();
       });
       el.addEventListener("change", () => {
+        if (el === locationSelect || el === mapLinkInput) updateDistanceHint();
         updateConfirmLink();
         updateBillSummary();
         updatePickerLink();
