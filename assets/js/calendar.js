@@ -714,7 +714,7 @@ async function loadAddonCatalog() {
       if (!customerPhoneParam && phoneInput && draft.phone) phoneInput.value = draft.phone;
       if (!customerNotesParam && notesInput && draft.notes) notesInput.value = draft.notes;
       if (!mapLinkParam && !pickedLat && !pickedLon && mapLinkInput && draft.mapLink) mapLinkInput.value = draft.mapLink;
-      if (!startDateParam && startInput && draft.startDate) startInput.value = draft.startDate;
+      // Keep start date default anchored to tomorrow on each page load unless explicit query param is provided.
       if (!params.get("plan") && planSelect && draft.plan) planSelect.value = draft.plan;
       if (!params.get("meal") && mealSelect && draft.meal) mealSelect.value = draft.meal;
       if (!params.get("variant") && variantSelect && draft.variant) variantSelect.value = draft.variant;
