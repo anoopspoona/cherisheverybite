@@ -152,6 +152,19 @@ function dayToken(value) {
   return normalizeKey(value).slice(0, 3);
 }
 
+function weekOrderValue(value) {
+  const token = weekToken(value);
+  const numeric = Number(String(token).replace(/[^0-9]/g, ""));
+  return Number.isFinite(numeric) && numeric > 0 ? numeric : 99;
+}
+
+function dayOrderValue(value) {
+  const token = dayToken(value);
+  const order = ["mon", "tue", "wed", "thu", "fri", "sat"];
+  const idx = order.indexOf(token);
+  return idx >= 0 ? idx : 99;
+}
+
 function extractVariantTokenFromPlanLabel(planLabel) {
   const text = normalizeKey(planLabel).replace(/[^a-z\s-]/g, " ");
   if (/(^|[\s-])non[\s-]?veg([\s-]|$)/.test(text)) return "nonveg";
@@ -190,6 +203,42 @@ function buildUnifiedEntry(rows, selectedPlan, selectedVariant, selectedMeal, da
     fiber: matched.Fiber || matched.fiber || ""
   };
   return { dish: cols[0] || "Menu item", details: cols, nutrition };
+}
+
+function buildPlanSequenceFromNutrition(rows, selectedPlan, selectedVariant, selectedMeal) {
+  const planNeedle = normalizeKey(selectedPlan);
+  const mealNeedle = normalizeKey(selectedMeal);
+  const variantNeedle = normalizeKey(selectedVariant).replace(/[^a-z]/g, "");
+  return rows
+    .filter(row => {
+      const planLabel = normalizeKey(row.Plan || row.plan || "");
+      const planVariantToken = extractVariantTokenFromPlanLabel(planLabel);
+      const variantHit = !variantNeedle || !planVariantToken || planVariantToken === variantNeedle;
+      const mealHit = planNeedle === "smoothie" ? true : planLabel.includes(mealNeedle);
+      return planLabel.includes(planNeedle) && mealHit && variantHit;
+    })
+    .sort((a, b) => {
+      const weekDiff = weekOrderValue(a.Week || a["Data.Column1"] || a.data_column1) - weekOrderValue(b.Week || b["Data.Column1"] || b.data_column1);
+      if (weekDiff !== 0) return weekDiff;
+      return dayOrderValue(a.Day || a["Data.Column2"] || a.data_column2) - dayOrderValue(b.Day || b["Data.Column2"] || b.data_column2);
+    })
+    .map(row => {
+      const cols = ["Data.Column3", "Data.Column4", "Data.Column5", "Data.Column6", "Data.Column7"]
+        .map(key => row[key] || row[key.toLowerCase()] || "")
+        .map(v => String(v || "").trim())
+        .filter(Boolean);
+      return {
+        dish: cols[0] || "Menu item",
+        details: cols,
+        nutrition: {
+          calories: row.Calories || row.calories || "",
+          protein: row["Protein Carbohydrates"] ? String(row["Protein Carbohydrates"]).split(/\s+/)[0] : (row.Protein || row.protein || ""),
+          carbohydrates: row.Carbohydrates || row.carbohydrates || "",
+          fats: row.Fats || row.fats || "",
+          fiber: row.Fiber || row.fiber || ""
+        }
+      };
+    });
 }
 
 async function loadDishes(plan, meal, variantKey = "") {
@@ -805,9 +854,9 @@ async function loadAddonCatalog() {
       const activeCount = selectedPeriod === "monthly" ? 24 : 6;
       const dates = nextActiveDates(start, activeCount);
       const activeMap = new Map();
+      const sequence = buildPlanSequenceFromNutrition(allPlansNutritionRows, selectedPlan, selectedVariant, selectedMeal);
       dates.forEach((iso, idx) => {
-        const dateObj = new Date(iso);
-        const unified = buildUnifiedEntry(allPlansNutritionRows, selectedPlan, selectedVariant, selectedMeal, dateObj);
+        const unified = sequence[idx] || null;
         activeMap.set(iso, unified || { dish: "Menu unavailable in master sheet", details: [], nutrition: {} });
       });
 
