@@ -94,6 +94,35 @@
           <button id="cal-reset" class="btn btn-soft" type="button">Reset Calendar Override</button>
         </div>
       </section>
+
+      <section class="card">
+        <h2>Delivery Zones Manager</h2>
+        <p class="muted">Draw and edit delivery polygons interactively. Save updates to local CSV overrides.</p>
+        <div class="calendar-controls">
+          <label>Zone
+            <select id="zone-select"></select>
+          </label>
+          <label>Zone Name
+            <input id="zone-name" type="text" />
+          </label>
+          <label>Status
+            <select id="zone-status">
+              <option value="live">live</option>
+              <option value="paused">paused</option>
+            </select>
+          </label>
+        </div>
+        <div class="action-row">
+          <button id="zone-add" class="btn btn-soft" type="button">Add Zone</button>
+          <button id="zone-draw" class="btn btn-soft" type="button">Draw Polygon</button>
+          <button id="zone-clear" class="btn btn-soft" type="button">Clear Polygon</button>
+          <button id="zone-save" class="btn btn-primary" type="button">Save Zones</button>
+        </div>
+        <div id="zone-map" style="height:320px;border-radius:12px;border:1px solid rgba(0,0,0,.1);margin-top:8px;"></div>
+        <label style="display:block;margin-top:10px;">Polygon GeoJSON
+          <textarea id="zone-geojson" rows="4"></textarea>
+        </label>
+      </section>
     </div>
     <div class="container">
       <p id="admin-feedback" class="muted"></p>
@@ -101,6 +130,7 @@
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC0Tz3KCvDCaR0TKKBb6BHF793HVanG_M8"></script>
   <script>
     window.CEB_RUNTIME_CONFIG = {
       enforceSecureAuth: true,
