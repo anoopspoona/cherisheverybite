@@ -72,6 +72,7 @@
       <div>
         <label for="map-app-link">Pinned Map Link</label>
         <input type="url" id="map-app-link" placeholder="Paste Google/Apple map link with coordinates" />
+        <p id="distance-hint" class="legend" style="margin:6px 0 0;">Distance from hub: --</p>
       </div>
       <div>
         <label>Pin on Map</label>
@@ -90,10 +91,20 @@
       <p id="bill-total" class="legend" style="font-weight:700;margin:0;">Total bill: --</p>
     </section>
 
-    <p>
-      <a id="confirm-subscription" class="btn btn-green confirm-floating" href="#" target="_blank" rel="noopener">Confirm Subscription</a>
-      <a id="back-to-subscription" class="btn btn-soft" href="plans.html">Back to Subscription</a>
-    </p>
+    <div class="confirm-bar">
+      <div class="subscription-qty-wrap" aria-label="Subscription quantity controls">
+        <label for="subscription-qty" class="subscription-qty-label">Number of Subscriptions</label>
+        <div class="subscription-qty-controls">
+          <button id="subscription-qty-minus" class="subscription-qty-btn" type="button" aria-label="Decrease number of subscriptions">-</button>
+          <input id="subscription-qty" type="number" min="1" max="5" value="1" inputmode="numeric" aria-label="Number of subscriptions" />
+          <button id="subscription-qty-plus" class="subscription-qty-btn" type="button" aria-label="Increase number of subscriptions">+</button>
+        </div>
+      </div>
+      <div class="confirm-actions">
+        <a id="confirm-subscription" class="btn btn-green confirm-floating" href="#" target="_blank" rel="noopener">Confirm Subscription</a>
+        <a id="back-to-subscription" class="btn btn-soft" href="plans.html">Back to Subscription</a>
+      </div>
+    </div>
     <p id="confirm-feedback" class="legend"></p>
 
     <section id="calendar-grid" class="calendar-grid"></section>
