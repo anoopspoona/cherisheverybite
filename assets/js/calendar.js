@@ -270,8 +270,17 @@ function daysDiff(a, b) {
 }
 
 function cycleWeekLabelForDate(targetDate, anchorDate) {
-  const diff = daysDiff(targetDate, anchorDate);
-  const normalized = ((Math.floor(diff / 7) % 4) + 4) % 4;
+  const mondayFor = date => {
+    const copy = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    const dow = copy.getDay(); // 0 Sun ... 6 Sat
+    const delta = dow === 0 ? -6 : 1 - dow;
+    copy.setDate(copy.getDate() + delta);
+    return copy;
+  };
+  const anchorWeekStart = mondayFor(anchorDate);
+  const targetWeekStart = mondayFor(targetDate);
+  const diffDays = daysDiff(targetWeekStart, anchorWeekStart);
+  const normalized = ((Math.floor(diffDays / 7) % 4) + 4) % 4;
   return `w${normalized + 1}`;
 }
 
