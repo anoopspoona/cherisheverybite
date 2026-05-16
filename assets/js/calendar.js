@@ -152,6 +152,13 @@ function dayToken(value) {
   return normalizeKey(value).slice(0, 3);
 }
 
+function extractVariantTokenFromPlanLabel(planLabel) {
+  const text = normalizeKey(planLabel).replace(/[^a-z\s-]/g, " ");
+  if (/(^|[\s-])non[\s-]?veg([\s-]|$)/.test(text)) return "nonveg";
+  if (/(^|[\s-])veg([\s-]|$)/.test(text)) return "veg";
+  return "";
+}
+
 function buildUnifiedEntry(rows, selectedPlan, selectedVariant, selectedMeal, date) {
   const week = cycleWeekLabelForDate(date, getSubscriptionCycleAnchorDate());
   const day = dayToken(dayNameForDate(date));
@@ -163,10 +170,9 @@ function buildUnifiedEntry(rows, selectedPlan, selectedVariant, selectedMeal, da
     const planLabel = normalizeKey(row.Plan || row.plan || "");
     const rowWeek = weekToken(row.Week || row["Data.Column1"] || row.data_column1);
     const rowDay = dayToken(row.Day || row["Data.Column2"] || row.data_column2);
-    const planHasVariantToken = /(?:^|[^a-z])(veg|nonveg|non-veg)(?:[^a-z]|$)/.test(planLabel);
-    const normalizedPlanLabel = planLabel.replace(/[^a-z]/g, "");
+    const planVariantToken = extractVariantTokenFromPlanLabel(planLabel);
     const normalizedVariantNeedle = variantNeedle.replace(/[^a-z]/g, "");
-    const variantHit = !normalizedVariantNeedle || !planHasVariantToken || normalizedPlanLabel.includes(normalizedVariantNeedle);
+    const variantHit = !normalizedVariantNeedle || !planVariantToken || planVariantToken === normalizedVariantNeedle;
     const mealHit = planNeedle === "smoothie" ? true : planLabel.includes(mealNeedle);
     return planLabel.includes(planNeedle) && mealHit && variantHit && rowWeek === week && rowDay === day;
   });
