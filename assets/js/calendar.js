@@ -801,16 +801,7 @@ async function loadAddonCatalog() {
       if (title) title.textContent = `${formatLabel(selectedPlan)} • ${selectedMeal[0].toUpperCase() + selectedMeal.slice(1)} • ${formatVariantLabel(selectedVariant)}`;
       updatePickerLink();
 
-      const allPlanMeals = await loadPlanMeals();
       const allPlansNutritionRows = await loadAllPlansNutrition();
-      const planMealRows = allPlanMeals
-        .filter(row => normalizeKey(row.Plan_Key || row.plan_key) === normalizeKey(selectedPlan))
-        .filter(row => normalizeKey(row.Meal_Type || row.meal_type) === normalizeKey(selectedMeal));
-      const variantRows = planMealRows.filter(row => {
-        const rowVariant = normalizeKey(row.Variant_Key || row.variant_key);
-        return !rowVariant || rowVariant === normalizeKey(selectedVariant);
-      });
-      const effectiveRows = variantRows.length ? variantRows : planMealRows;
       const activeCount = selectedPeriod === "monthly" ? 24 : 6;
       const dates = nextActiveDates(start, activeCount);
       const activeMap = new Map();
@@ -833,9 +824,9 @@ async function loadAddonCatalog() {
         start: formatIso(start),
         end: dates[dates.length - 1] || formatIso(start),
         activeDays: activeCount,
-        schedule: dates.map((iso, idx) => ({
+        schedule: dates.map(iso => ({
           date: iso,
-          dish: activeMap.get(iso)?.dish || activeMap.get(iso) || dishes[idx % dishes.length],
+          dish: activeMap.get(iso)?.dish || "Menu unavailable in master sheet",
           addonQty: getDateAddonTotal(iso)
         }))
       };
