@@ -1,6 +1,11 @@
 const WHATSAPP_NUMBER = "916282023762";
 const HUB_COORDS = { lat: 8.575357388981113, lon: 76.91238872393365 };
-const DELIVERY_LIMIT_KM = 7;
+const DELIVERY_LIMIT_KEY = "ceb_delivery_limit_km_v1";
+const DELIVERY_LIMIT_KM = (() => {
+  const raw = String(window.localStorage.getItem(DELIVERY_LIMIT_KEY) || "").trim();
+  const parsed = Number(raw);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : 7;
+})();
 const DRAFT_KEY = "ceb_calendar_draft_v1";
 const ORDER_KEY = "ceb_saved_orders_v1";
 const USERS_KEY = "ceb_users_v1";
@@ -147,6 +152,26 @@ function dayToken(value) {
   return normalizeKey(value).slice(0, 3);
 }
 
+function weekOrderValue(value) {
+  const token = weekToken(value);
+  const numeric = Number(String(token).replace(/[^0-9]/g, ""));
+  return Number.isFinite(numeric) && numeric > 0 ? numeric : 99;
+}
+
+function dayOrderValue(value) {
+  const token = dayToken(value);
+  const order = ["mon", "tue", "wed", "thu", "fri", "sat"];
+  const idx = order.indexOf(token);
+  return idx >= 0 ? idx : 99;
+}
+
+function extractVariantTokenFromPlanLabel(planLabel) {
+  const text = normalizeKey(planLabel).replace(/[^a-z\s-]/g, " ");
+  if (/(^|[\s-])non[\s-]?veg([\s-]|$)/.test(text)) return "nonveg";
+  if (/(^|[\s-])veg([\s-]|$)/.test(text)) return "veg";
+  return "";
+}
+
 function buildUnifiedEntry(rows, selectedPlan, selectedVariant, selectedMeal, date) {
   const week = cycleWeekLabelForDate(date, getSubscriptionCycleAnchorDate());
   const day = dayToken(dayNameForDate(date));
@@ -158,10 +183,9 @@ function buildUnifiedEntry(rows, selectedPlan, selectedVariant, selectedMeal, da
     const planLabel = normalizeKey(row.Plan || row.plan || "");
     const rowWeek = weekToken(row.Week || row["Data.Column1"] || row.data_column1);
     const rowDay = dayToken(row.Day || row["Data.Column2"] || row.data_column2);
-    const planHasVariantToken = /(?:^|[^a-z])(veg|nonveg|non-veg)(?:[^a-z]|$)/.test(planLabel);
-    const normalizedPlanLabel = planLabel.replace(/[^a-z]/g, "");
+    const planVariantToken = extractVariantTokenFromPlanLabel(planLabel);
     const normalizedVariantNeedle = variantNeedle.replace(/[^a-z]/g, "");
-    const variantHit = !normalizedVariantNeedle || !planHasVariantToken || normalizedPlanLabel.includes(normalizedVariantNeedle);
+    const variantHit = !normalizedVariantNeedle || !planVariantToken || planVariantToken === normalizedVariantNeedle;
     const mealHit = planNeedle === "smoothie" ? true : planLabel.includes(mealNeedle);
     return planLabel.includes(planNeedle) && mealHit && variantHit && rowWeek === week && rowDay === day;
   });
@@ -179,6 +203,42 @@ function buildUnifiedEntry(rows, selectedPlan, selectedVariant, selectedMeal, da
     fiber: matched.Fiber || matched.fiber || ""
   };
   return { dish: cols[0] || "Menu item", details: cols, nutrition };
+}
+
+function buildPlanSequenceFromNutrition(rows, selectedPlan, selectedVariant, selectedMeal) {
+  const planNeedle = normalizeKey(selectedPlan);
+  const mealNeedle = normalizeKey(selectedMeal);
+  const variantNeedle = normalizeKey(selectedVariant).replace(/[^a-z]/g, "");
+  return rows
+    .filter(row => {
+      const planLabel = normalizeKey(row.Plan || row.plan || "");
+      const planVariantToken = extractVariantTokenFromPlanLabel(planLabel);
+      const variantHit = !variantNeedle || !planVariantToken || planVariantToken === variantNeedle;
+      const mealHit = planNeedle === "smoothie" ? true : planLabel.includes(mealNeedle);
+      return planLabel.includes(planNeedle) && mealHit && variantHit;
+    })
+    .sort((a, b) => {
+      const weekDiff = weekOrderValue(a.Week || a["Data.Column1"] || a.data_column1) - weekOrderValue(b.Week || b["Data.Column1"] || b.data_column1);
+      if (weekDiff !== 0) return weekDiff;
+      return dayOrderValue(a.Day || a["Data.Column2"] || a.data_column2) - dayOrderValue(b.Day || b["Data.Column2"] || b.data_column2);
+    })
+    .map(row => {
+      const cols = ["Data.Column3", "Data.Column4", "Data.Column5", "Data.Column6", "Data.Column7"]
+        .map(key => row[key] || row[key.toLowerCase()] || "")
+        .map(v => String(v || "").trim())
+        .filter(Boolean);
+      return {
+        dish: cols[0] || "Menu item",
+        details: cols,
+        nutrition: {
+          calories: row.Calories || row.calories || "",
+          protein: row["Protein Carbohydrates"] ? String(row["Protein Carbohydrates"]).split(/\s+/)[0] : (row.Protein || row.protein || ""),
+          carbohydrates: row.Carbohydrates || row.carbohydrates || "",
+          fats: row.Fats || row.fats || "",
+          fiber: row.Fiber || row.fiber || ""
+        }
+      };
+    });
 }
 
 async function loadDishes(plan, meal, variantKey = "") {
@@ -328,6 +388,7 @@ async function loadAddonCatalog() {
     const phoneInput = document.getElementById("customer-phone");
     const locationSelect = document.getElementById("delivery-location");
     const mapLinkInput = document.getElementById("map-app-link");
+    const distanceHintEl = document.getElementById("distance-hint");
     const pickLocationBtn = document.getElementById("pick-location-btn");
     const notesInput = document.getElementById("customer-notes");
     const dayAddonPanel = document.getElementById("day-addon-panel");
@@ -338,6 +399,9 @@ async function loadAddonCatalog() {
     const subscriptionPriceEl = document.getElementById("subscription-price");
     const addonsPriceEl = document.getElementById("addons-price");
     const billTotalEl = document.getElementById("bill-total");
+    const subscriptionQtyInput = document.getElementById("subscription-qty");
+    const subscriptionQtyMinus = document.getElementById("subscription-qty-minus");
+    const subscriptionQtyPlus = document.getElementById("subscription-qty-plus");
 
     const locationMap = new Map();
     const dayAddonItems = new Map();
@@ -345,6 +409,19 @@ async function loadAddonCatalog() {
     let addonCatalog = [];
     let currentSelection = null;
     let planCatalog = [];
+    let currentQuantity = 1;
+
+    function normalizeQuantity(value) {
+      const parsed = Number.parseInt(String(value || "1"), 10);
+      if (Number.isNaN(parsed)) return 1;
+      return Math.min(5, Math.max(1, parsed));
+    }
+
+    function setSubscriptionQuantity(value) {
+      currentQuantity = normalizeQuantity(value);
+      if (subscriptionQtyInput) subscriptionQtyInput.value = String(currentQuantity);
+      updateBillSummary();
+    }
 
     const currentUserEmail = window.localStorage.getItem(CURRENT_USER_KEY) || "";
     const knownUsers = (() => {
@@ -405,10 +482,12 @@ async function loadAddonCatalog() {
       const selectedVariant = variantSelect?.value || variant;
       const planPrice = findPlanPrice(planCatalog, selectedPlan, selectedMeal, selectedVariant, selectedPeriod);
       const addonTotal = getAddonAmountTotal();
-      const total = Number(planPrice.amount || 0) + addonTotal;
+      const effectivePlanPrice = Number(planPrice.amount || 0) * currentQuantity;
+      const total = effectivePlanPrice + addonTotal;
 
       if (subscriptionPriceEl) {
-        subscriptionPriceEl.textContent = `Plan price: ${planPrice.label} (${formatLabel(selectedPeriod)})`;
+        const labelPrice = effectivePlanPrice > 0 ? `₹${effectivePlanPrice.toLocaleString("en-IN")}` : "Price on request";
+        subscriptionPriceEl.textContent = `Plan price: ${labelPrice} (${formatLabel(selectedPeriod)} x ${currentQuantity})`;
       }
       if (addonsPriceEl) addonsPriceEl.textContent = `Add-on total: ₹${addonTotal.toLocaleString("en-IN")}`;
       if (billTotalEl) {
@@ -434,6 +513,25 @@ async function loadAddonCatalog() {
         start_date: startInput?.value || ""
       });
       pickLocationBtn.href = `map-picker.html?${pickerParams.toString()}`;
+    }
+
+    function updateDistanceHint() {
+      if (!distanceHintEl) return;
+      const selected = locationMap.get(locationSelect?.value || "") || null;
+      const mapLink = mapLinkInput?.value.trim() || selected?.mapLink || "";
+      const coords = extractLatLng(mapLink);
+      if (!coords) {
+        distanceHintEl.textContent = "Distance from hub: Add a map link with coordinates";
+        distanceHintEl.classList.remove("success", "error");
+        return;
+      }
+      const distanceKm = haversineKm(HUB_COORDS, coords);
+      const withinRange = distanceKm <= DELIVERY_LIMIT_KM;
+      distanceHintEl.textContent = withinRange
+        ? `Distance from hub: ${distanceKm.toFixed(2)} km ✅ (within ${DELIVERY_LIMIT_KM} km limit)`
+        : `Distance from hub: ${distanceKm.toFixed(2)} km ⚠️ (outside ${DELIVERY_LIMIT_KM} km limit)`;
+      distanceHintEl.classList.toggle("success", withinRange);
+      distanceHintEl.classList.toggle("error", !withinRange);
     }
 
     function renderDayAddonPanel() {
@@ -516,11 +614,11 @@ async function loadAddonCatalog() {
             if (selectedAddonDate === key) box.classList.add("selected");
             box.innerHTML += `
               <div class="main-dish">${escapeHtml(mainDish)}</div>
-              <button class="details-link" type="button">View Details</button>
+              <button class="details-link" type="button">More in this combo</button>
               ${nutritionBits.length ? `<div class="day-nutrition">${nutritionBits.join("")}</div>` : ""}
               <div class="day-popup">
                 <div><strong>${escapeHtml(mainDish)}</strong></div>
-                ${dishesForCell.length > 1 ? `<div>Ingredients: ${dishesForCell.slice(1).map(escapeHtml).join(", ")}</div>` : ""}
+                ${dishesForCell.length > 1 ? `<div>More in this combo: ${dishesForCell.slice(1).map(escapeHtml).join(", ")}</div>` : ""}
                 ${nutrition.calories ? `<div>Calories: ${escapeHtml(String(nutrition.calories).trim())} kcal</div>` : ""}
                 ${nutrition.protein ? `<div>Protein: ${escapeHtml(formatMacroValue(nutrition.protein))}</div>` : ""}
                 ${nutrition.carbohydrates ? `<div>Carbohydrates: ${escapeHtml(formatMacroValue(nutrition.carbohydrates))}</div>` : ""}
@@ -616,7 +714,7 @@ async function loadAddonCatalog() {
       if (!customerPhoneParam && phoneInput && draft.phone) phoneInput.value = draft.phone;
       if (!customerNotesParam && notesInput && draft.notes) notesInput.value = draft.notes;
       if (!mapLinkParam && !pickedLat && !pickedLon && mapLinkInput && draft.mapLink) mapLinkInput.value = draft.mapLink;
-      if (!startDateParam && startInput && draft.startDate) startInput.value = draft.startDate;
+      // Keep start date default anchored to tomorrow on each page load unless explicit query param is provided.
       if (!params.get("plan") && planSelect && draft.plan) planSelect.value = draft.plan;
       if (!params.get("meal") && mealSelect && draft.meal) mealSelect.value = draft.meal;
       if (!params.get("variant") && variantSelect && draft.variant) variantSelect.value = draft.variant;
@@ -650,6 +748,7 @@ async function loadAddonCatalog() {
         currentSelection?.period || "weekly"
       );
       const addonTotal = getAddonAmountTotal();
+      const effectivePlanPrice = Number(planPrice.amount || 0) * currentQuantity;
 
       return {
         savedAt: new Date().toISOString(),
@@ -670,9 +769,11 @@ async function loadAddonCatalog() {
         addons: [],
         dailyAddons,
         pricing: {
-          planPrice: planPrice.amount,
+          unitPlanPrice: planPrice.amount,
+          planPrice: effectivePlanPrice,
           addonPrice: addonTotal,
-          total: Number(planPrice.amount || 0) + addonTotal
+          quantity: currentQuantity,
+          total: effectivePlanPrice + addonTotal
         }
       };
     }
@@ -749,22 +850,13 @@ async function loadAddonCatalog() {
       if (title) title.textContent = `${formatLabel(selectedPlan)} • ${selectedMeal[0].toUpperCase() + selectedMeal.slice(1)} • ${formatVariantLabel(selectedVariant)}`;
       updatePickerLink();
 
-      const allPlanMeals = await loadPlanMeals();
       const allPlansNutritionRows = await loadAllPlansNutrition();
-      const planMealRows = allPlanMeals
-        .filter(row => normalizeKey(row.Plan_Key || row.plan_key) === normalizeKey(selectedPlan))
-        .filter(row => normalizeKey(row.Meal_Type || row.meal_type) === normalizeKey(selectedMeal));
-      const variantRows = planMealRows.filter(row => {
-        const rowVariant = normalizeKey(row.Variant_Key || row.variant_key);
-        return !rowVariant || rowVariant === normalizeKey(selectedVariant);
-      });
-      const effectiveRows = variantRows.length ? variantRows : planMealRows;
       const activeCount = selectedPeriod === "monthly" ? 24 : 6;
       const dates = nextActiveDates(start, activeCount);
       const activeMap = new Map();
+      const sequence = buildPlanSequenceFromNutrition(allPlansNutritionRows, selectedPlan, selectedVariant, selectedMeal);
       dates.forEach((iso, idx) => {
-        const dateObj = new Date(iso);
-        const unified = buildUnifiedEntry(allPlansNutritionRows, selectedPlan, selectedVariant, selectedMeal, dateObj);
+        const unified = sequence[idx] || null;
         activeMap.set(iso, unified || { dish: "Menu unavailable in master sheet", details: [], nutrition: {} });
       });
 
@@ -781,9 +873,9 @@ async function loadAddonCatalog() {
         start: formatIso(start),
         end: dates[dates.length - 1] || formatIso(start),
         activeDays: activeCount,
-        schedule: dates.map((iso, idx) => ({
+        schedule: dates.map(iso => ({
           date: iso,
-          dish: activeMap.get(iso)?.dish || activeMap.get(iso) || dishes[idx % dishes.length],
+          dish: activeMap.get(iso)?.dish || "Menu unavailable in master sheet",
           addonQty: getDateAddonTotal(iso)
         }))
       };
@@ -858,6 +950,7 @@ async function loadAddonCatalog() {
         `Food Preference: ${formatVariantLabel(currentSelection.variant)}`,
         `Meal Slot: ${currentSelection.meal}`,
         `Period: ${currentSelection.period}`,
+        `Number of Subscriptions: ${orderPayload.pricing?.quantity || 1}`,
         `Active Days: ${currentSelection.activeDays}`,
         `Start Date: ${currentSelection.start}`,
         `End Date: ${currentSelection.end}`,
@@ -879,6 +972,19 @@ async function loadAddonCatalog() {
 
     if (mealSelect) mealSelect.value = meal;
     if (variantSelect) variantSelect.value = variant;
+    setSubscriptionQuantity(subscriptionQtyInput?.value || 1);
+    subscriptionQtyInput?.addEventListener("input", event => {
+      setSubscriptionQuantity(event.target?.value || 1);
+      setConfirmLink();
+    });
+    subscriptionQtyMinus?.addEventListener("click", () => {
+      setSubscriptionQuantity(currentQuantity - 1);
+      setConfirmLink();
+    });
+    subscriptionQtyPlus?.addEventListener("click", () => {
+      setSubscriptionQuantity(currentQuantity + 1);
+      setConfirmLink();
+    });
 
 
     if (pickedLat && pickedLon && mapLinkInput) {
@@ -893,6 +999,7 @@ async function loadAddonCatalog() {
     if (nameInput && !customerNameParam && currentUser?.name) nameInput.value = currentUser.name;
     if (nameInput && !nameInput.value && currentProfile.name) nameInput.value = currentProfile.name;
     if (phoneInput && !phoneInput.value && currentProfile.phone) phoneInput.value = currentProfile.phone;
+    updateDistanceHint();
 
     const minStartDate = new Date(Date.now() + 24 * 60 * 60 * 1000);
     if (startInput) {
@@ -943,6 +1050,7 @@ async function loadAddonCatalog() {
       locationSelect.addEventListener("change", () => {
         const selected = locationMap.get(locationSelect.value || "");
         if (selected?.mapLink) mapLinkInput.value = selected.mapLink;
+        updateDistanceHint();
         updateConfirmLink();
         updateBillSummary();
         updatePickerLink();
@@ -953,12 +1061,14 @@ async function loadAddonCatalog() {
     [nameInput, phoneInput, notesInput, locationSelect, mapLinkInput].forEach(el => {
       if (!el) return;
       el.addEventListener("input", () => {
+        if (el === locationSelect || el === mapLinkInput) updateDistanceHint();
         updateConfirmLink();
         updateBillSummary();
         updatePickerLink();
         saveDraft();
       });
       el.addEventListener("change", () => {
+        if (el === locationSelect || el === mapLinkInput) updateDistanceHint();
         updateConfirmLink();
         updateBillSummary();
         updatePickerLink();
