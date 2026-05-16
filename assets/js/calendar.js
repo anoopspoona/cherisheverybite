@@ -854,9 +854,9 @@ async function loadAddonCatalog() {
       const activeCount = selectedPeriod === "monthly" ? 24 : 6;
       const dates = nextActiveDates(start, activeCount);
       const activeMap = new Map();
-      const sequence = buildPlanSequenceFromNutrition(allPlansNutritionRows, selectedPlan, selectedVariant, selectedMeal);
-      dates.forEach((iso, idx) => {
-        const unified = sequence[idx] || null;
+      dates.forEach(iso => {
+        const dateObj = new Date(iso);
+        const unified = buildUnifiedEntry(allPlansNutritionRows, selectedPlan, selectedVariant, selectedMeal, dateObj);
         activeMap.set(iso, unified || { dish: "Menu unavailable in master sheet", details: [], nutrition: {} });
       });
 
