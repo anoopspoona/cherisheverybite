@@ -316,7 +316,14 @@ body {
   .hero-premium-viewport{min-height:220px}
   .hero-premium-overlay h3{font-size:1.1rem}
   .hero-experiment{grid-template-columns:1fr}
-  .hero-exp-nav{display:none}
+  .hero-exp-nav{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:38px;
+    height:38px;
+    font-size:1.6rem;
+  }
   .hero-experiment-viewport,.hero-experiment-track{min-height:240px;height:240px}
   .hero-exp-card{width:88vw;height:220px}
 }
