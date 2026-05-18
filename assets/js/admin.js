@@ -1,11 +1,104 @@
 const MENU_PATH = "menu.csv";
 const PRICE_PATH = "prices.csv";
 const CATALOG_PATH = "catalog.csv";
+const DELIVERY_ZONES_PATH = "delivery_zones.csv";
 const SUBSCRIPTION_CYCLE_ANCHOR_KEY = "ceb_subscription_cycle_anchor_v1";
 const DEFAULT_SUBSCRIPTION_CYCLE_ANCHOR = "2026-05-01";
+const DELIVERY_LIMIT_KEY = "ceb_delivery_limit_km_v1";
+const DEFAULT_DELIVERY_LIMIT_KM = 7;
 const runtime = window.cebRuntime || {};
 let preservedCatalogNonDishRows = [];
 let hasCatalogSchema = false;
+let zoneMap = null;
+let zonePolygon = null;
+let zoneRows = [];
+let drawingMode = false;
+let zoneMapClickListener = null;
+
+function parsePolygonGeoJson(value) {
+  try {
+    const parsed = JSON.parse(String(value || "").trim());
+    const points = parsed?.coordinates?.[0] || [];
+    return Array.isArray(points) ? points.map(([lng, lat]) => ({ lat: Number(lat), lng: Number(lng) })).filter(p => Number.isFinite(p.lat) && Number.isFinite(p.lng)) : [];
+  } catch {
+    return [];
+  }
+}
+
+function toPolygonGeoJson(path) {
+  const points = (path || []).map(p => [Number(p.lng), Number(p.lat)]);
+  if (points.length && (points[0][0] !== points[points.length - 1][0] || points[0][1] !== points[points.length - 1][1])) points.push(points[0]);
+  return JSON.stringify({ type: "Polygon", coordinates: [points] });
+}
+
+function renderZoneOptions() {
+  const select = document.getElementById("zone-select");
+  if (!select) return;
+  select.innerHTML = zoneRows.map((z, i) => `<option value="${i}">${escapeHtml(z.zone_id || `ZONE_${i + 1}`)} - ${escapeHtml(z.zone_name || "Unnamed")}</option>`).join("");
+}
+
+function renderSelectedZone() {
+  if (!zoneMap) return;
+  const idx = Number(document.getElementById("zone-select")?.value || 0);
+  const row = zoneRows[idx];
+  if (!row) return;
+  const name = document.getElementById("zone-name");
+  const status = document.getElementById("zone-status");
+  const geo = document.getElementById("zone-geojson");
+  if (name) name.value = row.zone_name || "";
+  if (status) status.value = row.status || "live";
+  if (geo) geo.value = row.polygon_geojson || "";
+
+  if (zonePolygon) zonePolygon.setMap(null);
+  const path = parsePolygonGeoJson(row.polygon_geojson);
+  zonePolygon = new google.maps.Polygon({
+    paths: path,
+    editable: true,
+    draggable: false,
+    strokeColor: "#1f6d47",
+    fillColor: "#1f6d47",
+    fillOpacity: 0.2,
+    map: zoneMap
+  });
+  const polyPath = zonePolygon.getPath();
+  const sync = () => {
+    const points = [];
+    for (let i = 0; i < polyPath.getLength(); i++) {
+      const p = polyPath.getAt(i);
+      points.push({ lat: p.lat(), lng: p.lng() });
+    }
+    const text = toPolygonGeoJson(points);
+    if (geo) geo.value = text;
+    row.polygon_geojson = text;
+  };
+  google.maps.event.addListener(polyPath, "set_at", sync);
+  google.maps.event.addListener(polyPath, "insert_at", sync);
+  google.maps.event.addListener(polyPath, "remove_at", sync);
+}
+
+async function initZoneManager() {
+  if (!window.google?.maps) return;
+  const rows = await fetchCSV(DELIVERY_ZONES_PATH).catch(() => []);
+  zoneRows = rows.map((r, idx) => ({
+    zone_id: r.zone_id || `ZONE_${idx + 1}`,
+    zone_name: r.zone_name || "",
+    status: r.status || "live",
+    priority: r.priority || String(idx + 1),
+    min_order: r.min_order || "0",
+    delivery_fee: r.delivery_fee || "0",
+    eta_min: r.eta_min || "",
+    eta_max: r.eta_max || "",
+    polygon_geojson: r.polygon_geojson || "",
+    notes: r.notes || ""
+  }));
+  zoneMap = new google.maps.Map(document.getElementById("zone-map"), {
+    center: { lat: 8.575357388981113, lng: 76.91238872393365 },
+    zoom: 12,
+    mapTypeControl: false
+  });
+  renderZoneOptions();
+  renderSelectedZone();
+}
 
 function setFeedback(message) {
   const el = document.getElementById("admin-feedback");
@@ -176,6 +269,14 @@ function loadCycleAnchorSetting() {
   input.value = /^\d{4}-\d{2}-\d{2}$/.test(stored) ? stored : DEFAULT_SUBSCRIPTION_CYCLE_ANCHOR;
 }
 
+function loadDeliveryLimitSetting() {
+  const input = document.getElementById("delivery-limit-km");
+  if (!input) return;
+  const raw = String(window.localStorage.getItem(DELIVERY_LIMIT_KEY) || "").trim();
+  const parsed = Number(raw);
+  input.value = Number.isFinite(parsed) && parsed > 0 ? String(parsed) : String(DEFAULT_DELIVERY_LIMIT_KM);
+}
+
 async function getCurrentAdminIdentifier() {
   if (window.cebAuth?.enabled) {
     const user = await window.cebAuth.getCurrentUser();
@@ -260,7 +361,9 @@ async function enforceAdminAccess() {
   });
   renderMenuTable(stateRows);
   await loadCalendarEditor();
+  await initZoneManager();
   loadCycleAnchorSetting();
+  loadDeliveryLimitSetting();
   await enforceAdminAccess();
 
   document.getElementById("admin-google-login")?.addEventListener("click", async () => {
@@ -343,5 +446,95 @@ async function enforceAdminAccess() {
     window.localStorage.removeItem(SUBSCRIPTION_CYCLE_ANCHOR_KEY);
     loadCycleAnchorSetting();
     setFeedback(`Cycle start date reset to default (${DEFAULT_SUBSCRIPTION_CYCLE_ANCHOR}).`);
+  });
+
+  document.getElementById("delivery-limit-save")?.addEventListener("click", () => {
+    const input = document.getElementById("delivery-limit-km");
+    const parsed = Number(input?.value || "");
+    if (!Number.isFinite(parsed) || parsed <= 0 || parsed > 50) {
+      setFeedback("Enter a valid delivery distance limit between 1 and 50 km.");
+      return;
+    }
+    window.localStorage.setItem(DELIVERY_LIMIT_KEY, String(parsed));
+    setFeedback(`Saved delivery distance limit: ${parsed} km.`);
+  });
+
+  document.getElementById("delivery-limit-reset")?.addEventListener("click", () => {
+    window.localStorage.removeItem(DELIVERY_LIMIT_KEY);
+    loadDeliveryLimitSetting();
+    setFeedback(`Delivery distance limit reset to default (${DEFAULT_DELIVERY_LIMIT_KM} km).`);
+  });
+
+  document.getElementById("zone-select")?.addEventListener("change", renderSelectedZone);
+  document.getElementById("zone-name")?.addEventListener("input", event => {
+    const idx = Number(document.getElementById("zone-select")?.value || 0);
+    if (!zoneRows[idx]) return;
+    zoneRows[idx].zone_name = event.target.value;
+    renderZoneOptions();
+    document.getElementById("zone-select").value = String(idx);
+  });
+  document.getElementById("zone-status")?.addEventListener("change", event => {
+    const idx = Number(document.getElementById("zone-select")?.value || 0);
+    if (zoneRows[idx]) zoneRows[idx].status = event.target.value;
+  });
+  document.getElementById("zone-geojson")?.addEventListener("change", event => {
+    const idx = Number(document.getElementById("zone-select")?.value || 0);
+    if (!zoneRows[idx]) return;
+    zoneRows[idx].polygon_geojson = String(event.target.value || "");
+    renderSelectedZone();
+  });
+  document.getElementById("zone-add")?.addEventListener("click", () => {
+    const next = {
+      zone_id: `ZONE_${Date.now()}`,
+      zone_name: "New Zone",
+      status: "live",
+      priority: String(zoneRows.length + 1),
+      min_order: "0",
+      delivery_fee: "0",
+      eta_min: "",
+      eta_max: "",
+      polygon_geojson: "",
+      notes: ""
+    };
+    zoneRows.push(next);
+    renderZoneOptions();
+    document.getElementById("zone-select").value = String(zoneRows.length - 1);
+    renderSelectedZone();
+  });
+  document.getElementById("zone-clear")?.addEventListener("click", () => {
+    const idx = Number(document.getElementById("zone-select")?.value || 0);
+    if (!zoneRows[idx]) return;
+    zoneRows[idx].polygon_geojson = "";
+    renderSelectedZone();
+  });
+  document.getElementById("zone-draw")?.addEventListener("click", () => {
+    if (!zoneMap) return;
+    drawingMode = !drawingMode;
+    if (zonePolygon) zonePolygon.setMap(null);
+    zonePolygon = new google.maps.Polygon({
+      paths: [],
+      editable: true,
+      map: zoneMap,
+      strokeColor: "#1f6d47",
+      fillColor: "#1f6d47",
+      fillOpacity: 0.2
+    });
+    if (zoneMapClickListener) google.maps.event.removeListener(zoneMapClickListener);
+    zoneMapClickListener = zoneMap.addListener("click", event => {
+      if (!drawingMode) return;
+      zonePolygon.getPath().push(event.latLng);
+      const points = [];
+      const path = zonePolygon.getPath();
+      for (let i = 0; i < path.getLength(); i++) points.push({ lat: path.getAt(i).lat(), lng: path.getAt(i).lng() });
+      const idx = Number(document.getElementById("zone-select")?.value || 0);
+      if (zoneRows[idx]) zoneRows[idx].polygon_geojson = toPolygonGeoJson(points);
+      const geo = document.getElementById("zone-geojson");
+      if (geo) geo.value = zoneRows[idx]?.polygon_geojson || "";
+    });
+    setFeedback(drawingMode ? "Draw mode enabled: click map points to shape polygon." : "Draw mode paused.");
+  });
+  document.getElementById("zone-save")?.addEventListener("click", () => {
+    window.cebCsvTools.writeOverride(DELIVERY_ZONES_PATH, window.cebCsvTools.serializeCSV(zoneRows));
+    setFeedback("Saved delivery_zones.csv override.");
   });
 })();
