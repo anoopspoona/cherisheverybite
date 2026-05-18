@@ -69,6 +69,7 @@ function groupByCategory(items) {
   const menuWrap = document.getElementById("preorder-menu");
   const categoryBar = document.getElementById("preorder-category-bar");
   const confirm = document.getElementById("preorder-confirm");
+  const confirmTop = document.getElementById("preorder-confirm-top");
   const params = new URLSearchParams(window.location.search);
   const pickedLat = params.get("picked_lat");
   const pickedLon = params.get("picked_lon");
@@ -227,8 +228,10 @@ function groupByCategory(items) {
     if (!timeSlotValid) missing.push("preferred delivery time (12:00 PM to 10:00 PM)");
     const totalCount = selectedItems.reduce((sum,item)=>sum+Number(qtyById.get(item.id)||0),0);
     if (confirm) confirm.innerHTML = `Confirm Pre Order <span class="badge">${totalCount} item${totalCount===1?"":"s"}</span>`;
+    if (confirmTop) confirmTop.textContent = `Confirm Pre Order (${totalCount})`;
     if (missing.length) {
       if (confirm) confirm.href = "#";
+      if (confirmTop) confirmTop.href = "#";
       if (feedback) feedback.textContent = `Please add: ${missing.join(", ")}.`;
       saveDraft();
       return;
@@ -244,7 +247,9 @@ function groupByCategory(items) {
       "Items:",
       ...chosen
     ].join("\n");
-    if (confirm) confirm.href = buildWhatsappLink(PREORDER_WHATSAPP, message);
+    const link = buildWhatsappLink(PREORDER_WHATSAPP, message);
+    if (confirm) confirm.href = link;
+    if (confirmTop) confirmTop.href = link;
     if (feedback) feedback.textContent = "Ready. Tap confirm to place pre-order on WhatsApp.";
     saveDraft();
   }
@@ -304,6 +309,16 @@ function groupByCategory(items) {
       }
       event.preventDefault();
       window.open(confirm.href, "_blank", "noopener");
+    });
+  }
+  if (confirmTop) {
+    confirmTop.addEventListener("click", event => {
+      if (!confirmTop.href || confirmTop.getAttribute("href") === "#") {
+        event.preventDefault();
+        return;
+      }
+      event.preventDefault();
+      window.open(confirmTop.href, "_blank", "noopener");
     });
   }
 
