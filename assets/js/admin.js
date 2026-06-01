@@ -107,42 +107,6 @@ function setFeedback(message) {
   if (el) el.textContent = message;
 }
 
-
-function slugFromName(value, fallback = "dish") {
-  const slug = String(value || "")
-    .trim()
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "_")
-    .replace(/^_+|_+$/g, "");
-  return slug || fallback;
-}
-
-function catalogDishId(row = {}, index = 0) {
-  return row.ID || row.id || row.Dish_ID || row.dish_id || slugFromName(row.Name || row.name || row.Dish_Name || row.dish_name, `dish_${index + 1}`);
-}
-
-function isCatalogDishRow(row = {}) {
-  const type = String(row.Record_Type || row.record_type || "").trim().toLowerCase();
-  return hasCatalogSchema ? type === "dish" : true;
-}
-
-
-function catalogRowToMenuRow(row = {}, index = 0) {
-  return {
-    Dish_ID: catalogDishId(row, index),
-    Dish_Name: row.Name || row.name || row.Dish_Name || row.dish_name || "",
-    Category: row.Category || row.category || "",
-    Meal_Type: row.Meal_Type || row.meal_type || "",
-    Image_URL: row.Image_URL || row.image_url || "",
-    Price: row.Price || row.price || "",
-    Status: row.Status || row.status || "live"
-  };
-}
-
-function hasDishLikeFields(row = {}) {
-  return Boolean(row.Name || row.name || row.Dish_Name || row.dish_name);
-}
-
 function normalizeStatus(value) {
   const status = String(value || "live").trim().toLowerCase();
   return status === "hidden" ? "hidden" : "live";
@@ -176,13 +140,14 @@ function renderMenuTable(rows) {
       <td><input data-field="Image_URL" value="${escapeHtml(row.Image_URL)}"></td>
       <td><input data-field="Price" value="${escapeHtml(row.Price)}"></td>
       <td>
-        <input type="hidden" data-field="Status" value="${escapeHtml(normalizeStatus(row.Status))}">
-        <div class="status-toggle" role="group" aria-label="Visibility for ${escapeHtml(row.Dish_Name || row.Dish_ID)}">
-          <button class="status-toggle-btn ${normalizeStatus(row.Status) === "live" ? "is-active" : ""}" type="button" data-action="set-status" data-status="live" data-index="${index}">Live</button>
-          <button class="status-toggle-btn ${normalizeStatus(row.Status) === "hidden" ? "is-active" : ""}" type="button" data-action="set-status" data-status="hidden" data-index="${index}">Hidden</button>
-        </div>
+        <span class="status-badge status-${escapeHtml(normalizeStatus(row.Status))}">${escapeHtml(normalizeStatus(row.Status))}</span>
+        <select data-field="Status">
+          <option value="live" ${normalizeStatus(row.Status) === "live" ? "selected" : ""}>live</option>
+          <option value="hidden" ${normalizeStatus(row.Status) === "hidden" ? "selected" : ""}>hidden</option>
+        </select>
       </td>
       <td>
+        <button class="btn btn-soft" type="button" data-action="toggle-status" data-index="${index}">${normalizeStatus(row.Status) === "live" ? "Hide" : "Make Live"}</button>
         <button class="btn delete-row" type="button" data-action="delete-row" data-index="${index}">Delete</button>
       </td>
     </tr>
@@ -423,14 +388,22 @@ async function enforceAdminAccess() {
     return normalized;
   });
   hasCatalogSchema = normalizedCatalogRows.some(row => "Record_Type" in row || "record_type" in row);
-  preservedCatalogNonDishRows = normalizedCatalogRows.filter(row => !isCatalogDishRow(row));
+  preservedCatalogNonDishRows = normalizedCatalogRows.filter(row => String(row.Record_Type || row.record_type || "").toLowerCase() !== "dish");
   catalogDishSourceById = new Map(normalizedCatalogRows
-    .filter(row => isCatalogDishRow(row))
-    .map((row, index) => [catalogDishId(row, index), row])
+    .filter(row => String(row.Record_Type || row.record_type || "").toLowerCase() === "dish")
+    .map(row => [row.ID || row.id || row.Dish_ID || row.dish_id || "", row])
     .filter(([id]) => id));
-  let catalogDishRows = normalizedCatalogRows
+  const catalogDishRows = normalizedCatalogRows
     .filter(row => isCatalogDishRow(row))
-    .map((row, index) => catalogRowToMenuRow(row, index))
+    .map((row, index) => ({
+      Dish_ID: catalogDishId(row, index),
+      Dish_Name: row.Name || row.name || row.Dish_Name || row.dish_name || "",
+      Category: row.Category || row.category || "",
+      Meal_Type: row.Meal_Type || row.meal_type || "",
+      Image_URL: row.Image_URL || row.image_url || "",
+      Price: row.Price || row.price || "",
+      Status: row.Status || row.status || "live"
+    }))
     .filter(row => row.Dish_ID && row.Dish_Name);
   if (!catalogDishRows.length && normalizedCatalogRows.length) {
     catalogDishRows = normalizedCatalogRows
@@ -511,8 +484,8 @@ async function enforceAdminAccess() {
     if (action === "delete-row") {
       stateRows.splice(index, 1);
     }
-    if (action === "set-status" && stateRows[index]) {
-      stateRows[index].Status = normalizeStatus(actionEl.getAttribute("data-status"));
+    if (action === "toggle-status" && stateRows[index]) {
+      stateRows[index].Status = normalizeStatus(stateRows[index].Status) === "live" ? "hidden" : "live";
     }
     renderMenuTable(stateRows);
   });
