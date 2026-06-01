@@ -67,7 +67,6 @@ function renderPlans(rows, selection) {
     const planSlug = normalizeKey(group.planKey);
     const price = pickPrice(first, selection.period);
     const description = first.Description || first.description || "Curated subscription plan.";
-    const mealsPerDay = first.Meals_Per_Day || first.meals_per_day || "-";
     const duration = selection.period === "weekly" ? "6 active days" : "24 active days";
 
     return `
@@ -75,7 +74,7 @@ function renderPlans(rows, selection) {
         <h3>${escapeHtml(titleFromPlanKey(group.planKey))}</h3>
         <p class="muted">${escapeHtml(description)}</p>
         <p class="legend" style="font-weight:700;color:#14532d;margin:8px 0 4px;">${escapeHtml(selection.period[0].toUpperCase() + selection.period.slice(1))} price: ${escapeHtml(price)}</p>
-        <p class="muted" style="margin:0 0 10px;">${escapeHtml(duration)} • ${escapeHtml(mealsPerDay)} meals/day</p>
+        <p class="muted" style="margin:0 0 10px;">${escapeHtml(duration)}</p>
         <p style="margin:12px 0 0;"><a class="btn btn-soft" href="calendar.html?plan=${encodeURIComponent(planSlug)}&meal=${encodeURIComponent(selection.meal)}&period=${encodeURIComponent(selection.period)}&variant=${encodeURIComponent(selection.variant)}">Choose Plan</a></p>
       </article>
     `;
