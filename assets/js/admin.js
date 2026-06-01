@@ -405,6 +405,13 @@ async function enforceAdminAccess() {
       Status: row.Status || row.status || "live"
     }))
     .filter(row => row.Dish_ID && row.Dish_Name);
+  if (!catalogDishRows.length && normalizedCatalogRows.length) {
+    catalogDishRows = normalizedCatalogRows
+      .filter(row => hasDishLikeFields(row))
+      .map((row, index) => catalogRowToMenuRow(row, index))
+      .filter(row => row.Dish_ID && row.Dish_Name);
+    if (catalogDishRows.length) setFeedback("Loaded catalog rows using fallback dish detection. Save Menu to normalize catalog override schema.");
+  }
   const priceMap = new Map(priceRows.map(row => [row.Dish_ID || row.dish_id || "", row]));
   let stateRows = (catalogDishRows.length ? catalogDishRows : menuRows).map(row => {
     const id = row.Dish_ID || row.dish_id || "";
@@ -416,6 +423,7 @@ async function enforceAdminAccess() {
     });
   });
   renderMenuTable(stateRows);
+  if (!stateRows.length) setFeedback("No catalog dishes loaded. Use Reset Menu Override if an old browser override is hiding catalog rows.");
   await loadCalendarEditor();
   await initZoneManager();
   loadCycleAnchorSetting();
