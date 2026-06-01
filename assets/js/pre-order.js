@@ -1,5 +1,12 @@
 const PREORDER_WHATSAPP = "916282023762";
 const PREORDER_DRAFT_KEY = "ceb_preorder_draft_v1";
+const ALLOWED_TIME_SLOTS = new Set([
+  "12:00-14:00",
+  "14:00-16:00",
+  "16:00-18:00",
+  "18:00-20:00",
+  "20:00-22:00"
+]);
 
 function normalizePrice(value) {
   const text = String(value || "").trim();
@@ -56,11 +63,13 @@ function groupByCategory(items) {
   const phoneInput = document.getElementById("preorder-phone");
   const locationSelect = document.getElementById("preorder-location");
   const mapLinkInput = document.getElementById("preorder-map-link");
+  const timeSlotSelect = document.getElementById("preorder-time-slot");
   const pickLocationBtn = document.getElementById("preorder-pick-location");
   const feedback = document.getElementById("preorder-feedback");
   const menuWrap = document.getElementById("preorder-menu");
   const categoryBar = document.getElementById("preorder-category-bar");
   const confirm = document.getElementById("preorder-confirm");
+  const confirmTop = document.getElementById("preorder-confirm-top");
   const params = new URLSearchParams(window.location.search);
   const pickedLat = params.get("picked_lat");
   const pickedLon = params.get("picked_lon");
@@ -96,6 +105,7 @@ function groupByCategory(items) {
         phone: phoneInput?.value || "",
         locationId: locationSelect?.value || "",
         mapLink: mapLinkInput?.value || "",
+        timeSlot: timeSlotSelect?.value || "",
         qty: Array.from(qtyById.entries()).filter(([, qty]) => Number(qty) > 0)
       };
       window.localStorage.setItem(PREORDER_DRAFT_KEY, JSON.stringify(payload));
@@ -114,6 +124,7 @@ function groupByCategory(items) {
       if (nameInput && payload.name) nameInput.value = payload.name;
       if (phoneInput && payload.phone) phoneInput.value = payload.phone;
       if (mapLinkInput && payload.mapLink) mapLinkInput.value = payload.mapLink;
+      if (timeSlotSelect && payload.timeSlot && ALLOWED_TIME_SLOTS.has(payload.timeSlot)) timeSlotSelect.value = payload.timeSlot;
       const qtyRows = Array.isArray(payload.qty) ? payload.qty : [];
       qtyRows.forEach(([id, qty]) => {
         if (id && Number(qty) > 0) qtyById.set(String(id), Number(qty));
@@ -203,6 +214,8 @@ function groupByCategory(items) {
     if (mapLinkInput && !mapLinkInput.value.trim() && selected?.mapLink) mapLinkInput.value = selected.mapLink;
     if (mapLinkInput && !mapLinkInput.value.trim() && pickedLat && pickedLon) mapLinkInput.value = `https://maps.google.com/?q=${pickedLat},${pickedLon}`;
     const mapLink = mapLinkInput?.value.trim() || "";
+    const timeSlot = timeSlotSelect?.value || "";
+    const timeSlotValid = ALLOWED_TIME_SLOTS.has(timeSlot);
     const phoneOk = /^\+?[0-9\-\s]{8,15}$/.test(phone);
     const missing = [];
     if (!date) missing.push("delivery date");
@@ -212,10 +225,13 @@ function groupByCategory(items) {
     if (!chosen.length) missing.push("at least one dish");
     if (!locationName) missing.push("delivery location");
     if (!mapLink) missing.push("map link");
+    if (!timeSlotValid) missing.push("preferred delivery time (12:00 PM to 10:00 PM)");
     const totalCount = selectedItems.reduce((sum,item)=>sum+Number(qtyById.get(item.id)||0),0);
     if (confirm) confirm.innerHTML = `Confirm Pre Order <span class="badge">${totalCount} item${totalCount===1?"":"s"}</span>`;
+    if (confirmTop) confirmTop.textContent = `Confirm Pre Order (${totalCount})`;
     if (missing.length) {
       if (confirm) confirm.href = "#";
+      if (confirmTop) confirmTop.href = "#";
       if (feedback) feedback.textContent = `Please add: ${missing.join(", ")}.`;
       saveDraft();
       return;
@@ -227,10 +243,13 @@ function groupByCategory(items) {
       `Delivery Location: ${locationName}`,
       `Pinned Map App Link: ${mapLink}`,
       `Delivery Date: ${date}`,
+      `Preferred Delivery Time: ${timeSlot}`,
       "Items:",
       ...chosen
     ].join("\n");
-    if (confirm) confirm.href = buildWhatsappLink(PREORDER_WHATSAPP, message);
+    const link = buildWhatsappLink(PREORDER_WHATSAPP, message);
+    if (confirm) confirm.href = link;
+    if (confirmTop) confirmTop.href = link;
     if (feedback) feedback.textContent = "Ready. Tap confirm to place pre-order on WhatsApp.";
     saveDraft();
   }
@@ -279,8 +298,8 @@ function groupByCategory(items) {
   }
   updatePickerLink();
 
-  [dateInput, nameInput, phoneInput, locationSelect, mapLinkInput].forEach(el => el?.addEventListener("input", () => { updateConfirm(); updatePickerLink(); saveDraft(); }));
-  [dateInput, nameInput, phoneInput, locationSelect, mapLinkInput].forEach(el => el?.addEventListener("change", () => { updateConfirm(); updatePickerLink(); saveDraft(); }));
+  [dateInput, nameInput, phoneInput, locationSelect, mapLinkInput, timeSlotSelect].forEach(el => el?.addEventListener("input", () => { updateConfirm(); updatePickerLink(); saveDraft(); }));
+  [dateInput, nameInput, phoneInput, locationSelect, mapLinkInput, timeSlotSelect].forEach(el => el?.addEventListener("change", () => { updateConfirm(); updatePickerLink(); saveDraft(); }));
 
   if (confirm) {
     confirm.addEventListener("click", event => {
@@ -290,6 +309,16 @@ function groupByCategory(items) {
       }
       event.preventDefault();
       window.open(confirm.href, "_blank", "noopener");
+    });
+  }
+  if (confirmTop) {
+    confirmTop.addEventListener("click", event => {
+      if (!confirmTop.href || confirmTop.getAttribute("href") === "#") {
+        event.preventDefault();
+        return;
+      }
+      event.preventDefault();
+      window.open(confirmTop.href, "_blank", "noopener");
     });
   }
 
