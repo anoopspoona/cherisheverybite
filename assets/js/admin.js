@@ -107,66 +107,6 @@ function setFeedback(message) {
   if (el) el.textContent = message;
 }
 
-
-function slugFromName(value, fallback = "dish") {
-  const slug = String(value || "")
-    .trim()
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "_")
-    .replace(/^_+|_+$/g, "");
-  return slug || fallback;
-}
-
-function catalogDishId(row = {}, index = 0) {
-  return row.ID || row.id || row.Dish_ID || row.dish_id || slugFromName(row.Name || row.name || row.Dish_Name || row.dish_name, `dish_${index + 1}`);
-}
-
-function isCatalogDishRow(row = {}) {
-  const type = String(row.Record_Type || row.record_type || "").trim().toLowerCase();
-  return hasCatalogSchema ? type === "dish" : true;
-}
-
-
-function catalogRowToMenuRow(row = {}, index = 0) {
-  return {
-    Dish_ID: catalogDishId(row, index),
-    Dish_Name: row.Name || row.name || row.Dish_Name || row.dish_name || "",
-    Category: row.Category || row.category || "",
-    Meal_Type: row.Meal_Type || row.meal_type || "",
-    Image_URL: row.Image_URL || row.image_url || "",
-    Price: row.Price || row.price || "",
-    Status: row.Status || row.status || "live"
-  };
-}
-
-function hasDishLikeFields(row = {}) {
-  return Boolean(row.Name || row.name || row.Dish_Name || row.dish_name);
-}
-
-function catalogRowsToMenuRows(rows = []) {
-  const normalizedRows = Array.isArray(rows) ? rows : [];
-  const schemaPresent = normalizedRows.some(row => "Record_Type" in row || "record_type" in row);
-  const dishRows = normalizedRows
-    .filter(row => {
-      const type = String(row.Record_Type || row.record_type || "").trim().toLowerCase();
-      return schemaPresent ? type === "dish" : hasDishLikeFields(row);
-    })
-    .map((row, index) => catalogRowToMenuRow(row, index))
-    .filter(row => row.Dish_ID && row.Dish_Name);
-  return dishRows;
-}
-
-async function loadCatalogRowsForAdmin() {
-  const rows = await fetchCSV(CATALOG_PATH).catch(() => []);
-  const dishRows = catalogRowsToMenuRows(rows);
-  if (dishRows.length) return { rows, dishRows, usedRawFallback: false };
-
-  const response = await fetch(CATALOG_PATH, { cache: "no-store" }).catch(() => null);
-  if (!response?.ok) return { rows, dishRows, usedRawFallback: false };
-  const rawRows = parseCSV(await response.text());
-  return { rows: rawRows, dishRows: catalogRowsToMenuRows(rawRows), usedRawFallback: true };
-}
-
 function normalizeStatus(value) {
   const status = String(value || "live").trim().toLowerCase();
   return status === "hidden" ? "hidden" : "live";
@@ -200,13 +140,14 @@ function renderMenuTable(rows) {
       <td><input data-field="Image_URL" value="${escapeHtml(row.Image_URL)}"></td>
       <td><input data-field="Price" value="${escapeHtml(row.Price)}"></td>
       <td>
-        <input type="hidden" data-field="Status" value="${escapeHtml(normalizeStatus(row.Status))}">
-        <div class="status-toggle" role="group" aria-label="Visibility for ${escapeHtml(row.Dish_Name || row.Dish_ID)}">
-          <button class="status-toggle-btn ${normalizeStatus(row.Status) === "live" ? "is-active" : ""}" type="button" data-action="set-status" data-status="live" data-index="${index}">Live</button>
-          <button class="status-toggle-btn ${normalizeStatus(row.Status) === "hidden" ? "is-active" : ""}" type="button" data-action="set-status" data-status="hidden" data-index="${index}">Hidden</button>
-        </div>
+        <span class="status-badge status-${escapeHtml(normalizeStatus(row.Status))}">${escapeHtml(normalizeStatus(row.Status))}</span>
+        <select data-field="Status">
+          <option value="live" ${normalizeStatus(row.Status) === "live" ? "selected" : ""}>live</option>
+          <option value="hidden" ${normalizeStatus(row.Status) === "hidden" ? "selected" : ""}>hidden</option>
+        </select>
       </td>
       <td>
+        <button class="btn btn-soft" type="button" data-action="toggle-status" data-index="${index}">${normalizeStatus(row.Status) === "live" ? "Hide" : "Make Live"}</button>
         <button class="btn delete-row" type="button" data-action="delete-row" data-index="${index}">Delete</button>
       </td>
     </tr>
@@ -462,8 +403,8 @@ function bindAdminAuthActions() {
   const hasAccess = await enforceAdminAccess();
   if (!hasAccess) return;
 
-  const [catalogResult, menuRows, priceRows] = await Promise.all([
-    loadCatalogRowsForAdmin(),
+  const [catalogRows, menuRows, priceRows] = await Promise.all([
+    fetchCSV(CATALOG_PATH).catch(() => []),
     fetchCSV(MENU_PATH).catch(() => []),
     fetchCSV(PRICE_PATH).catch(() => [])
   ]);
@@ -476,14 +417,29 @@ function bindAdminAuthActions() {
     return normalized;
   });
   hasCatalogSchema = normalizedCatalogRows.some(row => "Record_Type" in row || "record_type" in row);
-  preservedCatalogNonDishRows = normalizedCatalogRows.filter(row => !isCatalogDishRow(row));
+  preservedCatalogNonDishRows = normalizedCatalogRows.filter(row => String(row.Record_Type || row.record_type || "").toLowerCase() !== "dish");
   catalogDishSourceById = new Map(normalizedCatalogRows
-    .filter(row => isCatalogDishRow(row))
-    .map((row, index) => [catalogDishId(row, index), row])
+    .filter(row => String(row.Record_Type || row.record_type || "").toLowerCase() === "dish")
+    .map(row => [row.ID || row.id || row.Dish_ID || row.dish_id || "", row])
     .filter(([id]) => id));
-  const catalogDishRows = catalogResult.dishRows;
-  if (catalogResult.usedRawFallback && catalogDishRows.length) {
-    setFeedback("Loaded dishes directly from catalog.csv because the browser override did not contain dish rows. Use Reset Menu Override to clear stale local overrides.");
+  const catalogDishRows = normalizedCatalogRows
+    .filter(row => isCatalogDishRow(row))
+    .map((row, index) => ({
+      Dish_ID: catalogDishId(row, index),
+      Dish_Name: row.Name || row.name || row.Dish_Name || row.dish_name || "",
+      Category: row.Category || row.category || "",
+      Meal_Type: row.Meal_Type || row.meal_type || "",
+      Image_URL: row.Image_URL || row.image_url || "",
+      Price: row.Price || row.price || "",
+      Status: row.Status || row.status || "live"
+    }))
+    .filter(row => row.Dish_ID && row.Dish_Name);
+  if (!catalogDishRows.length && normalizedCatalogRows.length) {
+    catalogDishRows = normalizedCatalogRows
+      .filter(row => hasDishLikeFields(row))
+      .map((row, index) => catalogRowToMenuRow(row, index))
+      .filter(row => row.Dish_ID && row.Dish_Name);
+    if (catalogDishRows.length) setFeedback("Loaded catalog rows using fallback dish detection. Save Menu to normalize catalog override schema.");
   }
   const priceMap = new Map(priceRows.map(row => [row.Dish_ID || row.dish_id || "", row]));
   let stateRows = (catalogDishRows.length ? catalogDishRows : menuRows).map(row => {
@@ -501,6 +457,29 @@ function bindAdminAuthActions() {
   await initZoneManager();
   loadCycleAnchorSetting();
   loadDeliveryLimitSetting();
+  await enforceAdminAccess();
+
+  document.getElementById("admin-google-login")?.addEventListener("click", async () => {
+    if (!window.cebAuth?.enabled) {
+      setFeedback("Google auth is not configured. Check CEB_SUPABASE_CONFIG.");
+      return;
+    }
+    const redirectTo = new URL("admin.html", window.location.href).toString();
+    const result = await window.cebAuth.signInWithGoogle(redirectTo);
+    if (!result?.ok) {
+      setFeedback(result?.message || "Could not start Google sign-in.");
+    }
+  });
+
+  document.querySelectorAll("[data-menu-status-filter]").forEach(button => {
+    button.addEventListener("click", () => {
+      stateRows = readRowsFromTable(stateRows);
+      menuStatusFilter = button.getAttribute("data-menu-status-filter") || "all";
+      document.querySelectorAll("[data-menu-status-filter]").forEach(el => el.classList.toggle("is-active", el === button));
+      renderMenuTable(stateRows);
+    });
+  });
+
   document.getElementById("menu-add")?.addEventListener("click", () => {
     stateRows = readRowsFromTable(stateRows);
     stateRows.push(normalizeMenuRow({ Dish_ID: `dish_${Date.now()}`, Status: "live" }));
@@ -534,8 +513,8 @@ function bindAdminAuthActions() {
     if (action === "delete-row") {
       stateRows.splice(index, 1);
     }
-    if (action === "set-status" && stateRows[index]) {
-      stateRows[index].Status = normalizeStatus(actionEl.getAttribute("data-status"));
+    if (action === "toggle-status" && stateRows[index]) {
+      stateRows[index].Status = normalizeStatus(stateRows[index].Status) === "live" ? "hidden" : "live";
     }
     renderMenuTable(stateRows);
   });

@@ -18,9 +18,3 @@ input,select,textarea{width:100%;border:1px solid rgba(0,0,0,.15);border-radius:
 .menu-status-filters .is-active{background:#fff;border-color:rgba(31,109,71,.42);box-shadow:0 8px 20px rgba(31,109,71,.12)}
 #menu-table-wrap td:last-child{min-width:170px}
 #menu-table-wrap td:last-child .btn{margin:2px}
-.menu-table-summary{margin:0 0 8px;font-weight:700}
-.status-toggle{display:inline-flex;border:1px solid rgba(0,0,0,.14);border-radius:999px;overflow:hidden;background:#f8fafc;white-space:nowrap}
-.status-toggle-btn{border:0;background:transparent;color:#475569;padding:7px 11px;font:inherit;font-weight:800;cursor:pointer;min-width:72px}
-.status-toggle-btn.is-active[data-status="live"]{background:#16a34a;color:#fff}
-.status-toggle-btn.is-active[data-status="hidden"]{background:#64748b;color:#fff}
-.admin-menu-table td:nth-child(7){min-width:170px}
