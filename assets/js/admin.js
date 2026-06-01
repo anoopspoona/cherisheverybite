@@ -8,7 +8,9 @@ const DELIVERY_LIMIT_KEY = "ceb_delivery_limit_km_v1";
 const DEFAULT_DELIVERY_LIMIT_KM = 7;
 const runtime = window.cebRuntime || {};
 let preservedCatalogNonDishRows = [];
+let catalogDishSourceById = new Map();
 let hasCatalogSchema = false;
+let menuStatusFilter = "all";
 let zoneMap = null;
 let zonePolygon = null;
 let zoneRows = [];
@@ -105,6 +107,11 @@ function setFeedback(message) {
   if (el) el.textContent = message;
 }
 
+function normalizeStatus(value) {
+  const status = String(value || "live").trim().toLowerCase();
+  return status === "hidden" ? "hidden" : "live";
+}
+
 function normalizeMenuRow(row = {}) {
   return {
     Dish_ID: row.Dish_ID || row.dish_id || "",
@@ -113,7 +120,7 @@ function normalizeMenuRow(row = {}) {
     Meal_Type: row.Meal_Type || row.meal_type || "",
     Image_URL: row.Image_URL || row.image_url || "",
     Price: row.Price || row.price || "",
-    Status: row.Status || row.status || "live"
+    Status: normalizeStatus(row.Status || row.status)
   };
 }
 
@@ -121,7 +128,10 @@ function renderMenuTable(rows) {
   const wrap = document.getElementById("menu-table-wrap");
   if (!wrap) return;
   const head = ["Dish_ID", "Dish_Name", "Category", "Meal_Type", "Image_URL", "Price", "Status", "Actions"];
-  const body = rows.map((row, index) => `
+  const visibleRows = rows
+    .map((row, index) => ({ row, index }))
+    .filter(({ row }) => menuStatusFilter === "all" || normalizeStatus(row.Status) === menuStatusFilter);
+  const body = visibleRows.map(({ row, index }) => `
     <tr data-index="${index}">
       <td><input data-field="Dish_ID" value="${escapeHtml(row.Dish_ID)}"></td>
       <td><input data-field="Dish_Name" value="${escapeHtml(row.Dish_Name)}"></td>
@@ -130,30 +140,37 @@ function renderMenuTable(rows) {
       <td><input data-field="Image_URL" value="${escapeHtml(row.Image_URL)}"></td>
       <td><input data-field="Price" value="${escapeHtml(row.Price)}"></td>
       <td>
+        <span class="status-badge status-${escapeHtml(normalizeStatus(row.Status))}">${escapeHtml(normalizeStatus(row.Status))}</span>
         <select data-field="Status">
-          <option value="live" ${row.Status === "live" ? "selected" : ""}>live</option>
-          <option value="hidden" ${row.Status === "hidden" ? "selected" : ""}>hidden</option>
+          <option value="live" ${normalizeStatus(row.Status) === "live" ? "selected" : ""}>live</option>
+          <option value="hidden" ${normalizeStatus(row.Status) === "hidden" ? "selected" : ""}>hidden</option>
         </select>
       </td>
-      <td><button class="btn delete-row" type="button" data-action="delete-row" data-index="${index}">Delete</button></td>
+      <td>
+        <button class="btn btn-soft" type="button" data-action="toggle-status" data-index="${index}">${normalizeStatus(row.Status) === "live" ? "Hide" : "Make Live"}</button>
+        <button class="btn delete-row" type="button" data-action="delete-row" data-index="${index}">Delete</button>
+      </td>
     </tr>
   `).join("");
   wrap.innerHTML = `
     <table>
       <thead><tr>${head.map(label => `<th>${label}</th>`).join("")}</tr></thead>
-      <tbody>${body}</tbody>
+      <tbody>${body || `<tr><td colspan="${head.length}">No dishes match this status filter.</td></tr>`}</tbody>
     </table>
   `;
 }
 
-function readRowsFromTable() {
-  const rows = Array.from(document.querySelectorAll("#menu-table-wrap tbody tr"));
-  return rows.map(tr => {
+function readRowsFromTable(baseRows = []) {
+  const nextRows = Array.isArray(baseRows) ? baseRows.map(row => normalizeMenuRow(row)) : [];
+  const rows = Array.from(document.querySelectorAll("#menu-table-wrap tbody tr[data-index]"));
+  rows.forEach(tr => {
+    const index = Number(tr.dataset.index || -1);
+    if (index < 0) return;
     const get = name => {
       const el = tr.querySelector(`[data-field="${name}"]`);
       return el && "value" in el ? String(el.value).trim() : "";
     };
-    return normalizeMenuRow({
+    nextRows[index] = normalizeMenuRow({
       Dish_ID: get("Dish_ID"),
       Dish_Name: get("Dish_Name"),
       Category: get("Category"),
@@ -162,7 +179,36 @@ function readRowsFromTable() {
       Price: get("Price"),
       Status: get("Status")
     });
-  }).filter(row => row.Dish_ID && row.Dish_Name);
+  });
+  return nextRows.filter(row => row.Dish_ID && row.Dish_Name);
+}
+
+function validateMenuRows(rows) {
+  const errors = [];
+  const warnings = [];
+  const seen = new Set();
+  rows.forEach((row, index) => {
+    const label = row.Dish_ID || row.Dish_Name || `row ${index + 1}`;
+    if (!row.Dish_ID) errors.push(`${label}: Dish_ID is required.`);
+    if (!row.Dish_Name) errors.push(`${label}: Dish_Name is required.`);
+    if (!['live', 'hidden'].includes(normalizeStatus(row.Status))) errors.push(`${label}: Status must be live or hidden.`);
+    if (seen.has(row.Dish_ID)) errors.push(`${label}: duplicate Dish_ID.`);
+    seen.add(row.Dish_ID);
+  });
+  const liveRows = rows.filter(row => normalizeStatus(row.Status) === "live");
+  if (!liveRows.length && rows.length) warnings.push("All catalog dishes are hidden; public menu and pre-order may appear empty.");
+  const categories = new Map();
+  rows.forEach(row => {
+    const category = row.Category || "Menu";
+    const stats = categories.get(category) || { total: 0, live: 0 };
+    stats.total += 1;
+    if (normalizeStatus(row.Status) === "live") stats.live += 1;
+    categories.set(category, stats);
+  });
+  categories.forEach((stats, category) => {
+    if (stats.total && !stats.live) warnings.push(`Category "${category}" has no live dishes.`);
+  });
+  return { errors, warnings };
 }
 
 async function saveMenuOverrides(rows) {
@@ -172,26 +218,29 @@ async function saveMenuOverrides(rows) {
   const priceRows = rows.map(({ Dish_ID, Price, Status }) => ({
     Dish_ID, Price, Status
   }));
-  const catalogDishRows = rows.map(({ Dish_ID, Dish_Name, Category, Meal_Type, Image_URL, Price, Status }) => ({
-    ...(hasCatalogSchema ? {} : {
+  const catalogDishRows = rows.map(({ Dish_ID, Dish_Name, Category, Meal_Type, Image_URL, Price, Status }) => {
+    const existing = catalogDishSourceById.get(Dish_ID) || {};
+    const normalizedStatus = normalizeStatus(Status);
+    return {
+      ...existing,
       id: Dish_ID,
       name: Dish_Name,
       category: Category,
       meal_type: Meal_Type,
       image_url: Image_URL,
       price: Price,
-      status: Status || "live",
-      record_type: "dish"
-    }),
-    ID: Dish_ID,
-    Name: Dish_Name,
-    Category,
-    Meal_Type,
-    Image_URL,
-    Price,
-    Status: Status || "live",
-    Record_Type: "dish"
-  }));
+      status: normalizedStatus,
+      record_type: "dish",
+      ID: Dish_ID,
+      Name: Dish_Name,
+      Category,
+      Meal_Type,
+      Image_URL,
+      Price,
+      Status: normalizedStatus,
+      Record_Type: "dish"
+    };
+  });
   const catalogRows = [...catalogDishRows, ...preservedCatalogNonDishRows];
   if (runtime.requireBackendSync && !window.cebBackend?.apiBase) {
     return { ok: false, message: "Backend sync is required. Configure CEB_BACKEND_CONFIG first." };
@@ -337,6 +386,10 @@ async function enforceAdminAccess() {
   });
   hasCatalogSchema = normalizedCatalogRows.some(row => "Record_Type" in row || "record_type" in row);
   preservedCatalogNonDishRows = normalizedCatalogRows.filter(row => String(row.Record_Type || row.record_type || "").toLowerCase() !== "dish");
+  catalogDishSourceById = new Map(normalizedCatalogRows
+    .filter(row => String(row.Record_Type || row.record_type || "").toLowerCase() === "dish")
+    .map(row => [row.ID || row.id || row.Dish_ID || row.dish_id || "", row])
+    .filter(([id]) => id));
   const catalogDishRows = normalizedCatalogRows
     .filter(row => String(row.Record_Type || row.record_type || "").toLowerCase() === "dish")
     .map(row => ({
@@ -388,28 +441,59 @@ async function enforceAdminAccess() {
   });
 
   document.getElementById("menu-add")?.addEventListener("click", () => {
-    stateRows.push(normalizeMenuRow({ Dish_ID: `dish_${Date.now()}` }));
+    stateRows = readRowsFromTable(stateRows);
+    stateRows.push(normalizeMenuRow({ Dish_ID: `dish_${Date.now()}`, Status: "live" }));
+    renderMenuTable(stateRows);
+  });
+
+  document.querySelectorAll("[data-menu-status-filter]").forEach(button => {
+    button.addEventListener("click", () => {
+      stateRows = readRowsFromTable(stateRows);
+      menuStatusFilter = button.getAttribute("data-menu-status-filter") || "all";
+      document.querySelectorAll("[data-menu-status-filter]").forEach(el => el.classList.toggle("is-active", el === button));
+      renderMenuTable(stateRows);
+    });
+  });
+
+  document.getElementById("menu-table-wrap")?.addEventListener("change", event => {
+    const target = event.target instanceof HTMLElement ? event.target : null;
+    const row = target?.closest("tr[data-index]");
+    if (!row) return;
+    stateRows = readRowsFromTable(stateRows);
     renderMenuTable(stateRows);
   });
 
   document.getElementById("menu-table-wrap")?.addEventListener("click", event => {
     const target = event.target instanceof HTMLElement ? event.target : null;
-    if (!target || target.dataset.action !== "delete-row") return;
-    const index = Number(target.dataset.index || -1);
-    if (index < 0) return;
-    stateRows.splice(index, 1);
+    const actionEl = target?.closest("[data-action]");
+    const action = actionEl?.getAttribute("data-action");
+    const index = Number(actionEl?.getAttribute("data-index") || -1);
+    if (!action || index < 0) return;
+    stateRows = readRowsFromTable(stateRows);
+    if (action === "delete-row") {
+      stateRows.splice(index, 1);
+    }
+    if (action === "toggle-status" && stateRows[index]) {
+      stateRows[index].Status = normalizeStatus(stateRows[index].Status) === "live" ? "hidden" : "live";
+    }
     renderMenuTable(stateRows);
   });
 
   document.getElementById("menu-save")?.addEventListener("click", async () => {
-    stateRows = readRowsFromTable();
+    stateRows = readRowsFromTable(stateRows);
+    const validation = validateMenuRows(stateRows);
+    if (validation.errors.length) {
+      setFeedback(`Could not save menu: ${validation.errors.join(" ")}`);
+      return;
+    }
     const result = await saveMenuOverrides(stateRows);
     if (!result?.ok) {
       setFeedback(result?.message || "Could not save menu.");
       return;
     }
     renderMenuTable(stateRows);
-    setFeedback("Menu overrides saved. Refresh public pages to see updates.");
+    const warningText = validation.warnings.length ? ` Warnings: ${validation.warnings.join(" ")}` : "";
+    setFeedback(`Catalog visibility saved. Hidden dishes are removed from public menu and pre-order.${warningText}`);
   });
 
   document.getElementById("menu-reset")?.addEventListener("click", () => {

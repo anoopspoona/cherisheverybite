@@ -56,11 +56,16 @@
 
       <section class="card">
         <h2>Menu Manager</h2>
-        <p class="muted">Add, edit, or delete dishes. Changes are saved as browser overrides and reflected across the site.</p>
+        <p class="muted">Manage catalog dishes and visibility. Set Status to <strong>live</strong> to show a dish, or <strong>hidden</strong> to hide it across public pages and pre-order.</p>
         <div class="action-row">
           <button id="menu-add" class="btn btn-soft" type="button">Add Dish</button>
           <button id="menu-save" class="btn btn-primary" type="button">Save Menu</button>
           <button id="menu-reset" class="btn btn-soft" type="button">Reset Menu Override</button>
+        </div>
+        <div class="action-row menu-status-filters" aria-label="Catalog status filters">
+          <button class="btn btn-soft is-active" type="button" data-menu-status-filter="all">All</button>
+          <button class="btn btn-soft" type="button" data-menu-status-filter="live">Live</button>
+          <button class="btn btn-soft" type="button" data-menu-status-filter="hidden">Hidden</button>
         </div>
         <div id="menu-table-wrap" class="table-wrap"></div>
       </section>

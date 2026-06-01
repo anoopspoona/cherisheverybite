@@ -12,3 +12,9 @@ input,select,textarea{width:100%;border:1px solid rgba(0,0,0,.15);border-radius:
   .calendar-controls{grid-template-columns:1fr}
   .action-row .btn{width:100%}
 }
+.status-badge{display:inline-flex;align-items:center;justify-content:center;min-width:58px;margin-bottom:6px;padding:3px 8px;border-radius:999px;font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:.02em}
+.status-live{background:#ecfdf3;color:#166534;border:1px solid #bbf7d0}
+.status-hidden{background:#f8fafc;color:#475569;border:1px solid #cbd5e1}
+.menu-status-filters .is-active{background:#fff;border-color:rgba(31,109,71,.42);box-shadow:0 8px 20px rgba(31,109,71,.12)}
+#menu-table-wrap td:last-child{min-width:170px}
+#menu-table-wrap td:last-child .btn{margin:2px}
