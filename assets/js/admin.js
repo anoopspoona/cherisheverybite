@@ -374,7 +374,35 @@ async function enforceAdminAccess() {
   return false;
 }
 
+function bindAdminAuthActions() {
+  document.getElementById("admin-google-login")?.addEventListener("click", async () => {
+    if (!window.cebAuth?.enabled) {
+      setFeedback("Google auth is not configured. Check CEB_SUPABASE_CONFIG.");
+      return;
+    }
+    const redirectTo = new URL("admin.html", window.location.href).toString();
+    const result = await window.cebAuth.signInWithGoogle(redirectTo);
+    if (!result?.ok) {
+      setFeedback(result?.message || "Could not start Google sign-in.");
+    }
+  });
+
+  document.getElementById("admin-logout")?.addEventListener("click", async () => {
+    if (window.cebAuth?.enabled) {
+      await window.cebAuth.signOut();
+    } else {
+      localStorage.removeItem("ceb_current_user_v1");
+    }
+    await enforceAdminAccess();
+  });
+}
+
 (async function initAdmin() {
+  setAdminConsoleVisible(false);
+  bindAdminAuthActions();
+  const hasAccess = await enforceAdminAccess();
+  if (!hasAccess) return;
+
   const [catalogRows, menuRows, priceRows] = await Promise.all([
     fetchCSV(CATALOG_PATH).catch(() => []),
     fetchCSV(MENU_PATH).catch(() => []),
@@ -442,13 +470,13 @@ async function enforceAdminAccess() {
     }
   });
 
-  document.getElementById("admin-logout")?.addEventListener("click", async () => {
-    if (window.cebAuth?.enabled) {
-      await window.cebAuth.signOut();
-    } else {
-      localStorage.removeItem("ceb_current_user_v1");
-    }
-    await enforceAdminAccess();
+  document.querySelectorAll("[data-menu-status-filter]").forEach(button => {
+    button.addEventListener("click", () => {
+      stateRows = readRowsFromTable(stateRows);
+      menuStatusFilter = button.getAttribute("data-menu-status-filter") || "all";
+      document.querySelectorAll("[data-menu-status-filter]").forEach(el => el.classList.toggle("is-active", el === button));
+      renderMenuTable(stateRows);
+    });
   });
 
   document.getElementById("menu-add")?.addEventListener("click", () => {
