@@ -140,13 +140,14 @@ function renderMenuTable(rows) {
       <td><input data-field="Image_URL" value="${escapeHtml(row.Image_URL)}"></td>
       <td><input data-field="Price" value="${escapeHtml(row.Price)}"></td>
       <td>
-        <input type="hidden" data-field="Status" value="${escapeHtml(normalizeStatus(row.Status))}">
-        <div class="status-toggle" role="group" aria-label="Visibility for ${escapeHtml(row.Dish_Name || row.Dish_ID)}">
-          <button class="status-toggle-btn ${normalizeStatus(row.Status) === "live" ? "is-active" : ""}" type="button" data-action="set-status" data-status="live" data-index="${index}">Live</button>
-          <button class="status-toggle-btn ${normalizeStatus(row.Status) === "hidden" ? "is-active" : ""}" type="button" data-action="set-status" data-status="hidden" data-index="${index}">Hidden</button>
-        </div>
+        <span class="status-badge status-${escapeHtml(normalizeStatus(row.Status))}">${escapeHtml(normalizeStatus(row.Status))}</span>
+        <select data-field="Status">
+          <option value="live" ${normalizeStatus(row.Status) === "live" ? "selected" : ""}>live</option>
+          <option value="hidden" ${normalizeStatus(row.Status) === "hidden" ? "selected" : ""}>hidden</option>
+        </select>
       </td>
       <td>
+        <button class="btn btn-soft" type="button" data-action="toggle-status" data-index="${index}">${normalizeStatus(row.Status) === "live" ? "Hide" : "Make Live"}</button>
         <button class="btn delete-row" type="button" data-action="delete-row" data-index="${index}">Delete</button>
       </td>
     </tr>
@@ -475,8 +476,8 @@ async function enforceAdminAccess() {
     if (action === "delete-row") {
       stateRows.splice(index, 1);
     }
-    if (action === "set-status" && stateRows[index]) {
-      stateRows[index].Status = normalizeStatus(actionEl.getAttribute("data-status"));
+    if (action === "toggle-status" && stateRows[index]) {
+      stateRows[index].Status = normalizeStatus(stateRows[index].Status) === "live" ? "hidden" : "live";
     }
     renderMenuTable(stateRows);
   });
