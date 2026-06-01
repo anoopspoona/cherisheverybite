@@ -5,30 +5,30 @@ Basic Healthy Pizza Dough,,,,79,hidden,520,14,88,15,12
 Beetroot Carrot Kanji,Drink,,assets/dishes/Picture17.png,69,live,17,0,3,0,0
 CBP Protein Smoothie,Drink,,assets/dishes/Picture27.png,249,live,253,28,10,13,6
 Chia Monkfruit Mango Pudding,Dessert,,assets/dishes/Picture2.png,249,live,127,4,14,5,7
-Chia Peanut Butter Protein Smoothie,Drink,,assets/dishes/Picture28.png,249,live,306,30,28,11,8
-Chia Protein Smoothie Chocolate,Drink,,assets/dishes/Picture28.png,199,live,218,11,30,7,6
+Chia Peanut Butter Protein Smoothie,Drink,,assets/dishes/Picture28.png,249,hidden,306,30,28,11,8
+Chia Protein Smoothie Chocolate,Drink,,assets/dishes/Picture28.png,199,hidden,218,11,30,7,6
 Chicken curry,Addon,,,99,live,215,25,7,13,2
 Chocolate Chips Oats Cookies,Snacks,,assets/dishes/Picture14.png,199,live,730,14,75,42,10
 Coconut Sambol,Addon,,,9,live,46,1,3,4,2
-Crunchy Nut mix,Snacks,,,49,live,84,3,3,7,1
-Crunchy Nut mix-Main,Snacks,,,299,live,837,33,32,72,15
+Crunchy Nut mix,Snacks,,,49,hidden,84,3,3,7,1
+Crunchy Nut mix-Main,Snacks,,,299,hidden,837,33,32,72,15
 Cucumber Raita,Addon,,,29,live,24,2,2,1,0
 Cut fruits,Addon,,,49,live,23,1,5,0,1
 French Onion Grilled Cheese,,,,199,hidden,512,21,42,28,6
-Furikake Avocado Toast,Sandwich,,,299,live,611,18,74,29,19
-Furikake Avocado Toast with Jammy Eggs,Sandwich,,assets/dishes/Picture16.png,299,live,400,24,33,25,10
-Greek Yogurt Granola Bowl,Snacks,,assets/dishes/Picture18.png,349,live,420,16,39,22,6
+Furikake Avocado Toast,Sandwich,,,299,hidden,611,18,74,29,19
+Furikake Avocado Toast with Jammy Eggs,Sandwich,,assets/dishes/Picture16.png,299,hidden,400,24,33,25,10
+Greek Yogurt Granola Bowl,Snacks,,assets/dishes/Picture18.png,349,hidden,420,16,39,22,6
 Grilled Chicken and Avocado Sandwich,Sandwich,,,299,live,450,34,32,24,8
 Herbs Marinated Chicken Breast,Addon,,,149,live,205,31,3,11,1
 Herbs Marinated Chicken Breast-Main,,,,349,hidden,314,46,6,17,2
 Lemonade Salt,Drink,,,49,live,3,0,1,0,0
-Maple Togarashi Spiced Nuts,Snacks,,assets/dishes/Picture13.png,49,live,70,2,5,5,1
+Maple Togarashi Spiced Nuts,Snacks,,assets/dishes/Picture13.png,49,hidden,70,2,5,5,1
 Maple Togarashi Spiced Nuts-Main,Snacks,,assets/dishes/Picture13.png,349,live,701,20,50,52,9
 Masala Chaas,Drink,,,99,live,177,11,16,9,1
 Mesclun Quinoa Salad,Salad,,assets/dishes/Picture7.png,299,live,420,12,44,25,8
 Mesclun Quinoa Salad dressing,Sub-ingredient,,,,hidden,207,0,8,20,1
 Mesclun Quinoa Salad mix,Sub-ingredient,,,,hidden,326,14,50,9,7
-Mint Pineapple Spinach Smoothie,Drink,,assets/dishes/Picture26.png,159,live,317,13,40,13,6
+Mint Pineapple Spinach Smoothie,Drink,,assets/dishes/Picture26.png,159,hidden,317,13,40,13,6
 Mixed vegetable thoran,Addon,,,19,live,56,2,4,4,3
 Monkfruit Lemonade,Drink,,,69,live,3,0,1,0,0
 Omlet,Addon,,,25,live,70,8,2,6,0
@@ -38,27 +38,27 @@ Peanut Butter and Banana Toast,Sandwich,,,149,live,420,17,68,22,10
 Pineapple Gut Booster Tepache,Drink,,assets/dishes/Picture15.png,69,live,110,0,29,0,1
 Protein Chicken Collagen Millet Kanji,,,assets/dishes/Picture29.png,149,hidden,340,32,30,10,4
 Protein Chicken Collagen Millet Kanji combo,Combo,,,249,live,320,34,33,9,5
-Protein Chicken Collagen Millet Kanji Economy combo,Combo,,,199,live,315,26,30,11,6
+Protein Chicken Collagen Millet Kanji Economy combo,Combo,,,199,hidden,315,26,30,11,6
 Protein Peanut Butter Brownie,,,,499,hidden,1180,52,66,86,11
-Pulled Chicken Caesar Salad,Salad,,assets/dishes/Picture1.png,299,live,585,44,17,36,4
+Pulled Chicken Caesar Salad,Salad,,assets/dishes/Picture1.png,299,hidden,585,44,17,36,4
 Ragi Chicken Collagen Broth,Soup,,assets/dishes/Picture3.png,149,live,140,22,7,10,1
 Ragi Jowar Chapathi,Addon,,,16,live,219,7,47,2,7
 Ragi Jowar Chapathi Chicken meal combo,Combo,,assets/dishes/Picture30.png,249,live,660,48,62,22,12
-Ragi Jowar Chapathi Chicken meal Economy combo,Combo,,,199,live,635,41,64,26,11
+Ragi Jowar Chapathi Chicken meal Economy combo,Combo,,,199,hidden,635,41,64,26,11
 Ragi Jowar Chapathi Paneer meal combo,Combo,,assets/dishes/Picture30.png,249,live,633,32,85,43,15
-Ragi Jowar Chapathi Paneer meal Economy combo,Combo,,,199,live,698,25,66,38,11
+Ragi Jowar Chapathi Paneer meal Economy combo,Combo,,,199,hidden,698,25,66,38,11
 Ragi Quinoa Crisp bread,,,,,hidden,546,14,95,11,13
 Roasted sweet potato,Addon,,,49,live,85,2,15,3,2
 Scrambled egg sando on multigrain bread,Sandwich,,,149,live,352,22,30,18,5
-Shirazi salad,Addon,,assets/dishes/Picture6.png,49,live,15,1,2,1,1
-Shirazi salad-Main,Salad,,assets/dishes/Picture6.png,149,live,90,3,14,4,4
+Shirazi salad,Addon,,assets/dishes/Picture6.png,49,hidden,15,1,2,1,1
+Shirazi salad-Main,Salad,,assets/dishes/Picture6.png,149,hidden,90,3,14,4,4
 Sour Dough Grilled Chicken and Avocado Sandwich,,,assets/dishes/Picture19.png,349,hidden,782,39,81,38,13
 Soyu egg,Addon,,assets/dishes/Picture21.png,49,live,134,12,1,9,0
-Steamed Edamame,Snacks,,assets/dishes/Picture22.png,61,live,34,3,3,1,1
+Steamed Edamame,Snacks,,assets/dishes/Picture22.png,61,hidden,34,3,3,1,1
 Steamed Edamame-Main,Snacks,,assets/dishes/Picture22.png,249,hidden,170,17,13,7,6
 Toor dal fry,Addon,,,49,live,146,7,20,4,5
 Vegan Chocolate Chips Almond Oats Cookies,Snacks,,,149,live,700,13,75,40,10
-Vegetable millet broth,Soup,,,79,live,160,5,25,7,6
+Vegetable millet broth,Soup,,,79,hidden,160,5,25,7,6
 Whole Wheat Pizza Dough,,,,,hidden,824,23,161,11,14
 Yuzu Corn Salad,Salad,,,199,live,300,6,36,17,6
 Yuzu Corn Salad mix,Sub-ingredient,,,,hidden,221,6,38,7,5
