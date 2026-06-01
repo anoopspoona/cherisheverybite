@@ -341,8 +341,11 @@ async function enforceAdminAccess() {
   const allowedEmails = Array.isArray(runtime.adminEmails) ? runtime.adminEmails.map(v => String(v || "").trim().toLowerCase()) : [];
   const current = await getCurrentAdminIdentifier();
   const loginBtn = document.getElementById("admin-google-login");
+  const emailLinkBtn = document.getElementById("admin-email-link");
+  const emailInput = document.getElementById("admin-email-login");
   const logoutBtn = document.getElementById("admin-logout");
   const authStatus = document.getElementById("admin-auth-status");
+  if (emailInput && allowedEmails[0] && !emailInput.value) emailInput.value = allowedEmails[0];
 
   if (!allowedEmails.length) {
     setAdminConsoleVisible(true);
@@ -356,6 +359,8 @@ async function enforceAdminAccess() {
   setControlsEnabled(isAllowed);
 
   if (loginBtn) loginBtn.style.display = isAllowed ? "none" : "inline-flex";
+  if (emailLinkBtn) emailLinkBtn.style.display = isAllowed ? "none" : "inline-flex";
+  if (emailInput) emailInput.disabled = isAllowed;
   if (logoutBtn) logoutBtn.style.display = current ? "inline-flex" : "none";
 
   if (isAllowed) {
@@ -365,8 +370,8 @@ async function enforceAdminAccess() {
   }
 
   if (!current) {
-    if (authStatus) authStatus.textContent = "Admin login required. Continue with Google to access this console.";
-    setFeedback("Admin login required. Continue with Google.");
+    if (authStatus) authStatus.textContent = "Admin login required. Send a login link to the authorized email or continue with Google.";
+    setFeedback("Admin login required. Send a login link or continue with Google.");
   } else {
     if (authStatus) authStatus.textContent = `Signed in as ${current}. This account is not authorized for admin changes.`;
     setFeedback("Admin access denied. Only anoop.anoops@gmail.com can modify admin content.");

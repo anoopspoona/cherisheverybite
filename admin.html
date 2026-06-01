@@ -27,9 +27,13 @@
   <main class="section">
     <div class="container card" id="admin-auth-gate">
       <h2>Admin Access</h2>
-      <p class="muted" id="admin-auth-status">Sign in with the authorized Google account to manage admin content.</p>
-      <div class="action-row">
-        <button id="admin-google-login" class="btn btn-primary" type="button">Continue with Google</button>
+      <p class="muted" id="admin-auth-status">Sign in with the authorized admin email or Google account to manage admin content.</p>
+      <div class="calendar-controls admin-login-controls">
+        <label>Admin Email
+          <input id="admin-email-login" type="email" placeholder="anoop.anoops@gmail.com" autocomplete="email" />
+        </label>
+        <button id="admin-email-link" class="btn btn-primary" type="button">Send Login Link</button>
+        <button id="admin-google-login" class="btn btn-soft" type="button">Continue with Google</button>
         <button id="admin-logout" class="btn btn-soft" type="button">Logout</button>
       </div>
     </div>
