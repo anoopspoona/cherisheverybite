@@ -1,0 +1,5 @@
+zone_id,zone_name,status,priority,min_order,delivery_fee,eta_min,eta_max,polygon_geojson,notes
+ZONE_TVM_01,Technopark-Infosys Corridor,live,1,0,0,20,35,"{""type"":""Polygon"",""coordinates"":[[[76.87,8.54],[76.89,8.54],[76.89,8.57],[76.87,8.57],[76.87,8.54]]]}",High density tech hub - Free delivery tier
+ZONE_TVM_02,Vellayambalam-Kowadiar Premium,live,2,250,30,25,40,"{""type"":""Polygon"",""coordinates"":[[[76.94,8.51],[76.96,8.51],[76.96,8.53],[76.94,8.53],[76.94,8.51]]]}",Premium residential zone with minimum order value
+ZONE_TVM_03,Mangalapuram-Kazhakoottam Extended,live,3,400,50,40,55,"{""type"":""Polygon"",""coordinates"":[[[76.84,8.57],[76.88,8.57],[76.88,8.61],[76.84,8.61],[76.84,8.57]]]}",NH66 expansion corridor - higher distance fee applies
+ZONE_TVM_04,Pothencode Test,paused,4,500,90,55,70,"{""type"":""Polygon"",""coordinates"":[[[76.87,8.60],[76.91,8.60],[76.91,8.64],[76.87,8.64],[76.87,8.60]]]}",Peripheral testing zone - currently paused for operations
