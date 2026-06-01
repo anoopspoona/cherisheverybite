@@ -152,8 +152,11 @@ function renderMenuTable(rows) {
       </td>
     </tr>
   `).join("");
+  const liveCount = rows.filter(row => normalizeStatus(row.Status) === "live").length;
+  const hiddenCount = rows.filter(row => normalizeStatus(row.Status) === "hidden").length;
   wrap.innerHTML = `
-    <table>
+    <p class="muted menu-table-summary">Showing ${visibleRows.length} of ${rows.length} dishes • ${liveCount} live • ${hiddenCount} hidden</p>
+    <table class="admin-menu-table">
       <thead><tr>${head.map(label => `<th>${label}</th>`).join("")}</tr></thead>
       <tbody>${body || `<tr><td colspan="${head.length}">No dishes match this status filter.</td></tr>`}</tbody>
     </table>
