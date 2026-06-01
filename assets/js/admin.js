@@ -408,6 +408,7 @@ function bindAdminAuthActions() {
     fetchCSV(MENU_PATH).catch(() => []),
     fetchCSV(PRICE_PATH).catch(() => [])
   ]);
+  const catalogRows = catalogResult.rows;
   const normalizedCatalogRows = catalogRows.map(row => {
     const normalized = {};
     Object.keys(row || {}).forEach(key => {
