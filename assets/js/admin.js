@@ -394,9 +394,9 @@ async function enforceAdminAccess() {
     .map(row => [row.ID || row.id || row.Dish_ID || row.dish_id || "", row])
     .filter(([id]) => id));
   const catalogDishRows = normalizedCatalogRows
-    .filter(row => String(row.Record_Type || row.record_type || "").toLowerCase() === "dish")
-    .map(row => ({
-      Dish_ID: row.ID || row.id || row.Dish_ID || row.dish_id || "",
+    .filter(row => isCatalogDishRow(row))
+    .map((row, index) => ({
+      Dish_ID: catalogDishId(row, index),
       Dish_Name: row.Name || row.name || row.Dish_Name || row.dish_name || "",
       Category: row.Category || row.category || "",
       Meal_Type: row.Meal_Type || row.meal_type || "",
