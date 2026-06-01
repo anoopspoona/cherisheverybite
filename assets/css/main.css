@@ -248,6 +248,15 @@ body {
 }
 .preorder-shell h2 { font-size: 1.55rem; color: #1f6d47; margin-bottom: 8px; }
 .preorder-feedback { min-height: 22px; font-weight: 600; }
+.preorder-top-actions{
+  position: sticky;
+  top: 84px;
+  z-index: 6;
+  display:flex;
+  justify-content:flex-end;
+  padding: 4px 0 8px;
+  background: linear-gradient(180deg,#fff,rgba(255,255,255,.92));
+}
 .dish-title { display:block; font-size: 1.08rem; line-height:1.35; color: #123f2a; width: 100%; flex: 0 0 100%; }
 .nutrition-icon { width: 16px; display: inline-flex; justify-content: center; }
 .preorder-page #preorder-menu { column-count: 1; display: block; }
@@ -316,9 +325,17 @@ body {
   .hero-premium-viewport{min-height:220px}
   .hero-premium-overlay h3{font-size:1.1rem}
   .hero-experiment{grid-template-columns:1fr}
-  .hero-exp-nav{display:none}
+  .hero-exp-nav{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:38px;
+    height:38px;
+    font-size:1.6rem;
+  }
   .hero-experiment-viewport,.hero-experiment-track{min-height:240px;height:240px}
   .hero-exp-card{width:88vw;height:220px}
+  .preorder-top-actions{top:72px}
 }
 
 @media (prefers-reduced-motion: reduce) {
