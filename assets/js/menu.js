@@ -82,15 +82,26 @@ function groupMenu(rows) {
 
 function renderMenu(groups) {
   const menuGrid = document.getElementById("menu-grid");
+  const categoryBar = document.getElementById("menu-category-bar");
   if (!menuGrid) return;
 
   if (!groups.length) {
     menuGrid.innerHTML = `<article class="menu-section"><h3 class="menu-title">Menu updating soon</h3><p class="muted">Upload catalog.csv with live dish rows to show the latest menu.</p></article>`;
+    if (categoryBar) categoryBar.innerHTML = "";
     return;
+  }
+
+  const activeCategory = renderMenu.activeCategory && groups.some(g => g.category === renderMenu.activeCategory)
+    ? renderMenu.activeCategory
+    : groups[0].category;
+  renderMenu.activeCategory = activeCategory;
+  if (categoryBar) {
+    categoryBar.innerHTML = groups.map(group => `<button class="btn btn-soft preorder-cat-chip ${group.category === activeCategory ? "is-active" : ""}" data-action="menu-category" data-category="${escapeHtml(group.category)}" type="button">${escapeHtml(group.category)}</button>`).join("");
   }
 
   const fragment = document.createDocumentFragment();
   for (const group of groups) {
+    const isOpen = group.category === activeCategory;
     const section = document.createElement("article");
     section.className = "menu-section";
     const rows = group.items.map((item, index) => `
@@ -117,12 +128,13 @@ function renderMenu(groups) {
         <h3 class="menu-title">${escapeHtml(group.category)}</h3>
         <span class="count">${group.items.length} items</span>
       </div>
-      <ul class="item-list">${rows}</ul>
+      <ul class="item-list" style="display:${isOpen ? "grid" : "none"};">${rows}</ul>
     `;
     fragment.appendChild(section);
   }
   menuGrid.replaceChildren(fragment);
 }
+let menuGroupsCache = [];
 
 function renderPlans(rows) {
   const wrap = document.getElementById("plan-grid");
@@ -144,7 +156,7 @@ function renderPlans(rows) {
     <article class="plan-card">
       <h3>${escapeHtml(planLabel)}</h3>
       <p class="muted">${escapeHtml(row.Description || "")}</p>
-      <p class="muted">Duration: ${escapeHtml(row.Duration_Days)} days • Meals/day: ${escapeHtml(row.Meals_Per_Day)}</p>
+      <p class="muted">Duration: ${escapeHtml(row.Duration_Days)} days</p>
       <p class="legend" style="font-weight:700;color:#14532d;margin-bottom:6px;">Weekly: ${escapeHtml(weekly || "--")}</p>
       <p class="legend" style="font-weight:700;color:#14532d;margin-top:0;">Monthly: ${escapeHtml(monthly || "--")}</p>
       <a class="btn btn-soft" href="${escapeHtml(calendarUrl)}">View Plan</a>
@@ -336,7 +348,8 @@ Promise.resolve([])
         Dish_ID: `NUT-${idx + 1}`, Dish_Name: name, Category: "Plan Menu", Meal_Type: "", Image_URL: "cherish-logo.jpg", Price: "TBD", Status: "live"
       }));
     }
-    renderMenu(groupMenu(catalogDishes));
+    menuGroupsCache = groupMenu(catalogDishes);
+    renderMenu(menuGroupsCache);
     renderPlans(planRows);
     renderHeroSlideshow(heroRows, catalogRows);
   } catch (error) {
@@ -344,4 +357,12 @@ Promise.resolve([])
   }
 
   attachDietChartForm();
+  const categoryBar = document.getElementById("menu-category-bar");
+  categoryBar?.addEventListener("click", event => {
+    const target = event.target instanceof HTMLElement ? event.target : null;
+    const button = target?.closest("button[data-action='menu-category']");
+    if (!button) return;
+    renderMenu.activeCategory = button.getAttribute("data-category") || "";
+    if (menuGroupsCache.length) renderMenu(menuGroupsCache);
+  });
 })();

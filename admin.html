@@ -27,14 +27,18 @@
   <main class="section">
     <div class="container card" id="admin-auth-gate">
       <h2>Admin Access</h2>
-      <p class="muted" id="admin-auth-status">Sign in with the authorized Google account to manage admin content.</p>
-      <div class="action-row">
-        <button id="admin-google-login" class="btn btn-primary" type="button">Continue with Google</button>
+      <p class="muted" id="admin-auth-status">Sign in with the authorized admin email or Google account to manage admin content.</p>
+      <div class="calendar-controls admin-login-controls">
+        <label>Admin Email
+          <input id="admin-email-login" type="email" placeholder="anoop.anoops@gmail.com" autocomplete="email" />
+        </label>
+        <button id="admin-email-link" class="btn btn-primary" type="button">Send Login Link</button>
+        <button id="admin-google-login" class="btn btn-soft" type="button">Continue with Google</button>
         <button id="admin-logout" class="btn btn-soft" type="button">Logout</button>
       </div>
     </div>
 
-    <div class="container admin-grid" id="admin-console">
+    <div class="container admin-grid" id="admin-console" style="display:none;">
       <section class="card">
         <h2>Subscription Cycle Settings</h2>
         <p class="muted">Week rotation anchor date for W1→W4 plan cycle. Default is 2026-05-01.</p>
@@ -42,22 +46,32 @@
           <label>Cycle Start Date
             <input id="cycle-anchor-date" type="date" />
           </label>
+          <label>Delivery Distance Limit (km)
+            <input id="delivery-limit-km" type="number" min="1" max="50" step="0.5" />
+          </label>
         </div>
         <div class="action-row">
           <button id="cycle-save" class="btn btn-primary" type="button">Save Cycle Start</button>
+          <button id="delivery-limit-save" class="btn btn-primary" type="button">Save Delivery Limit</button>
+          <button id="delivery-limit-reset" class="btn btn-soft" type="button">Reset Delivery Limit</button>
           <button id="cycle-reset" class="btn btn-soft" type="button">Reset to Default</button>
         </div>
       </section>
 
       <section class="card">
         <h2>Menu Manager</h2>
-        <p class="muted">Add, edit, or delete dishes. Changes are saved as browser overrides and reflected across the site.</p>
+        <p class="muted">Manage catalog dishes and visibility. Set Status to <strong>live</strong> to show a dish, or <strong>hidden</strong> to hide it across public pages and pre-order.</p>
         <div class="action-row">
           <button id="menu-add" class="btn btn-soft" type="button">Add Dish</button>
           <button id="menu-save" class="btn btn-primary" type="button">Save Menu</button>
           <button id="menu-reset" class="btn btn-soft" type="button">Reset Menu Override</button>
         </div>
-        <div id="menu-table-wrap" class="table-wrap"></div>
+        <div class="action-row menu-status-filters" aria-label="Catalog status filters">
+          <button class="btn btn-soft is-active" type="button" data-menu-status-filter="all">All</button>
+          <button class="btn btn-soft" type="button" data-menu-status-filter="live">Live</button>
+          <button class="btn btn-soft" type="button" data-menu-status-filter="hidden">Hidden</button>
+        </div>
+        <div id="menu-table-wrap" class="table-wrap"><p class="muted">Loading catalog dishes…</p></div>
       </section>
 
       <section class="card">
@@ -89,6 +103,35 @@
           <button id="cal-reset" class="btn btn-soft" type="button">Reset Calendar Override</button>
         </div>
       </section>
+
+      <section class="card">
+        <h2>Delivery Zones Manager</h2>
+        <p class="muted">Draw and edit delivery polygons interactively. Save updates to local CSV overrides.</p>
+        <div class="calendar-controls">
+          <label>Zone
+            <select id="zone-select"></select>
+          </label>
+          <label>Zone Name
+            <input id="zone-name" type="text" />
+          </label>
+          <label>Status
+            <select id="zone-status">
+              <option value="live">live</option>
+              <option value="paused">paused</option>
+            </select>
+          </label>
+        </div>
+        <div class="action-row">
+          <button id="zone-add" class="btn btn-soft" type="button">Add Zone</button>
+          <button id="zone-draw" class="btn btn-soft" type="button">Draw Polygon</button>
+          <button id="zone-clear" class="btn btn-soft" type="button">Clear Polygon</button>
+          <button id="zone-save" class="btn btn-primary" type="button">Save Zones</button>
+        </div>
+        <div id="zone-map" style="height:320px;border-radius:12px;border:1px solid rgba(0,0,0,.1);margin-top:8px;"></div>
+        <label style="display:block;margin-top:10px;">Polygon GeoJSON
+          <textarea id="zone-geojson" rows="4"></textarea>
+        </label>
+      </section>
     </div>
     <div class="container">
       <p id="admin-feedback" class="muted"></p>
@@ -96,6 +139,7 @@
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC0Tz3KCvDCaR0TKKBb6BHF793HVanG_M8"></script>
   <script>
     window.CEB_RUNTIME_CONFIG = {
       enforceSecureAuth: true,

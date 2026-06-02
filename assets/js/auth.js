@@ -16,9 +16,12 @@
       async signIn() {
         return { ok: false, reason: runtime.enforceSecureAuth ? "secure_auth_required" : "auth_not_configured" };
       },
-    async signInWithGoogle() {
-      return { ok: false, reason: "auth_not_configured" };
-    },
+      async signInWithGoogle() {
+        return { ok: false, reason: "auth_not_configured" };
+      },
+      async signInWithOtp() {
+        return { ok: false, reason: "auth_not_configured" };
+      },
       async signOut() {
         localStorage.removeItem(CURRENT_USER_KEY);
         return { ok: true };
@@ -34,7 +37,12 @@
   const client = window.supabase.createClient(url, anonKey);
   const oauthRedirectTo = new URL("account.html", window.location.href).toString();
 
-  if (window.location.hash && window.location.hash.includes("access_token=")) {
+  const authCode = new URLSearchParams(window.location.search).get("code");
+  if (authCode && typeof client.auth.exchangeCodeForSession === "function") {
+    client.auth.exchangeCodeForSession(authCode).finally(() => {
+      window.history.replaceState({}, document.title, window.location.pathname);
+    });
+  } else if (window.location.hash && window.location.hash.includes("access_token=")) {
     client.auth.getSession().finally(() => {
       const cleanUrl = `${window.location.pathname}${window.location.search}`;
       window.history.replaceState({}, document.title, cleanUrl);
@@ -90,8 +98,23 @@
       localStorage.removeItem(CURRENT_USER_KEY);
       return { ok: true };
     },
+    async signInWithOtp(email, redirectTo = window.location.href) {
+      const { error } = await client.auth.signInWithOtp({
+        email,
+        options: { emailRedirectTo: redirectTo }
+      });
+      if (error) return { ok: false, message: error.message };
+      return { ok: true };
+    },
     async getCurrentUser() {
+      const { data: sessionData } = await client.auth.getSession();
+      const sessionUser = sessionData?.session?.user || null;
+      if (sessionUser) {
+        await refreshMirrorFromSession();
+        return sessionUser;
+      }
       const { data } = await client.auth.getUser();
+      if (data?.user) await refreshMirrorFromSession();
       return data?.user || null;
     }
   };
