@@ -156,7 +156,7 @@ function renderPlans(rows) {
     <article class="plan-card">
       <h3>${escapeHtml(planLabel)}</h3>
       <p class="muted">${escapeHtml(row.Description || "")}</p>
-      <p class="muted">Duration: ${escapeHtml(row.Duration_Days)} days • Meals/day: ${escapeHtml(row.Meals_Per_Day)}</p>
+      <p class="muted">Duration: ${escapeHtml(row.Duration_Days)} days</p>
       <p class="legend" style="font-weight:700;color:#14532d;margin-bottom:6px;">Weekly: ${escapeHtml(weekly || "--")}</p>
       <p class="legend" style="font-weight:700;color:#14532d;margin-top:0;">Monthly: ${escapeHtml(monthly || "--")}</p>
       <a class="btn btn-soft" href="${escapeHtml(calendarUrl)}">View Plan</a>
