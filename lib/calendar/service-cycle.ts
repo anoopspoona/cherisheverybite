@@ -43,11 +43,17 @@ export function countServiceDaysInclusive(anchorDate: Date, selectedDate: Date):
   return count;
 }
 
-export function getServiceDayIndex(anchorDate: Date, selectedDate: Date): number | null {
+export function getRollingServiceDayIndex(anchorDate: Date, selectedDate: Date): number | null {
   if (!isServiceDay(selectedDate)) return null;
   const counted = countServiceDaysInclusive(anchorDate, selectedDate);
   const zeroBased = ((counted - 1) % SERVICE_DAYS_PER_CYCLE + SERVICE_DAYS_PER_CYCLE) % SERVICE_DAYS_PER_CYCLE;
   return zeroBased + 1;
+}
+
+export function getCycleServiceDayWithinFirstCycle(anchorDate: Date, selectedDate: Date): number | null {
+  if (!isServiceDay(selectedDate) || selectedDate < anchorDate) return null;
+  const counted = countServiceDaysInclusive(anchorDate, selectedDate);
+  return counted >= 1 && counted <= SERVICE_DAYS_PER_CYCLE ? counted : null;
 }
 
 export function buildFiveWeekServiceGrid(anchorDate: Date): CalendarCell[] {
@@ -62,8 +68,8 @@ export function buildFiveWeekServiceGrid(anchorDate: Date): CalendarCell[] {
     if (date < anchorDate) return { kind: 'leading', date } satisfies CalendarCell;
     if (!isServiceDay(date)) return { kind: 'closed', date } satisfies CalendarCell;
 
-    const cycleServiceDay = getServiceDayIndex(anchorDate, date);
-    if (!cycleServiceDay || cycleServiceDay > SERVICE_DAYS_PER_CYCLE) {
+    const cycleServiceDay = getCycleServiceDayWithinFirstCycle(anchorDate, date);
+    if (!cycleServiceDay) {
       return { kind: 'trailing', date } satisfies CalendarCell;
     }
 
